@@ -8,6 +8,7 @@ import {
   Brain,
   Menu,
   X,
+  DumbbellIcon,
 } from 'lucide-react'
 
 const Navbar: React.FC = () => {
@@ -77,13 +78,15 @@ const Navbar: React.FC = () => {
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <Activity className="h-8 w-8 text-primary-600" />
+              <DumbbellIcon className="h-8 w-8 text-primary-600" />
               <span
-                className={`font-bold text-gray-800 ${
-                  screenSize === 'mobile' ? 'text-lg' : 'text-xl'
+                className={`font-bold text-gray-700 ${
+                  screenSize === 'mobile' ? 'text-xl' : 'text-4xl'
                 }`}
               >
-                {screenSize === 'mobile' ? 'AI Trainer' : 'AI Personal Trainer'}
+                TR
+                <span className="text-primary-600 font-extrabold">AI</span>
+                NER
               </span>
             </div>
 
