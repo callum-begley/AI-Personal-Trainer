@@ -155,38 +155,6 @@ const AIRecommendations: React.FC = () => {
         </button>
       </div>
 
-      {/* API Configuration Notice */}
-      <div className="card bg-blue-50 border-blue-200">
-        <div className="flex items-start space-x-3">
-          <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-          <div>
-            <h3 className="font-medium text-blue-900 mb-2">
-              API Configuration Required
-            </h3>
-            <p className="text-blue-800 text-sm mb-3">
-              To get real AI recommendations, you need to configure your Gemini
-              API key. Create a{' '}
-              <code className="bg-blue-100 px-1 rounded">.env</code> file in
-              your project root with:
-            </p>
-            <code className="block bg-blue-100 p-2 rounded text-sm font-mono text-blue-900">
-              VITE_GEMINI_API_KEY=your_api_key_here
-            </code>
-            <p className="text-blue-700 text-sm mt-2">
-              Get your free API key from{' '}
-              <a
-                href="https://makersuite.google.com/app/apikey"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-blue-800"
-              >
-                Google AI Studio
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-
       {workouts.length === 0 ? (
         <div className="card text-center py-12">
           <Brain className="h-16 w-16 text-gray-400 mx-auto mb-4" />

@@ -8,7 +8,7 @@ import {
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 
 interface GeminiResponse {
   candidates: Array<{
@@ -103,7 +103,20 @@ export class AITrainerService {
 
     try {
       const response = await this.callGeminiAPI(prompt)
-      const parsed = JSON.parse(response)
+
+      // Clean up the response by removing markdown code blocks
+      let cleanResponse = response.trim()
+      if (cleanResponse.startsWith('```json')) {
+        cleanResponse = cleanResponse
+          .replace(/^```json\n/, '')
+          .replace(/\n```$/, '')
+      } else if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse
+          .replace(/^```\n/, '')
+          .replace(/\n```$/, '')
+      }
+
+      const parsed = JSON.parse(cleanResponse)
       return parsed.recommendations || []
     } catch (error) {
       console.error('Error parsing AI recommendations:', error)
@@ -148,7 +161,20 @@ export class AITrainerService {
 
     try {
       const response = await this.callGeminiAPI(prompt)
-      const parsed = JSON.parse(response)
+
+      // Clean up the response by removing markdown code blocks
+      let cleanResponse = response.trim()
+      if (cleanResponse.startsWith('```json')) {
+        cleanResponse = cleanResponse
+          .replace(/^```json\n/, '')
+          .replace(/\n```$/, '')
+      } else if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse
+          .replace(/^```\n/, '')
+          .replace(/\n```$/, '')
+      }
+
+      const parsed = JSON.parse(cleanResponse)
       return parsed.exercises || []
     } catch (error) {
       console.error('Error parsing exercise recommendations:', error)
@@ -207,7 +233,20 @@ export class AITrainerService {
 
     try {
       const response = await this.callGeminiAPI(prompt)
-      const parsed = JSON.parse(response)
+
+      // Clean up the response by removing markdown code blocks
+      let cleanResponse = response.trim()
+      if (cleanResponse.startsWith('```json')) {
+        cleanResponse = cleanResponse
+          .replace(/^```json\n/, '')
+          .replace(/\n```$/, '')
+      } else if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse
+          .replace(/^```\n/, '')
+          .replace(/\n```$/, '')
+      }
+
+      const parsed = JSON.parse(cleanResponse)
       return {
         ...parsed.workout,
         date: new Date(),
