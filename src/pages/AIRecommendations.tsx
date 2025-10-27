@@ -135,7 +135,7 @@ const AIRecommendations: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-col">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
             AI Recommendations
@@ -148,7 +148,7 @@ const AIRecommendations: React.FC = () => {
         <button
           onClick={loadRecommendations}
           disabled={loading || workouts.length === 0}
-          className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           <span>{loading ? 'Loading...' : 'Refresh Recommendations'}</span>
