@@ -2,6 +2,53 @@
 
 A modern web application that helps users track their workouts and receive AI-powered training recommendations using Google's Gemini AI.
 
+## Learning Objectives
+- **AI/LLM Integration**: Learn how to integrate Google's Gemini AI API for generating personalized workout recommendations and training advice
+- **React Development**: Master modern React patterns including hooks, context, routing, and responsive design with TypeScript
+- **Data Visualization**: Develop skills in presenting fitness progress data in meaningful and actionable ways
+- **User Experience Design**: Create intuitive interfaces for fitness tracking that work seamlessly across mobile and desktop devices
+
+## Project Scope
+**Included Features:**
+- Real-time workout tracking with timer functionality
+- Exercise library with pre-loaded common exercises
+- Progress analytics and workout history visualization
+- AI-powered personalized training recommendations
+- Responsive design for mobile, tablet, and desktop
+- Local data storage for offline functionality
+
+**Excluded to Keep Scope Manageable:**
+- User authentication and cloud sync
+- Social features and workout sharing
+- Video exercise demonstrations
+- Nutrition tracking integration
+- Wearable device synchronization
+
+## Technologies
+- **Frontend**: React 18 with TypeScript for type safety and modern development
+- **Styling**: Tailwind CSS for responsive, utility-first styling
+- **AI Integration**: Google Gemini 2.0 Flash API for intelligent recommendations
+- **Form Handling**: React Hook Form for efficient form management
+- **Routing**: React Router DOM for single-page application navigation
+- **Icons**: Lucide React for consistent, beautiful iconography
+- **Build Tool**: Vite for fast development and optimized production builds
+- **Data Storage**: Browser localStorage for client-side data persistence
+
+## Timeline
+- **Week 1**: Project setup, basic React structure, and workout tracking functionality
+- **Week 2**: Progress analytics, data visualization, and responsive design implementation
+- **Week 3**: AI integration with Gemini API and recommendation system
+- **Week 4**: Mobile optimization, testing, and final polish
+- **Ongoing**: Bug fixes, performance optimization, and feature enhancements
+
+## Success Criteria
+- **Functional Workout Tracking**: Users can successfully log exercises, sets, reps, and weights
+- **Working AI Recommendations**: Gemini AI provides relevant, personalized training advice based on user data
+- **Responsive Design**: Application works flawlessly on mobile phones, tablets, and desktop computers
+- **Data Persistence**: User workout data is saved locally and persists between sessions
+- **Intuitive User Experience**: New users can navigate and use the app without instructions
+- **Performance**: Fast loading times and smooth interactions across all features
+
 ## Features
 
 - **Workout Tracking**: Log exercises, sets, reps, and weights with an intuitive interface
@@ -21,51 +68,6 @@ A modern web application that helps users track their workouts and receive AI-po
 - **AI Integration**: Google Gemini API for intelligent recommendations
 - **Build Tool**: Vite for fast development and building
 - **Data Storage**: Local Storage for client-side data persistence
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm or yarn package manager
-- Google AI Studio API key (for AI recommendations)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/callum-begley/AI-Personal-Trainer.git
-cd AI-Personal-Trainer
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-```
-
-4. Add your Gemini API key to the `.env` file:
-```
-VITE_GEMINI_API_KEY=your_api_key_here
-```
-
-5. Start the development server:
-```bash
-npm run dev
-```
-
-6. Open your browser and navigate to `http://localhost:3000`
-
-### Getting Your Gemini API Key
-
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Create a new API key
-4. Copy the key and add it to your `.env` file
 
 ## Usage
 
@@ -94,21 +96,6 @@ src/
 └── styles/           # CSS and styling
     └── index.css     # Global styles and Tailwind setup
 ```
-
-## Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
