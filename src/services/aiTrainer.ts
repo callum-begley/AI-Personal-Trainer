@@ -231,11 +231,15 @@ export class AITrainerService {
       Create a balanced workout targeting multiple muscle groups with appropriate sets, reps, and rest periods.
     `
 
+    let rawResponse = ''
     try {
       const response = await this.callGeminiAPI(prompt)
+      rawResponse = response
 
-      // Clean up the response by removing markdown code blocks
+      // Clean up the response by removing markdown code blocks and extra text
       let cleanResponse = response.trim()
+
+      // Remove markdown code blocks
       if (cleanResponse.startsWith('```json')) {
         cleanResponse = cleanResponse
           .replace(/^```json\n/, '')
@@ -246,20 +250,92 @@ export class AITrainerService {
           .replace(/\n```$/, '')
       }
 
+      // Try to extract JSON if there's extra text
+      const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        cleanResponse = jsonMatch[0]
+      }
+
+      // Additional cleaning for common JSON issues
+      cleanResponse = cleanResponse
+        .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add quotes to unquoted keys
+        .trim()
+
+      console.log(
+        'Cleaned AI response for parsing:',
+        cleanResponse.substring(0, 500) + '...'
+      )
+
       const parsed = JSON.parse(cleanResponse)
-      return {
-        ...parsed.workout,
-        date: new Date(),
+
+      if (parsed.workout) {
+        return {
+          ...parsed.workout,
+          date: new Date(),
+        }
+      } else {
+        // If the response is the workout object directly
+        return {
+          ...parsed,
+          date: new Date(),
+        }
       }
     } catch (error) {
       console.error('Error parsing workout plan:', error)
-      // Return a default workout if AI fails
+      console.error('Raw AI response:', rawResponse.substring(0, 1000))
+
+      // Return a sample workout if AI fails
       return {
         id: Date.now().toString(),
         date: new Date(),
-        name: 'Default Workout',
-        exercises: [],
-        sets: [],
+        name: 'Sample AI Workout',
+        exercises: [
+          {
+            id: 'push-up-sample',
+            name: 'Push-ups',
+            category: 'chest',
+            muscleGroups: ['chest', 'shoulders', 'triceps'],
+            equipment: 'bodyweight',
+            instructions:
+              'Start in plank position, lower chest to ground, push back up.',
+          },
+          {
+            id: 'squat-sample',
+            name: 'Bodyweight Squats',
+            category: 'legs',
+            muscleGroups: ['quadriceps', 'glutes'],
+            equipment: 'bodyweight',
+            instructions:
+              'Stand with feet shoulder-width apart, lower hips back and down.',
+          },
+        ],
+        sets: [
+          {
+            id: 'set-1',
+            exerciseId: 'push-up-sample',
+            reps: 12,
+            completed: false,
+          },
+          {
+            id: 'set-2',
+            exerciseId: 'push-up-sample',
+            reps: 12,
+            completed: false,
+          },
+          {
+            id: 'set-3',
+            exerciseId: 'squat-sample',
+            reps: 15,
+            completed: false,
+          },
+          {
+            id: 'set-4',
+            exerciseId: 'squat-sample',
+            reps: 15,
+            completed: false,
+          },
+        ],
         duration: availableTime,
         completed: false,
       }

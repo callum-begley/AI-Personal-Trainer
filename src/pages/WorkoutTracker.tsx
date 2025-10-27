@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Plus, Trash2, Play, Square, Save, Edit2, Check, X } from 'lucide-react'
+import {
+  Plus,
+  Trash2,
+  Play,
+  Square,
+  Save,
+  Edit2,
+  Check,
+  X,
+  Brain,
+  Wand2,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
+import { AITrainerService } from '../services/aiTrainer'
 import { Workout, Exercise, WorkoutSet } from '../types/workout'
 
 interface WorkoutForm {
@@ -11,6 +23,13 @@ interface WorkoutForm {
   sets: number
   reps: number
   weight: number
+}
+
+interface WorkoutPlanForm {
+  fitnessLevel: 'beginner' | 'intermediate' | 'advanced'
+  goals: string
+  availableTime: number
+  equipment: string
 }
 
 const WorkoutTracker: React.FC = () => {
@@ -24,6 +43,10 @@ const WorkoutTracker: React.FC = () => {
     reps: number
     weight?: number
   }>({ reps: 0 })
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
+  const [showPlanForm, setShowPlanForm] = useState(false)
+
+  const aiTrainer = new AITrainerService()
 
   const {
     register,
@@ -31,6 +54,13 @@ const WorkoutTracker: React.FC = () => {
     reset,
     formState: { errors },
   } = useForm<WorkoutForm>()
+
+  const {
+    register: registerPlan,
+    handleSubmit: handleSubmitPlan,
+    reset: resetPlan,
+    formState: { errors: planErrors },
+  } = useForm<WorkoutPlanForm>()
 
   useEffect(() => {
     setExercises(storageService.getExercises())
@@ -193,6 +223,66 @@ const WorkoutTracker: React.FC = () => {
     toast.success('Set updated!')
   }
 
+  const generateWorkoutPlan = async (data: WorkoutPlanForm) => {
+    setIsGeneratingPlan(true)
+    try {
+      const goals = data.goals
+        .split(',')
+        .map((goal) => goal.trim())
+        .filter((goal) => goal.length > 0)
+      const equipment = data.equipment
+        .split(',')
+        .map((eq) => eq.trim())
+        .filter((eq) => eq.length > 0)
+
+      const aiWorkout = await aiTrainer.getWorkoutPlan(
+        data.fitnessLevel,
+        goals,
+        data.availableTime,
+        equipment
+      )
+
+      // Add AI-generated exercises to our exercises list if they don't exist
+      const currentExercises = storageService.getExercises()
+      const newExercises = [...currentExercises]
+
+      aiWorkout.exercises.forEach((aiExercise) => {
+        const existingExercise = currentExercises.find(
+          (ex) => ex.id === aiExercise.id
+        )
+        if (!existingExercise) {
+          newExercises.push(aiExercise)
+          storageService.saveExercise(aiExercise)
+        }
+      })
+
+      setExercises(newExercises)
+
+      // Ensure the workout structure is complete
+      const completeWorkout: Workout = {
+        ...aiWorkout,
+        id: Date.now().toString(),
+        date: new Date(),
+        completed: false,
+        exercises: aiWorkout.exercises || [],
+        sets: aiWorkout.sets || [],
+      }
+
+      // Set as current workout but not started yet
+      setCurrentWorkout(completeWorkout)
+      setShowPlanForm(false)
+      resetPlan()
+      toast.success(
+        `AI workout plan generated with ${completeWorkout.exercises.length} exercises!`
+      )
+    } catch (error) {
+      console.error('Error generating workout plan:', error)
+      toast.error('Failed to generate workout plan. Please try again.')
+    } finally {
+      setIsGeneratingPlan(false)
+    }
+  }
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -228,13 +318,22 @@ const WorkoutTracker: React.FC = () => {
             </div>
           )}
           {!currentWorkout ? (
-            <button
-              onClick={startWorkout}
-              className="btn-primary flex items-center space-x-2"
-            >
-              <Play className="h-4 w-4" />
-              <span>Start Workout</span>
-            </button>
+            <div className="flex space-x-2 flex-col md:flex-row">
+              <button
+                onClick={startWorkout}
+                className="btn-primary flex items-center space-x-2"
+              >
+                <Play className="h-4 w-4" />
+                <span>Start Workout</span>
+              </button>
+              <button
+                onClick={() => setShowPlanForm(true)}
+                className="btn-secondary flex items-center space-x-2"
+              >
+                <Brain className="h-4 w-4" />
+                <span>AI Plan</span>
+              </button>
+            </div>
           ) : (
             <div className="flex md:space-x-2 md:flex-row flex-col">
               {isWorkoutActive ? (
@@ -548,15 +647,155 @@ const WorkoutTracker: React.FC = () => {
             Ready to start your workout?
           </h2>
           <p className="text-gray-600 mb-6">
-            Click the "Start Workout" button to begin tracking your exercises.
+            Start tracking your exercises manually or let AI generate a
+            personalized workout plan for you.
           </p>
-          <button
-            onClick={startWorkout}
-            className="btn-primary flex items-center space-x-2 mx-auto"
-          >
-            <Play className="h-4 w-4" />
-            <span>Start Workout</span>
-          </button>
+          <div className="flex space-x-4 justify-center flex-col sm:flex-row">
+            <button
+              onClick={startWorkout}
+              className="btn-primary flex items-center space-x-2 mx-auto sm:mx-0"
+            >
+              <Play className="h-4 w-4" />
+              <span>Start Workout</span>
+            </button>
+            <button
+              onClick={() => setShowPlanForm(true)}
+              className="btn-secondary flex items-center space-x-2 mx-auto sm:mx-0"
+            >
+              <Brain className="h-4 w-4" />
+              <span>Generate AI Plan</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* AI Workout Plan Form Modal */}
+      {showPlanForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
+                <Wand2 className="h-5 w-5 text-primary-600" />
+                <span>Generate AI Workout Plan</span>
+              </h2>
+              <button
+                onClick={() => setShowPlanForm(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleSubmitPlan(generateWorkoutPlan)}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Fitness Level *
+                </label>
+                <select
+                  {...registerPlan('fitnessLevel', {
+                    required: 'Please select your fitness level',
+                  })}
+                  className="input-field"
+                >
+                  <option value="">Select your level</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+                {planErrors.fitnessLevel && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {planErrors.fitnessLevel.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Fitness Goals *
+                </label>
+                <input
+                  {...registerPlan('goals', {
+                    required: 'Please enter your goals',
+                  })}
+                  className="input-field"
+                  placeholder="e.g., build muscle, lose weight, improve endurance"
+                />
+                {planErrors.goals && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {planErrors.goals.message}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  Separate multiple goals with commas
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Available Time (minutes) *
+                </label>
+                <input
+                  {...registerPlan('availableTime', {
+                    required: 'Please enter available time',
+                    min: { value: 15, message: 'Minimum 15 minutes required' },
+                    max: { value: 180, message: 'Maximum 180 minutes allowed' },
+                  })}
+                  type="number"
+                  className="input-field"
+                  placeholder="45"
+                  min="15"
+                  max="180"
+                />
+                {planErrors.availableTime && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {planErrors.availableTime.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Available Equipment
+                </label>
+                <input
+                  {...registerPlan('equipment')}
+                  className="input-field"
+                  placeholder="e.g., barbell, dumbbells, resistance bands, bodyweight"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Separate multiple equipment with commas. Leave empty for
+                  bodyweight exercises.
+                </p>
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={isGeneratingPlan}
+                  className="btn-primary flex items-center space-x-2 flex-1 justify-center disabled:opacity-50"
+                >
+                  <Wand2
+                    className={`h-4 w-4 ${
+                      isGeneratingPlan ? 'animate-spin' : ''
+                    }`}
+                  />
+                  <span>
+                    {isGeneratingPlan ? 'Generating...' : 'Generate Plan'}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPlanForm(false)}
+                  className="btn-secondary px-4"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
