@@ -177,11 +177,11 @@ const WorkoutTracker: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center md:flex-row flex-col">
         <h1 className="text-3xl font-bold text-gray-800">Workout Tracker</h1>
         <div className="flex items-center space-x-4">
           {currentWorkout && (
-            <div className="flex items-center space-x-2 bg-primary-50 px-4 py-2 rounded-lg">
+            <div className="flex items-center space-x-2 bg-primary-50 px-4 py-2 rounded-lg md:flex-row flex-col">
               <span className="text-primary-700 font-medium">Time:</span>
               <span className="text-primary-900 font-bold text-lg">
                 {formatTime(timer)}
@@ -197,7 +197,7 @@ const WorkoutTracker: React.FC = () => {
               <span>Start Workout</span>
             </button>
           ) : (
-            <div className="flex space-x-2">
+            <div className="flex md:space-x-2 md:flex-row flex-col">
               {isWorkoutActive ? (
                 <button
                   onClick={stopWorkout}
