@@ -12,6 +12,8 @@ import {
   Brain,
   Wand2,
   HelpCircle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
@@ -60,6 +62,9 @@ const WorkoutTracker: React.FC = () => {
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
   const [showPlanForm, setShowPlanForm] = useState(false)
   const [showInstructions, setShowInstructions] = useState<string | null>(null)
+  const [minimizedExercises, setMinimizedExercises] = useState<Set<string>>(
+    new Set()
+  )
 
   const aiTrainer = new AITrainerService()
 
@@ -100,14 +105,8 @@ const WorkoutTracker: React.FC = () => {
     }
 
     setCurrentWorkout(newWorkout)
-    setIsWorkoutActive(true)
+    setIsWorkoutActive(false) // Don't start timing automatically
     setTimer(0)
-
-    const interval = setInterval(() => {
-      setTimer((prev) => prev + 1)
-    }, 1000)
-
-    setTimerInterval(interval)
     toast.success('Workout started!')
   }
 
@@ -202,6 +201,18 @@ const WorkoutTracker: React.FC = () => {
       sets: updatedSets,
     })
     toast.success('Set removed')
+  }
+
+  const toggleExerciseMinimized = (exerciseId: string) => {
+    setMinimizedExercises((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(exerciseId)) {
+        newSet.delete(exerciseId)
+      } else {
+        newSet.add(exerciseId)
+      }
+      return newSet
+    })
   }
 
   const startEditingSet = (setId: string) => {
@@ -373,7 +384,7 @@ const WorkoutTracker: React.FC = () => {
                   className="btn-secondary flex items-center space-x-2"
                 >
                   <Play className="h-4 w-4" />
-                  <span>Resume</span>
+                  <span>{timer === 0 ? 'Start' : 'Resume'}</span>
                 </button>
               )}
               <button
@@ -546,165 +557,201 @@ const WorkoutTracker: React.FC = () => {
                     return (
                       <div key={exerciseId} className="border rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-medium text-gray-900">
-                            {exercise.name}
-                          </h3>
-                          <button
-                            onClick={() =>
-                              setShowInstructions(
-                                showInstructions === exerciseId
-                                  ? null
-                                  : exerciseId
-                              )
-                            }
-                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                            title="Show exercise instructions"
-                          >
-                            <HelpCircle className="h-4 w-4" />
-                          </button>
+                          <div className="flex items-center space-x-3">
+                            <h3 className="font-medium text-gray-900">
+                              {exercise.name}
+                            </h3>
+                            {minimizedExercises.has(exerciseId) && (
+                              <span className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                                {sets.filter((set) => set.completed).length}/
+                                {sets.length} completed
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              onClick={() =>
+                                toggleExerciseMinimized(exerciseId)
+                              }
+                              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                              title={
+                                minimizedExercises.has(exerciseId)
+                                  ? 'Maximize exercise'
+                                  : 'Minimize exercise'
+                              }
+                            >
+                              {minimizedExercises.has(exerciseId) ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronUp className="h-4 w-4" />
+                              )}
+                            </button>
+                            {!minimizedExercises.has(exerciseId) && (
+                              <button
+                                onClick={() =>
+                                  setShowInstructions(
+                                    showInstructions === exerciseId
+                                      ? null
+                                      : exerciseId
+                                  )
+                                }
+                                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                                title="Show exercise instructions"
+                              >
+                                <HelpCircle className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
                         </div>
 
-                        {showInstructions === exerciseId &&
-                          exercise.instructions && (
-                            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                              <p className="text-sm text-blue-800">
-                                <strong>Instructions:</strong>{' '}
-                                {exercise.instructions}
-                              </p>
-                            </div>
-                          )}
-
-                        <div className="space-y-2">
-                          {sets.map((set, index) => (
-                            <div
-                              key={set.id}
-                              className="bg-gray-50 p-3 rounded"
-                            >
-                              {editingSetId === set.id ? (
-                                // Editing mode
-                                <div className="space-y-3">
-                                  <div className="flex items-center space-x-4">
-                                    <input
-                                      type="checkbox"
-                                      checked={Boolean(set.completed)}
-                                      onChange={() =>
-                                        toggleSetCompletion(set.id)
-                                      }
-                                      className="h-4 w-4 text-primary-600 rounded"
-                                    />
-                                    <span className="font-medium text-gray-900">
-                                      Set {index + 1}:
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center space-x-4">
-                                    <div className="flex items-center space-x-2">
-                                      <label className="text-sm font-medium text-gray-700">
-                                        Reps:
-                                      </label>
-                                      <input
-                                        type="number"
-                                        value={editingValues.reps}
-                                        onChange={(e) =>
-                                          setEditingValues({
-                                            ...editingValues,
-                                            reps: parseInt(e.target.value) || 0,
-                                          })
-                                        }
-                                        className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
-                                        min="1"
-                                      />
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <label className="text-sm font-medium text-gray-700">
-                                        Weight (kgs):
-                                      </label>
-                                      <input
-                                        type="number"
-                                        value={editingValues.weight || ''}
-                                        onChange={(e) =>
-                                          setEditingValues({
-                                            ...editingValues,
-                                            weight: e.target.value
-                                              ? parseFloat(e.target.value)
-                                              : undefined,
-                                          })
-                                        }
-                                        className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                                        min="0"
-                                        step="0.5"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      onClick={saveEditingSet}
-                                      className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                                    >
-                                      <Check className="h-3 w-3" />
-                                      <span>Save</span>
-                                    </button>
-                                    <button
-                                      onClick={cancelEditingSet}
-                                      className="flex items-center space-x-1 px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
-                                    >
-                                      <X className="h-3 w-3" />
-                                      <span>Cancel</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : (
-                                // Display mode
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center space-x-4">
-                                    <input
-                                      type="checkbox"
-                                      checked={Boolean(set.completed)}
-                                      onChange={() =>
-                                        toggleSetCompletion(set.id)
-                                      }
-                                      className="h-4 w-4 text-primary-600 rounded"
-                                    />
-                                    <span
-                                      className={`font-medium ${
-                                        set.completed
-                                          ? 'line-through text-gray-500'
-                                          : 'text-gray-900'
-                                      }`}
-                                    >
-                                      Set {index + 1}:
-                                    </span>
-                                    <span
-                                      className={
-                                        set.completed
-                                          ? 'text-gray-500'
-                                          : 'text-gray-700'
-                                      }
-                                    >
-                                      {set.reps} reps{' '}
-                                      {set.weight && `@ ${set.weight} kgs`}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      onClick={() => startEditingSet(set.id)}
-                                      className="text-blue-600 hover:text-blue-800"
-                                      title="Edit set"
-                                    >
-                                      <Edit2 className="h-4 w-4" />
-                                    </button>
-                                    <button
-                                      onClick={() => removeSet(set.id)}
-                                      className="text-red-600 hover:text-red-800"
-                                      title="Remove set"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </button>
-                                  </div>
+                        {!minimizedExercises.has(exerciseId) && (
+                          <>
+                            {showInstructions === exerciseId &&
+                              exercise.instructions && (
+                                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                                  <p className="text-sm text-blue-800">
+                                    <strong>Instructions:</strong>{' '}
+                                    {exercise.instructions}
+                                  </p>
                                 </div>
                               )}
+
+                            <div className="space-y-2">
+                              {sets.map((set, index) => (
+                                <div
+                                  key={set.id}
+                                  className="bg-gray-50 p-3 rounded"
+                                >
+                                  {editingSetId === set.id ? (
+                                    // Editing mode
+                                    <div className="space-y-3">
+                                      <div className="flex items-center space-x-4">
+                                        <input
+                                          type="checkbox"
+                                          checked={Boolean(set.completed)}
+                                          onChange={() =>
+                                            toggleSetCompletion(set.id)
+                                          }
+                                          className="h-4 w-4 text-primary-600 rounded"
+                                        />
+                                        <span className="font-medium text-gray-900">
+                                          Set {index + 1}:
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center space-x-4">
+                                        <div className="flex items-center space-x-2">
+                                          <label className="text-sm font-medium text-gray-700">
+                                            Reps:
+                                          </label>
+                                          <input
+                                            type="number"
+                                            value={editingValues.reps}
+                                            onChange={(e) =>
+                                              setEditingValues({
+                                                ...editingValues,
+                                                reps:
+                                                  parseInt(e.target.value) || 0,
+                                              })
+                                            }
+                                            className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
+                                            min="1"
+                                          />
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <label className="text-sm font-medium text-gray-700">
+                                            Weight (kgs):
+                                          </label>
+                                          <input
+                                            type="number"
+                                            value={editingValues.weight || ''}
+                                            onChange={(e) =>
+                                              setEditingValues({
+                                                ...editingValues,
+                                                weight: e.target.value
+                                                  ? parseFloat(e.target.value)
+                                                  : undefined,
+                                              })
+                                            }
+                                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                                            min="0"
+                                            step="0.5"
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <button
+                                          onClick={saveEditingSet}
+                                          className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                                        >
+                                          <Check className="h-3 w-3" />
+                                          <span>Save</span>
+                                        </button>
+                                        <button
+                                          onClick={cancelEditingSet}
+                                          className="flex items-center space-x-1 px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                                        >
+                                          <X className="h-3 w-3" />
+                                          <span>Cancel</span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    // Display mode
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center space-x-4">
+                                        <input
+                                          type="checkbox"
+                                          checked={Boolean(set.completed)}
+                                          onChange={() =>
+                                            toggleSetCompletion(set.id)
+                                          }
+                                          className="h-4 w-4 text-primary-600 rounded"
+                                        />
+                                        <span
+                                          className={`font-medium ${
+                                            set.completed
+                                              ? 'line-through text-gray-500'
+                                              : 'text-gray-900'
+                                          }`}
+                                        >
+                                          Set {index + 1}:
+                                        </span>
+                                        <span
+                                          className={
+                                            set.completed
+                                              ? 'text-gray-500'
+                                              : 'text-gray-700'
+                                          }
+                                        >
+                                          {set.reps} reps{' '}
+                                          {set.weight && `@ ${set.weight} kgs`}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <button
+                                          onClick={() =>
+                                            startEditingSet(set.id)
+                                          }
+                                          className="text-blue-600 hover:text-blue-800"
+                                          title="Edit set"
+                                        >
+                                          <Edit2 className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                          onClick={() => removeSet(set.id)}
+                                          className="text-red-600 hover:text-red-800"
+                                          title="Remove set"
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </>
+                        )}
                       </div>
                     )
                   }
