@@ -11,6 +11,7 @@ import {
   X,
   Brain,
   Wand2,
+  HelpCircle,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
@@ -58,6 +59,7 @@ const WorkoutTracker: React.FC = () => {
   }>({ reps: 0 })
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
   const [showPlanForm, setShowPlanForm] = useState(false)
+  const [showInstructions, setShowInstructions] = useState<string | null>(null)
 
   const aiTrainer = new AITrainerService()
 
@@ -513,9 +515,35 @@ const WorkoutTracker: React.FC = () => {
 
                     return (
                       <div key={exerciseId} className="border rounded-lg p-4">
-                        <h3 className="font-medium text-gray-900 mb-3">
-                          {exercise.name}
-                        </h3>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-medium text-gray-900">
+                            {exercise.name}
+                          </h3>
+                          <button
+                            onClick={() =>
+                              setShowInstructions(
+                                showInstructions === exerciseId
+                                  ? null
+                                  : exerciseId
+                              )
+                            }
+                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            title="Show exercise instructions"
+                          >
+                            <HelpCircle className="h-4 w-4" />
+                          </button>
+                        </div>
+
+                        {showInstructions === exerciseId &&
+                          exercise.instructions && (
+                            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                              <p className="text-sm text-blue-800">
+                                <strong>Instructions:</strong>{' '}
+                                {exercise.instructions}
+                              </p>
+                            </div>
+                          )}
+
                         <div className="space-y-2">
                           {sets.map((set, index) => (
                             <div
