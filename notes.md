@@ -1,6 +1,7 @@
 To Add:
 other for more exercises
 cardio
+better name?
 save workouts
 load saved
 send ai last workouts for recommended improvements
