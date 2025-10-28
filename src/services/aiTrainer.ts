@@ -108,6 +108,8 @@ export class AITrainerService {
       3. Recovery recommendations if overtraining is detected
       4. Form corrections if inconsistent performance is observed
 
+      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+      
       Provide 3-5 specific, actionable recommendations.
     `
 
@@ -167,6 +169,8 @@ export class AITrainerService {
       2. Targeting underworked muscle groups
       3. Progressive difficulty appropriate for fitness level
       4. Variety in movement patterns
+
+      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
     `
 
     try {
@@ -255,6 +259,8 @@ export class AITrainerService {
       - cardio: Include high-intensity cardio exercises
       - strength: Focus on compound movements with heavier weights/lower reps
       - endurance: Focus on higher reps and circuit-style training
+      
+      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
       
       Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
