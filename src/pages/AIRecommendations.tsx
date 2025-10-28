@@ -29,17 +29,6 @@ const AIRecommendations: React.FC = () => {
     })
     const workoutProgress = storageService.getWorkoutProgress()
 
-    console.log('All workouts:', allWorkouts.length)
-    console.log('Completed workouts:', completedWorkouts.length)
-    console.log(
-      'Workout completion states:',
-      allWorkouts.map((w) => ({
-        name: w.name,
-        completed: w.completed,
-        type: typeof w.completed,
-      }))
-    )
-
     setWorkouts(completedWorkouts)
     setProgress(workoutProgress)
 
