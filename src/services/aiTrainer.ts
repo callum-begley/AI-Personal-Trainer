@@ -93,7 +93,7 @@ export class AITrainerService {
             "type": "progression",
             "exerciseId": "exercise_id",
             "exerciseName": "Exercise Name",
-            "title": "Increase weight by 5lbs",
+            "title": "Increase weight by 2-3 kgs",
             "description": "Based on your consistent performance, you're ready to increase the weight.",
             "reasoning": "You've completed all sets with proper form for the last 2 sessions.",
             "confidence": 0.85,

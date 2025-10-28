@@ -485,13 +485,13 @@ const WorkoutTracker: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Weight (lbs)
+                      Weight (kgs)
                     </label>
                     <input
                       {...register('weight', { min: 0 })}
                       type="number"
                       className="input-field"
-                      placeholder="135"
+                      placeholder="60"
                       min="0"
                       step="0.5"
                     />
@@ -514,6 +514,24 @@ const WorkoutTracker: React.FC = () => {
             <h2 className="text-xl font-semibold text-gray-800 mb-6">
               Current Workout
             </h2>
+
+            {/* Workout Title and Notes */}
+            {(currentWorkout.name || currentWorkout.notes) && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                {currentWorkout.name && (
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {currentWorkout.name}
+                  </h3>
+                )}
+                {currentWorkout.notes && (
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Notes:</span>{' '}
+                    {currentWorkout.notes}
+                  </p>
+                )}
+              </div>
+            )}
+
             {currentWorkout.sets.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
                 No exercises added yet
@@ -598,7 +616,7 @@ const WorkoutTracker: React.FC = () => {
                                     </div>
                                     <div className="flex items-center space-x-2">
                                       <label className="text-sm font-medium text-gray-700">
-                                        Weight (lbs):
+                                        Weight (kgs):
                                       </label>
                                       <input
                                         type="number"
@@ -663,7 +681,7 @@ const WorkoutTracker: React.FC = () => {
                                       }
                                     >
                                       {set.reps} reps{' '}
-                                      {set.weight && `@ ${set.weight} lbs`}
+                                      {set.weight && `@ ${set.weight} kgs`}
                                     </span>
                                   </div>
                                   <div className="flex items-center space-x-2">

@@ -20,20 +20,43 @@ const AIRecommendations: React.FC = () => {
   const aiTrainer = new AITrainerService()
 
   useEffect(() => {
-    const allWorkouts = storageService.getWorkouts().filter((w) => w.completed)
+    const allWorkouts = storageService.getWorkouts()
+    const completedWorkouts = allWorkouts.filter((w) => {
+      // Handle both boolean and string values for completed
+      const isCompleted =
+        Boolean(w.completed) && String(w.completed) !== 'false'
+      return isCompleted
+    })
     const workoutProgress = storageService.getWorkoutProgress()
 
-    setWorkouts(allWorkouts)
+    console.log('All workouts:', allWorkouts.length)
+    console.log('Completed workouts:', completedWorkouts.length)
+    console.log(
+      'Workout completion states:',
+      allWorkouts.map((w) => ({
+        name: w.name,
+        completed: w.completed,
+        type: typeof w.completed,
+      }))
+    )
+
+    setWorkouts(completedWorkouts)
     setProgress(workoutProgress)
 
     // Auto-load recommendations if we have data
-    if (allWorkouts.length > 0) {
-      loadRecommendations()
+    if (completedWorkouts.length > 0) {
+      loadRecommendations(completedWorkouts, workoutProgress)
     }
   }, [])
 
-  const loadRecommendations = async () => {
-    if (workouts.length === 0) {
+  const loadRecommendations = async (
+    workoutData?: Workout[],
+    progressData?: WorkoutProgress[]
+  ) => {
+    const workoutsToUse = workoutData || workouts
+    const progressToUse = progressData || progress
+
+    if (workoutsToUse.length === 0) {
       toast.error('Complete some workouts first to get AI recommendations')
       return
     }
@@ -41,8 +64,8 @@ const AIRecommendations: React.FC = () => {
     setLoading(true)
     try {
       const recs = await aiTrainer.getProgressionRecommendations(
-        workouts,
-        progress
+        workoutsToUse,
+        progressToUse
       )
       setRecommendations(recs)
       toast.success('AI recommendations loaded!')
@@ -60,7 +83,7 @@ const AIRecommendations: React.FC = () => {
           exerciseName: 'Bench Press',
           title: 'Increase Weight',
           description:
-            "You've been consistent with your current weight. Time to increase by 5-10 lbs.",
+            "You've been consistent with your current weight. Time to increase by 2-5 kgs.",
           reasoning:
             "You've completed all sets with proper form for the last 3 sessions.",
           confidence: 0.85,
@@ -146,7 +169,7 @@ const AIRecommendations: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={loadRecommendations}
+          onClick={() => loadRecommendations()}
           disabled={loading || workouts.length === 0}
           className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
         >
@@ -297,7 +320,7 @@ const AIRecommendations: React.FC = () => {
                   advice based on your workout history.
                 </p>
                 <button
-                  onClick={loadRecommendations}
+                  onClick={() => loadRecommendations()}
                   className="btn-primary"
                   disabled={loading}
                 >
