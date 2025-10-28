@@ -1,4 +1,5 @@
 To Add:
+ask for gender?
 other for more exercises
 cardio
 better name?
