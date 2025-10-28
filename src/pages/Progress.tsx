@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Calendar, TrendingUp, Award, Trash2 } from 'lucide-react'
+import {
+  Calendar,
+  TrendingUp,
+  Award,
+  Trash2,
+  X,
+  AlertTriangle,
+} from 'lucide-react'
+import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
 import { Workout, WorkoutProgress } from '../types/workout'
 
@@ -9,6 +17,10 @@ const Progress: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<
     'week' | 'month' | 'all'
   >('month')
+  const [workoutToDelete, setWorkoutToDelete] = useState<{
+    id: string
+    name: string
+  } | null>(null)
 
   useEffect(() => {
     const allWorkouts = storageService.getWorkouts()
@@ -53,11 +65,21 @@ const Progress: React.FC = () => {
     return workouts.filter((workout) => workout.date >= startDate)
   }
 
-  const deleteWorkout = (workoutId: string) => {
-    if (confirm('Are you sure you want to delete this workout?')) {
-      storageService.deleteWorkout(workoutId)
-      setWorkouts((prev) => prev.filter((w) => w.id !== workoutId))
+  const showDeleteConfirmation = (workoutId: string, workoutName: string) => {
+    setWorkoutToDelete({ id: workoutId, name: workoutName })
+  }
+
+  const confirmDeleteWorkout = () => {
+    if (workoutToDelete) {
+      storageService.deleteWorkout(workoutToDelete.id)
+      setWorkouts((prev) => prev.filter((w) => w.id !== workoutToDelete.id))
+      toast.success(`Workout "${workoutToDelete.name}" deleted successfully`)
+      setWorkoutToDelete(null)
     }
+  }
+
+  const cancelDeleteWorkout = () => {
+    setWorkoutToDelete(null)
   }
 
   const getStats = () => {
@@ -236,7 +258,9 @@ const Progress: React.FC = () => {
                             {workout.name}
                           </h3>
                           <button
-                            onClick={() => deleteWorkout(workout.id)}
+                            onClick={() =>
+                              showDeleteConfirmation(workout.id, workout.name)
+                            }
                             className="text-red-600 hover:text-red-800 p-1"
                             title="Delete workout"
                           >
@@ -268,11 +292,6 @@ const Progress: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        {workout.notes && (
-                          <p className="text-sm text-gray-600 mt-2 italic">
-                            "{workout.notes}"
-                          </p>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -281,6 +300,51 @@ const Progress: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {workoutToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md m-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Delete Workout
+                </h3>
+              </div>
+              <button
+                onClick={cancelDeleteWorkout}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-600">
+                Are you sure you want to delete the workout "
+                {workoutToDelete.name}"? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDeleteWorkout}
+                className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteWorkout}
+                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center space-x-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
