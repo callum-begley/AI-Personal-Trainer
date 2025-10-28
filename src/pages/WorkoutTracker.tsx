@@ -389,113 +389,125 @@ const WorkoutTracker: React.FC = () => {
       </div>
 
       {currentWorkout ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Add Exercise Form */}
-          <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">
-              Add Exercise
-            </h2>
-            <form
-              onSubmit={handleSubmit(addExerciseToWorkout)}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Workout Name
-                </label>
-                <input
-                  {...register('name')}
-                  className="input-field"
-                  placeholder="Enter workout name"
-                  defaultValue={currentWorkout.name}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Exercise *
-                </label>
-                <select
-                  {...register('exerciseId', {
-                    required: 'Please select an exercise',
-                  })}
-                  className="input-field"
-                >
-                  <option value="">Select an exercise</option>
-                  {exercises.map((exercise) => (
-                    <option key={exercise.id} value={exercise.id}>
-                      {exercise.name} ({exercise.category})
-                    </option>
-                  ))}
-                </select>
-                {errors.exerciseId && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.exerciseId.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sets *
-                  </label>
-                  <input
-                    {...register('sets', { required: 'Sets required', min: 1 })}
-                    type="number"
-                    className="input-field"
-                    placeholder="3"
-                    min="1"
-                  />
-                  {errors.sets && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.sets.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reps *
-                  </label>
-                  <input
-                    {...register('reps', { required: 'Reps required', min: 1 })}
-                    type="number"
-                    className="input-field"
-                    placeholder="12"
-                    min="1"
-                  />
-                  {errors.reps && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.reps.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Weight (lbs)
-                  </label>
-                  <input
-                    {...register('weight', { min: 0 })}
-                    type="number"
-                    className="input-field"
-                    placeholder="135"
-                    min="0"
-                    step="0.5"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="btn-primary w-full flex items-center justify-center space-x-2"
+        <div
+          className={`grid gap-8 ${
+            !isWorkoutActive ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'
+          }`}
+        >
+          {/* Add Exercise Form - Hidden when workout is active */}
+          {!isWorkoutActive && (
+            <div className="card">
+              <h2 className="text-xl font-semibold text-gray-800 mb-6">
+                Add Exercise
+              </h2>
+              <form
+                onSubmit={handleSubmit(addExerciseToWorkout)}
+                className="space-y-4"
               >
-                <Plus className="h-4 w-4" />
-                <span>Add to Workout</span>
-              </button>
-            </form>
-          </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Workout Name
+                  </label>
+                  <input
+                    {...register('name')}
+                    className="input-field"
+                    placeholder="Enter workout name"
+                    defaultValue={currentWorkout.name}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Exercise *
+                  </label>
+                  <select
+                    {...register('exerciseId', {
+                      required: 'Please select an exercise',
+                    })}
+                    className="input-field"
+                  >
+                    <option value="">Select an exercise</option>
+                    {exercises.map((exercise) => (
+                      <option key={exercise.id} value={exercise.id}>
+                        {exercise.name} ({exercise.category})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.exerciseId && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.exerciseId.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Sets *
+                    </label>
+                    <input
+                      {...register('sets', {
+                        required: 'Sets required',
+                        min: 1,
+                      })}
+                      type="number"
+                      className="input-field"
+                      placeholder="3"
+                      min="1"
+                    />
+                    {errors.sets && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.sets.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Reps *
+                    </label>
+                    <input
+                      {...register('reps', {
+                        required: 'Reps required',
+                        min: 1,
+                      })}
+                      type="number"
+                      className="input-field"
+                      placeholder="12"
+                      min="1"
+                    />
+                    {errors.reps && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.reps.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Weight (lbs)
+                    </label>
+                    <input
+                      {...register('weight', { min: 0 })}
+                      type="number"
+                      className="input-field"
+                      placeholder="135"
+                      min="0"
+                      step="0.5"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn-primary w-full flex items-center justify-center space-x-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add to Workout</span>
+                </button>
+              </form>
+            </div>
+          )}
 
           {/* Current Workout */}
           <div className="card">
