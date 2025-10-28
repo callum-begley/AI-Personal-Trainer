@@ -1,4 +1,3 @@
-import axios from 'axios'
 import {
   AIRecommendation,
   WorkoutProgress,
@@ -7,60 +6,71 @@ import {
 } from '../types/workout'
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
-const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
-
-interface GeminiResponse {
-  candidates: Array<{
-    content: {
-      parts: Array<{
-        text: string
-      }>
-    }
-  }>
-}
 
 export class AITrainerService {
+  private sanitizeWorkoutData(workout: any): Workout {
+    const toBool = (value: any): boolean => {
+      if (typeof value === 'boolean') return value
+      if (typeof value === 'string') return value.toLowerCase() === 'true'
+      if (typeof value === 'number') return value !== 0
+      return false // Default to false for all other cases
+    }
+
+    return {
+      ...workout,
+      completed: toBool(workout.completed),
+      sets:
+        workout.sets?.map((set: any) => ({
+          ...set,
+          completed: toBool(set.completed),
+        })) || [],
+      date:
+        workout.date instanceof Date
+          ? workout.date
+          : new Date(workout.date || Date.now()),
+    }
+  }
+
   private async callGeminiAPI(prompt: string): Promise<string> {
     if (!GEMINI_API_KEY) {
       throw new Error('Gemini API key not configured')
     }
 
     try {
-      const response = await axios.post<GeminiResponse>(
-        `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          },
-        },
-        {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+          }),
         }
       )
 
-      return (
-        response.data.candidates[0]?.content?.parts[0]?.text ||
-        'No response generated'
-      )
+      const data = await response.json()
+
+      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text
+      } else {
+        throw new Error('No valid response from AI')
+      }
     } catch (error) {
-      console.error('Error calling Gemini API:', error)
-      throw new Error('Failed to get AI recommendations')
+      console.error('Error in callGeminiAPI:', error)
+      throw error
     }
+
+    throw new Error('No valid response received from AI')
   }
 
   async getProgressionRecommendations(
@@ -184,6 +194,7 @@ export class AITrainerService {
 
   async getWorkoutPlan(
     fitnessLevel: string,
+    workoutType: string,
     goals: string[],
     availableTime: number,
     equipment: string[]
@@ -193,6 +204,7 @@ export class AITrainerService {
 
       User Profile:
       - Fitness Level: ${fitnessLevel}
+      - Workout Type/Focus: ${workoutType}
       - Goals: ${goals.join(', ')}
       - Available Time: ${availableTime} minutes
       - Available Equipment: ${equipment.join(', ')}
@@ -228,16 +240,33 @@ export class AITrainerService {
         }
       }
 
-      Create a balanced workout targeting multiple muscle groups with appropriate sets, reps, and rest periods.
+      Create a workout specifically focused on "${workoutType}". 
+      
+      Workout Type Guidelines:
+      - full-body: Include exercises for all major muscle groups
+      - upper-body: Focus on chest, back, shoulders, and arms
+      - lower-body: Focus on legs, glutes, and calves
+      - chest: Primarily chest exercises with supporting muscles
+      - back: Primarily back exercises with supporting muscles
+      - shoulders: Focus on all three deltoid heads
+      - arms: Focus on biceps, triceps, and forearms
+      - legs: Focus on quadriceps, hamstrings, glutes, and calves
+      - core: Focus on abs, obliques, and lower back
+      - cardio: Include high-intensity cardio exercises
+      - strength: Focus on compound movements with heavier weights/lower reps
+      - endurance: Focus on higher reps and circuit-style training
+      
+      Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
 
     let rawResponse = ''
+    let cleanResponse = ''
     try {
       const response = await this.callGeminiAPI(prompt)
       rawResponse = response
 
       // Clean up the response by removing markdown code blocks and extra text
-      let cleanResponse = response.trim()
+      cleanResponse = response.trim()
 
       // Remove markdown code blocks
       if (cleanResponse.startsWith('```json')) {
@@ -250,43 +279,40 @@ export class AITrainerService {
           .replace(/\n```$/, '')
       }
 
-      // Try to extract JSON if there's extra text
-      const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        cleanResponse = jsonMatch[0]
+      // Try to extract JSON if there's extra text - look for the outermost braces
+      let jsonStart = cleanResponse.indexOf('{')
+      let jsonEnd = cleanResponse.lastIndexOf('}')
+
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        cleanResponse = cleanResponse.substring(jsonStart, jsonEnd + 1)
       }
 
       // Additional cleaning for common JSON issues
       cleanResponse = cleanResponse
         .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add quotes to unquoted keys
+        .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*:)/g, '$1"$2"$3') // Add quotes to unquoted keys
+        .replace(/:\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*([,}])/g, ': "$1"$2') // Add quotes to unquoted string values
         .trim()
-
-      console.log(
-        'Cleaned AI response for parsing:',
-        cleanResponse.substring(0, 500) + '...'
-      )
 
       const parsed = JSON.parse(cleanResponse)
 
       if (parsed.workout) {
-        return {
-          ...parsed.workout,
-          date: new Date(),
-        }
+        return this.sanitizeWorkoutData(parsed.workout)
       } else {
         // If the response is the workout object directly
-        return {
-          ...parsed,
-          date: new Date(),
-        }
+        return this.sanitizeWorkoutData(parsed)
       }
     } catch (error) {
       console.error('Error parsing workout plan:', error)
-      console.error('Raw AI response:', rawResponse.substring(0, 1000))
+      console.error(
+        'Raw AI response (first 1000 chars):',
+        rawResponse.substring(0, 1000)
+      )
+      console.error('Full raw AI response:', rawResponse)
+      console.error('Cleaned response that failed to parse:', cleanResponse)
 
       // Return a sample workout if AI fails
-      return {
+      return this.sanitizeWorkoutData({
         id: Date.now().toString(),
         date: new Date(),
         name: 'Sample AI Workout',
@@ -338,7 +364,7 @@ export class AITrainerService {
         ],
         duration: availableTime,
         completed: false,
-      }
+      })
     }
   }
 }

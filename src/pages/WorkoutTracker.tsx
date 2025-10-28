@@ -27,6 +27,19 @@ interface WorkoutForm {
 
 interface WorkoutPlanForm {
   fitnessLevel: 'beginner' | 'intermediate' | 'advanced'
+  workoutType:
+    | 'full-body'
+    | 'upper-body'
+    | 'lower-body'
+    | 'chest'
+    | 'back'
+    | 'shoulders'
+    | 'arms'
+    | 'legs'
+    | 'core'
+    | 'cardio'
+    | 'strength'
+    | 'endurance'
   goals: string
   availableTime: number
   equipment: string
@@ -237,6 +250,7 @@ const WorkoutTracker: React.FC = () => {
 
       const aiWorkout = await aiTrainer.getWorkoutPlan(
         data.fitnessLevel,
+        data.workoutType,
         goals,
         data.availableTime,
         equipment
@@ -514,7 +528,7 @@ const WorkoutTracker: React.FC = () => {
                                   <div className="flex items-center space-x-4">
                                     <input
                                       type="checkbox"
-                                      checked={set.completed}
+                                      checked={Boolean(set.completed)}
                                       onChange={() =>
                                         toggleSetCompletion(set.id)
                                       }
@@ -586,7 +600,7 @@ const WorkoutTracker: React.FC = () => {
                                   <div className="flex items-center space-x-4">
                                     <input
                                       type="checkbox"
-                                      checked={set.completed}
+                                      checked={Boolean(set.completed)}
                                       onChange={() =>
                                         toggleSetCompletion(set.id)
                                       }
@@ -671,8 +685,11 @@ const WorkoutTracker: React.FC = () => {
 
       {/* AI Workout Plan Form Modal */}
       {showPlanForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          style={{ margin: '-2rem -1rem' }}
+        >
+          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto m-4">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
                 <Wand2 className="h-5 w-5 text-primary-600" />
@@ -708,6 +725,37 @@ const WorkoutTracker: React.FC = () => {
                 {planErrors.fitnessLevel && (
                   <p className="text-red-600 text-sm mt-1">
                     {planErrors.fitnessLevel.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Workout Type/Focus *
+                </label>
+                <select
+                  {...registerPlan('workoutType', {
+                    required: 'Please select a workout type',
+                  })}
+                  className="input-field"
+                >
+                  <option value="">Select workout focus</option>
+                  <option value="full-body">Full Body</option>
+                  <option value="upper-body">Upper Body</option>
+                  <option value="lower-body">Lower Body</option>
+                  <option value="chest">Chest</option>
+                  <option value="back">Back</option>
+                  <option value="shoulders">Shoulders</option>
+                  <option value="arms">Arms</option>
+                  <option value="legs">Legs</option>
+                  <option value="core">Core/Abs</option>
+                  <option value="cardio">Cardio</option>
+                  <option value="strength">Strength Training</option>
+                  <option value="endurance">Endurance</option>
+                </select>
+                {planErrors.workoutType && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {planErrors.workoutType.message}
                   </p>
                 )}
               </div>
