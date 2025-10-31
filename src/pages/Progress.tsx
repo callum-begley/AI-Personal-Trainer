@@ -332,7 +332,7 @@ const Progress: React.FC = () => {
                         <p className="text-sm text-gray-600 mb-2">
                           {formatDate(workout.date)}
                         </p>
-                        <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div className="grid grid-cols-3 gap-4 text-sm mb-3">
                           <div>
                             <p className="text-gray-600">Exercises</p>
                             <p className="font-semibold">
@@ -353,6 +353,51 @@ const Progress: React.FC = () => {
                                 : 'N/A'}
                             </p>
                           </div>
+                        </div>
+
+                        {/* Exercise Details */}
+                        <div className="space-y-1 border-t pt-2">
+                          {workout.exercises.map((exercise) => {
+                            const exerciseSets = workout.sets.filter(
+                              (s) => s.exerciseId === exercise.id && s.completed
+                            )
+                            if (exerciseSets.length === 0) return null
+
+                            const isCardio = isCardioExercise(exercise.id)
+
+                            return (
+                              <div
+                                key={exercise.id}
+                                className="text-xs text-gray-600 flex justify-between"
+                              >
+                                <span className="font-medium">
+                                  {exercise.name}:
+                                </span>
+                                <span>
+                                  {isCardio ? (
+                                    <>
+                                      {exerciseSets[0].distance
+                                        ? `${exerciseSets[0].distance} km`
+                                        : ''}
+                                      {exerciseSets[0].distance &&
+                                      exerciseSets[0].duration
+                                        ? ' • '
+                                        : ''}
+                                      {exerciseSets[0].duration
+                                        ? `${Math.floor(
+                                            exerciseSets[0].duration / 60
+                                          )} min ${
+                                            exerciseSets[0].duration % 60
+                                          } sec`
+                                        : ''}
+                                    </>
+                                  ) : (
+                                    `${exerciseSets.length} sets`
+                                  )}
+                                </span>
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     </div>

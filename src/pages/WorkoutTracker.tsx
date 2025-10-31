@@ -68,6 +68,10 @@ const WorkoutTracker: React.FC = () => {
     new Set()
   )
   const [isCardioExercise, setIsCardioExercise] = useState(false)
+  const [showCustomExerciseForm, setShowCustomExerciseForm] = useState(false)
+  const [customExerciseType, setCustomExerciseType] = useState<
+    'cardio' | 'strength'
+  >('strength')
 
   const aiTrainer = new AITrainerService()
 
@@ -288,6 +292,29 @@ const WorkoutTracker: React.FC = () => {
     }
   }
 
+  const createCustomExercise = (data: {
+    name: string
+    type: 'cardio' | 'strength'
+    category: string
+  }) => {
+    const newExercise: Exercise = {
+      id: `custom-${Date.now()}`,
+      name: data.name,
+      category: data.category as Exercise['category'],
+      muscleGroups: [],
+      equipment: 'custom',
+      instructions: 'Custom exercise',
+    }
+
+    storageService.saveExercise(newExercise)
+    setExercises([...exercises, newExercise])
+    setShowCustomExerciseForm(false)
+    toast.success(`Custom exercise "${data.name}" created!`)
+
+    // Auto-select the new exercise
+    return newExercise.id
+  }
+
   const generateWorkoutPlan = async (data: WorkoutPlanForm) => {
     setIsGeneratingPlan(true)
     try {
@@ -470,20 +497,30 @@ const WorkoutTracker: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Exercise *
                   </label>
-                  <select
-                    {...register('exerciseId', {
-                      required: 'Please select an exercise',
-                      onChange: (e) => handleExerciseChange(e.target.value),
-                    })}
-                    className="input-field"
-                  >
-                    <option value="">Select an exercise</option>
-                    {exercises.map((exercise) => (
-                      <option key={exercise.id} value={exercise.id}>
-                        {exercise.name} ({exercise.category})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex space-x-2">
+                    <select
+                      {...register('exerciseId', {
+                        required: 'Please select an exercise',
+                        onChange: (e) => handleExerciseChange(e.target.value),
+                      })}
+                      className="input-field flex-1"
+                    >
+                      <option value="">Select an exercise</option>
+                      {exercises.map((exercise) => (
+                        <option key={exercise.id} value={exercise.id}>
+                          {exercise.name} ({exercise.category})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomExerciseForm(true)}
+                      className="btn-secondary px-4 py-2 whitespace-nowrap"
+                      title="Create custom exercise"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
                   {errors.exerciseId && (
                     <p className="text-red-600 text-sm mt-1">
                       {errors.exerciseId.message}
@@ -1085,6 +1122,127 @@ const WorkoutTracker: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPlanForm(false)}
+                  className="btn-secondary px-4"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Exercise Form Modal */}
+      {showCustomExerciseForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md m-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Create Custom Exercise
+              </h2>
+              <button
+                onClick={() => setShowCustomExerciseForm(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.currentTarget)
+                const name = formData.get('customName') as string
+                const type = formData.get('customType') as 'cardio' | 'strength'
+
+                if (!name.trim()) {
+                  toast.error('Please enter an exercise name')
+                  return
+                }
+
+                const category = type === 'cardio' ? 'cardio' : 'chest' // Default to chest for strength
+                const exerciseId = createCustomExercise({
+                  name,
+                  type,
+                  category,
+                })
+
+                // Set the form to use this new exercise
+                const selectElement = document.querySelector(
+                  'select[name="exerciseId"]'
+                ) as HTMLSelectElement
+                if (selectElement) {
+                  selectElement.value = exerciseId
+                  handleExerciseChange(exerciseId)
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Exercise Name *
+                </label>
+                <input
+                  name="customName"
+                  type="text"
+                  className="input-field"
+                  placeholder="e.g., Bulgarian Split Squat"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Exercise Type *
+                </label>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="customType"
+                      value="strength"
+                      defaultChecked
+                      onChange={() => setCustomExerciseType('strength')}
+                      className="h-4 w-4 text-primary-600"
+                    />
+                    <div>
+                      <span className="font-medium text-gray-900">
+                        Strength/Weights
+                      </span>
+                      <p className="text-xs text-gray-500">
+                        Track sets, reps, and weight
+                      </p>
+                    </div>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="customType"
+                      value="cardio"
+                      onChange={() => setCustomExerciseType('cardio')}
+                      className="h-4 w-4 text-primary-600"
+                    />
+                    <div>
+                      <span className="font-medium text-gray-900">Cardio</span>
+                      <p className="text-xs text-gray-500">
+                        Track distance and time
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="submit"
+                  className="btn-primary flex-1 flex items-center justify-center space-x-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Create Exercise</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomExerciseForm(false)}
                   className="btn-secondary px-4"
                 >
                   Cancel
