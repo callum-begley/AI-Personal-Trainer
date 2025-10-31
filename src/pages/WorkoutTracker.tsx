@@ -170,7 +170,10 @@ const WorkoutTracker: React.FC = () => {
         id: `${Date.now()}`,
         exerciseId: exercise.id,
         reps: 0, // Not used for cardio
-        duration: data.duration ? data.duration * 60 : timer, // Convert minutes to seconds if manually entered, otherwise use workout timer
+        duration:
+          data.duration != null && data.duration > 0
+            ? data.duration * 60
+            : timer, // Convert minutes to seconds if manually entered, otherwise use workout timer
         distance: data.distance || undefined,
         completed: false,
         isCardio: true,

@@ -43,7 +43,24 @@ class StorageService {
   // Exercises
   getExercises(): Exercise[] {
     const exercises = localStorage.getItem(this.getStorageKey('exercises'))
-    return exercises ? JSON.parse(exercises) : this.getDefaultExercises()
+    if (exercises) {
+      const parsed = JSON.parse(exercises)
+      // Check if we need to add new default exercises
+      const defaults = this.getDefaultExercises()
+      const existingIds = new Set(parsed.map((e: Exercise) => e.id))
+      const newExercises = defaults.filter((d) => !existingIds.has(d.id))
+
+      if (newExercises.length > 0) {
+        const updated = [...parsed, ...newExercises]
+        localStorage.setItem(
+          this.getStorageKey('exercises'),
+          JSON.stringify(updated)
+        )
+        return updated
+      }
+      return parsed
+    }
+    return this.getDefaultExercises()
   }
 
   saveExercise(exercise: Exercise): void {
@@ -87,6 +104,7 @@ class StorageService {
 
         const key = set.exerciseId
         const existing = progressMap.get(key)
+        const isCardio = exercise.category === 'cardio'
 
         if (!existing) {
           progressMap.set(key, {
@@ -95,24 +113,42 @@ class StorageService {
             previousBest: {
               weight: set.weight,
               reps: set.reps,
+              distance: set.distance,
+              duration: set.duration,
               date: workout.date,
             },
             currentSession: {
               weight: set.weight,
               reps: set.reps,
+              distance: set.distance,
+              duration: set.duration,
             },
           })
         } else {
           // Update if this is a better performance
-          const isBetter =
-            (set.weight || 0) > (existing.previousBest.weight || 0) ||
-            ((set.weight || 0) === (existing.previousBest.weight || 0) &&
-              set.reps > existing.previousBest.reps)
+          let isBetter = false
+
+          if (isCardio) {
+            // For cardio, better = longer distance or faster time
+            if (set.distance && existing.previousBest.distance) {
+              isBetter = set.distance > existing.previousBest.distance
+            } else if (set.duration && existing.previousBest.duration) {
+              isBetter = set.duration > existing.previousBest.duration
+            }
+          } else {
+            // For strength exercises
+            isBetter =
+              (set.weight || 0) > (existing.previousBest.weight || 0) ||
+              ((set.weight || 0) === (existing.previousBest.weight || 0) &&
+                set.reps > existing.previousBest.reps)
+          }
 
           if (isBetter && workout.date > existing.previousBest.date) {
             existing.previousBest = {
               weight: set.weight,
               reps: set.reps,
+              distance: set.distance,
+              duration: set.duration,
               date: workout.date,
             }
           }

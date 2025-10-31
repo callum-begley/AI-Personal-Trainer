@@ -39,6 +39,12 @@ const Progress: React.FC = () => {
     }).format(date)
   }
 
+  const isCardioExercise = (exerciseId: string): boolean => {
+    const exercises = storageService.getExercises()
+    const exercise = exercises.find((e) => e.id === exerciseId)
+    return exercise?.category === 'cardio'
+  }
+
   const getFilteredWorkouts = () => {
     const now = new Date()
     let startDate: Date
@@ -194,48 +200,100 @@ const Progress: React.FC = () => {
             </p>
           ) : (
             <div className="space-y-4">
-              {progress.map((prog) => (
-                <div
-                  key={prog.exerciseId}
-                  className="bg-gray-50 p-4 rounded-lg"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium text-gray-900">
-                      {prog.exerciseName}
-                    </h3>
-                    {prog.improvement && (
-                      <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
-                        +{prog.improvement.percentage.toFixed(1)}%
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-600">Personal Best</p>
-                      <p className="font-semibold">
-                        {prog.previousBest.reps} reps
-                        {prog.previousBest.weight &&
-                        Number(prog.previousBest.weight) > 0
-                          ? ` @ ${prog.previousBest.weight} kgs`
-                          : ''}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {formatDate(prog.previousBest.date)}
-                      </p>
+              {progress.map((prog) => {
+                const isCardio = isCardioExercise(prog.exerciseId)
+                return (
+                  <div
+                    key={prog.exerciseId}
+                    className="bg-gray-50 p-4 rounded-lg"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-gray-900">
+                        {prog.exerciseName}
+                      </h3>
+                      {prog.improvement && (
+                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
+                          +{prog.improvement.percentage.toFixed(1)}%
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-gray-600">Current Session</p>
-                      <p className="font-semibold">
-                        {prog.currentSession.reps} reps
-                        {prog.currentSession.weight &&
-                        Number(prog.currentSession.weight) > 0
-                          ? ` @ ${prog.currentSession.weight} kgs`
-                          : ''}
-                      </p>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600">Personal Best</p>
+                        {isCardio ? (
+                          <div>
+                            <p className="font-semibold">
+                              {prog.previousBest.distance
+                                ? `${prog.previousBest.distance} km`
+                                : ''}
+                              {prog.previousBest.distance &&
+                              prog.previousBest.duration
+                                ? ' • '
+                                : ''}
+                              {prog.previousBest.duration
+                                ? `${Math.floor(
+                                    prog.previousBest.duration / 60
+                                  )} min ${prog.previousBest.duration % 60} sec`
+                                : ''}
+                              {!prog.previousBest.distance &&
+                              !prog.previousBest.duration
+                                ? 'No data'
+                                : ''}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formatDate(prog.previousBest.date)}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="font-semibold">
+                              {prog.previousBest.reps} reps
+                              {prog.previousBest.weight &&
+                              Number(prog.previousBest.weight) > 0
+                                ? ` @ ${prog.previousBest.weight} kgs`
+                                : ''}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formatDate(prog.previousBest.date)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Current Session</p>
+                        {isCardio ? (
+                          <p className="font-semibold">
+                            {prog.currentSession.distance
+                              ? `${prog.currentSession.distance} km`
+                              : ''}
+                            {prog.currentSession.distance &&
+                            prog.currentSession.duration
+                              ? ' • '
+                              : ''}
+                            {prog.currentSession.duration
+                              ? `${Math.floor(
+                                  prog.currentSession.duration / 60
+                                )} min ${prog.currentSession.duration % 60} sec`
+                              : ''}
+                            {!prog.currentSession.distance &&
+                            !prog.currentSession.duration
+                              ? 'No data'
+                              : ''}
+                          </p>
+                        ) : (
+                          <p className="font-semibold">
+                            {prog.currentSession.reps} reps
+                            {prog.currentSession.weight &&
+                            Number(prog.currentSession.weight) > 0
+                              ? ` @ ${prog.currentSession.weight} kgs`
+                              : ''}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

@@ -36,14 +36,18 @@ export interface WorkoutProgress {
   previousBest: {
     weight?: number
     reps: number
+    distance?: number // for cardio exercises in km
+    duration?: number // for cardio exercises in seconds
     date: Date
   }
   currentSession: {
     weight?: number
     reps: number
+    distance?: number // for cardio exercises in km
+    duration?: number // for cardio exercises in seconds
   }
   improvement?: {
-    type: 'weight' | 'reps' | 'both'
+    type: 'weight' | 'reps' | 'both' | 'distance' | 'duration'
     percentage: number
   }
 }
