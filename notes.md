@@ -3,6 +3,7 @@ custom workouts set category, use ai to complete data?
 better name?
 save full workouts
 load saved
+check if already in saved exercises
 
 send ai last workouts for recommended improvements
 send saved for recommended improvements
