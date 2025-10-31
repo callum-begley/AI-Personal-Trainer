@@ -240,6 +240,22 @@ const WorkoutTracker: React.FC = () => {
     })
   }
 
+  const completeAllSets = () => {
+    if (!currentWorkout) return
+
+    const updatedSets = currentWorkout.sets.map((set) => ({
+      ...set,
+      completed: true,
+    }))
+
+    setCurrentWorkout({
+      ...currentWorkout,
+      sets: updatedSets,
+    })
+
+    toast.success('All exercises marked as complete!')
+  }
+
   const removeSet = (setId: string) => {
     if (!currentWorkout) return
 
@@ -675,9 +691,20 @@ const WorkoutTracker: React.FC = () => {
 
           {/* Current Workout */}
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">
-              Current Workout
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Current Workout
+              </h2>
+              {currentWorkout.sets.length > 0 && (
+                <button
+                  onClick={completeAllSets}
+                  className="btn-secondary flex items-center space-x-2 text-sm"
+                >
+                  <Check className="h-4 w-4" />
+                  <span>Complete All</span>
+                </button>
+              )}
+            </div>
 
             {/* Workout Title and Notes */}
             {(currentWorkout.name || currentWorkout.notes) && (
