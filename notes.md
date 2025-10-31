@@ -1,14 +1,11 @@
-To Add:
-custom workouts set category, use ai to complete data?
-better name?
-save full workouts
-load saved
-check if already in saved exercises
-
-send ai last workouts for recommended improvements
-send saved for recommended improvements
-set up database, remove from local storage
-cache ai recs and only update on button push
-select lb/kg
-
-add ai trainer visual? sexy robot trainer lady
+## To Add:
+- custom workouts set category, use ai to complete data?
+- better name?
+- save full workouts
+- load saved
+- check if already in saved exercises
+- send ai last workouts for recommended improvements
+- send saved for recommended improvements
+- set up database, remove from local storage
+- cache ai recs and only update on button push
+- select lb/kg
