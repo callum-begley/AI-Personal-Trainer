@@ -75,12 +75,10 @@ class StorageService {
       exercises.push(exercise)
     }
 
-    console.log('Saving exercises to localStorage:', exercises)
     localStorage.setItem(
       this.getStorageKey('exercises'),
       JSON.stringify(exercises)
     )
-    console.log('Exercises saved successfully. Total count:', exercises.length)
   }
 
   // User Profile
@@ -235,22 +233,6 @@ class StorageService {
         equipment: 'bike',
         instructions:
           'Cycle at a comfortable pace. Track your distance and time.',
-      },
-      {
-        id: 'rowing',
-        name: 'Rowing',
-        category: 'cardio',
-        muscleGroups: ['back', 'legs', 'arms', 'cardiovascular'],
-        equipment: 'rowing machine',
-        instructions: 'Use proper rowing form. Track your distance and time.',
-      },
-      {
-        id: 'jump-rope',
-        name: 'Jump Rope',
-        category: 'cardio',
-        muscleGroups: ['legs', 'cardiovascular'],
-        equipment: 'jump rope',
-        instructions: 'Jump rope at a steady rhythm. Track your time.',
       },
       {
         id: 'swimming',
