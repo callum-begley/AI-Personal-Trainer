@@ -116,7 +116,6 @@ const WorkoutTracker: React.FC = () => {
     setCurrentWorkout(newWorkout)
     setIsWorkoutActive(false) // Don't start timing automatically
     setTimer(0)
-    toast.success('Workout started!')
   }
 
   const stopWorkout = () => {
@@ -453,6 +452,9 @@ const WorkoutTracker: React.FC = () => {
                       1000
                     )
                     setTimerInterval(interval)
+                    toast.success(
+                      timer === 0 ? 'Workout started!' : 'Timer resumed!'
+                    )
                   }}
                   className="btn-secondary flex items-center space-x-2"
                 >
