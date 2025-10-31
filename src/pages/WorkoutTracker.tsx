@@ -26,6 +26,8 @@ interface WorkoutForm {
   sets: number
   reps: number
   weight: number
+  distance: number
+  duration: number
 }
 
 interface WorkoutPlanForm {
@@ -65,6 +67,12 @@ const WorkoutTracker: React.FC = () => {
   const [minimizedExercises, setMinimizedExercises] = useState<Set<string>>(
     new Set()
   )
+  const [isCardioExercise, setIsCardioExercise] = useState(false)
+  const [cardioTimer, setCardioTimer] = useState(0)
+  const [cardioTimerInterval, setCardioTimerInterval] = useState<number | null>(
+    null
+  )
+  const [isCardioTimerActive, setIsCardioTimerActive] = useState(false)
 
   const aiTrainer = new AITrainerService()
 
@@ -91,8 +99,11 @@ const WorkoutTracker: React.FC = () => {
       if (timerInterval) {
         clearInterval(timerInterval)
       }
+      if (cardioTimerInterval) {
+        clearInterval(cardioTimerInterval)
+      }
     }
-  }, [timerInterval])
+  }, [timerInterval, cardioTimerInterval])
 
   const startWorkout = () => {
     const newWorkout: Workout = {
@@ -155,16 +166,42 @@ const WorkoutTracker: React.FC = () => {
       ? currentWorkout.exercises
       : [...currentWorkout.exercises, exercise]
 
+    // Check if it's a cardio exercise
+    const isCardio = exercise.category === 'cardio'
+
     // Create sets for this exercise
     const newSets: WorkoutSet[] = []
-    for (let i = 0; i < data.sets; i++) {
+
+    if (isCardio) {
+      // For cardio: create a single entry with duration and/or distance
       newSets.push({
-        id: `${Date.now()}-${i}`,
+        id: `${Date.now()}`,
         exerciseId: exercise.id,
-        reps: data.reps,
-        weight: data.weight || undefined,
+        reps: 0, // Not used for cardio
+        duration: data.duration || cardioTimer || undefined,
+        distance: data.distance || undefined,
         completed: false,
+        isCardio: true,
       })
+      // Reset cardio timer
+      if (cardioTimerInterval) {
+        clearInterval(cardioTimerInterval)
+        setCardioTimerInterval(null)
+      }
+      setCardioTimer(0)
+      setIsCardioTimerActive(false)
+    } else {
+      // For strength exercises: create sets with reps and weight
+      for (let i = 0; i < data.sets; i++) {
+        newSets.push({
+          id: `${Date.now()}-${i}`,
+          exerciseId: exercise.id,
+          reps: data.reps,
+          weight: data.weight || undefined,
+          completed: false,
+          isCardio: false,
+        })
+      }
     }
 
     const updatedWorkout: Workout = {
@@ -176,7 +213,12 @@ const WorkoutTracker: React.FC = () => {
 
     setCurrentWorkout(updatedWorkout)
     reset()
-    toast.success(`Added ${data.sets} sets of ${exercise.name}`)
+
+    if (isCardio) {
+      toast.success(`Added ${exercise.name} to workout`)
+    } else {
+      toast.success(`Added ${data.sets} sets of ${exercise.name}`)
+    }
   }
 
   const toggleSetCompletion = (setId: string) => {
@@ -247,6 +289,42 @@ const WorkoutTracker: React.FC = () => {
     setEditingSetId(null)
     setEditingValues({ reps: 0 })
     toast.success('Set updated!')
+  }
+
+  const startCardioTimer = () => {
+    setIsCardioTimerActive(true)
+    const interval = setInterval(() => setCardioTimer((prev) => prev + 1), 1000)
+    setCardioTimerInterval(interval)
+  }
+
+  const stopCardioTimer = () => {
+    if (cardioTimerInterval) {
+      clearInterval(cardioTimerInterval)
+      setCardioTimerInterval(null)
+    }
+    setIsCardioTimerActive(false)
+  }
+
+  const resetCardioTimer = () => {
+    if (cardioTimerInterval) {
+      clearInterval(cardioTimerInterval)
+      setCardioTimerInterval(null)
+    }
+    setCardioTimer(0)
+    setIsCardioTimerActive(false)
+  }
+
+  const handleExerciseChange = (exerciseId: string) => {
+    const exercise = exercises.find((e) => e.id === exerciseId)
+    if (exercise) {
+      setIsCardioExercise(exercise.category === 'cardio')
+      // Reset cardio timer when changing exercises
+      if (exercise.category === 'cardio') {
+        resetCardioTimer()
+      }
+    } else {
+      setIsCardioExercise(false)
+    }
   }
 
   const generateWorkoutPlan = async (data: WorkoutPlanForm) => {
@@ -434,6 +512,7 @@ const WorkoutTracker: React.FC = () => {
                   <select
                     {...register('exerciseId', {
                       required: 'Please select an exercise',
+                      onChange: (e) => handleExerciseChange(e.target.value),
                     })}
                     className="input-field"
                   >
@@ -451,63 +530,145 @@ const WorkoutTracker: React.FC = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Sets *
-                    </label>
-                    <input
-                      {...register('sets', {
-                        required: 'Sets required',
-                        min: 1,
-                      })}
-                      type="number"
-                      className="input-field"
-                      placeholder="3"
-                      min="1"
-                    />
-                    {errors.sets && (
-                      <p className="text-red-600 text-sm mt-1">
-                        {errors.sets.message}
-                      </p>
-                    )}
-                  </div>
+                {isCardioExercise ? (
+                  // Cardio Exercise Fields
+                  <>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Distance (km)
+                          </label>
+                          <input
+                            {...register('distance', { min: 0 })}
+                            type="number"
+                            className="input-field"
+                            placeholder="5.0"
+                            min="0"
+                            step="0.1"
+                          />
+                        </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Reps *
-                    </label>
-                    <input
-                      {...register('reps', {
-                        required: 'Reps required',
-                        min: 1,
-                      })}
-                      type="number"
-                      className="input-field"
-                      placeholder="12"
-                      min="1"
-                    />
-                    {errors.reps && (
-                      <p className="text-red-600 text-sm mt-1">
-                        {errors.reps.message}
-                      </p>
-                    )}
-                  </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Duration (min)
+                          </label>
+                          <input
+                            {...register('duration', { min: 0 })}
+                            type="number"
+                            className="input-field"
+                            placeholder="30"
+                            min="0"
+                            step="1"
+                          />
+                        </div>
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Weight (kgs)
-                    </label>
-                    <input
-                      {...register('weight', { min: 0 })}
-                      type="number"
-                      className="input-field"
-                      placeholder="60"
-                      min="0"
-                      step="0.5"
-                    />
+                      <div className="border-t pt-4">
+                        <p className="text-sm font-medium text-gray-700 mb-2">
+                          Or use timer:
+                        </p>
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-1 bg-gray-100 px-4 py-2 rounded-lg text-center">
+                            <span className="text-2xl font-bold text-gray-900">
+                              {formatTime(cardioTimer)}
+                            </span>
+                          </div>
+                          <div className="flex space-x-2">
+                            {!isCardioTimerActive ? (
+                              <button
+                                type="button"
+                                onClick={startCardioTimer}
+                                className="btn-secondary flex items-center space-x-1 px-3 py-2"
+                              >
+                                <Play className="h-4 w-4" />
+                                <span>Start</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={stopCardioTimer}
+                                className="btn-secondary flex items-center space-x-1 px-3 py-2"
+                              >
+                                <Square className="h-4 w-4" />
+                                <span>Stop</span>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={resetCardioTimer}
+                              className="btn-secondary px-3 py-2"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Timer will be used if duration is not manually entered
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  // Strength Exercise Fields
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Sets *
+                      </label>
+                      <input
+                        {...register('sets', {
+                          required: 'Sets required',
+                          min: 1,
+                        })}
+                        type="number"
+                        className="input-field"
+                        placeholder="3"
+                        min="1"
+                      />
+                      {errors.sets && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {errors.sets.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Reps *
+                      </label>
+                      <input
+                        {...register('reps', {
+                          required: 'Reps required',
+                          min: 1,
+                        })}
+                        type="number"
+                        className="input-field"
+                        placeholder="12"
+                        min="1"
+                      />
+                      {errors.reps && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {errors.reps.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Weight (kgs)
+                      </label>
+                      <input
+                        {...register('weight', { min: 0 })}
+                        type="number"
+                        className="input-field"
+                        placeholder="60"
+                        min="0"
+                        step="0.5"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <button
                   type="submit"
@@ -622,8 +783,65 @@ const WorkoutTracker: React.FC = () => {
                                   key={set.id}
                                   className="bg-gray-50 p-3 rounded"
                                 >
-                                  {editingSetId === set.id ? (
-                                    // Editing mode
+                                  {set.isCardio ? (
+                                    // Cardio Exercise Display
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center space-x-4">
+                                        <input
+                                          type="checkbox"
+                                          checked={Boolean(set.completed)}
+                                          onChange={() =>
+                                            toggleSetCompletion(set.id)
+                                          }
+                                          className="h-4 w-4 text-primary-600 rounded"
+                                        />
+                                        <div>
+                                          <span
+                                            className={`font-medium ${
+                                              set.completed
+                                                ? 'line-through text-gray-500'
+                                                : 'text-gray-900'
+                                            }`}
+                                          >
+                                            Cardio Exercise
+                                          </span>
+                                          <div
+                                            className={`text-sm ${
+                                              set.completed
+                                                ? 'text-gray-500'
+                                                : 'text-gray-700'
+                                            }`}
+                                          >
+                                            {set.distance && (
+                                              <span className="mr-3">
+                                                Distance: {set.distance} km
+                                              </span>
+                                            )}
+                                            {set.duration && (
+                                              <span>
+                                                Time:{' '}
+                                                {Math.floor(set.duration / 60)}{' '}
+                                                min {set.duration % 60} sec
+                                              </span>
+                                            )}
+                                            {!set.distance && !set.duration && (
+                                              <span className="text-gray-500 italic">
+                                                No time/distance recorded
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <button
+                                        onClick={() => removeSet(set.id)}
+                                        className="text-red-600 hover:text-red-800"
+                                        title="Remove exercise"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </button>
+                                    </div>
+                                  ) : editingSetId === set.id ? (
+                                    // Editing mode for strength exercises
                                     <div className="space-y-3">
                                       <div className="flex items-center space-x-4">
                                         <input
@@ -696,7 +914,7 @@ const WorkoutTracker: React.FC = () => {
                                       </div>
                                     </div>
                                   ) : (
-                                    // Display mode
+                                    // Display mode for strength exercises
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center space-x-4">
                                         <input

@@ -12,9 +12,11 @@ export interface WorkoutSet {
   exerciseId: string
   reps: number
   weight?: number
-  duration?: number // for cardio exercises
+  duration?: number // for cardio exercises in seconds
+  distance?: number // for cardio exercises in km or miles
   restTime?: number // in seconds
   completed: boolean
+  isCardio?: boolean // flag to identify cardio exercises
 }
 
 export interface Workout {

@@ -179,6 +179,48 @@ class StorageService {
         instructions:
           'Start in plank position, lower chest to ground, push back up.',
       },
+      {
+        id: 'running',
+        name: 'Running',
+        category: 'cardio',
+        muscleGroups: ['legs', 'cardiovascular'],
+        equipment: 'none',
+        instructions: 'Run at a steady pace. Track your distance and time.',
+      },
+      {
+        id: 'cycling',
+        name: 'Cycling',
+        category: 'cardio',
+        muscleGroups: ['legs', 'cardiovascular'],
+        equipment: 'bike',
+        instructions:
+          'Cycle at a comfortable pace. Track your distance and time.',
+      },
+      {
+        id: 'rowing',
+        name: 'Rowing',
+        category: 'cardio',
+        muscleGroups: ['back', 'legs', 'arms', 'cardiovascular'],
+        equipment: 'rowing machine',
+        instructions: 'Use proper rowing form. Track your distance and time.',
+      },
+      {
+        id: 'jump-rope',
+        name: 'Jump Rope',
+        category: 'cardio',
+        muscleGroups: ['legs', 'cardiovascular'],
+        equipment: 'jump rope',
+        instructions: 'Jump rope at a steady rhythm. Track your time.',
+      },
+      {
+        id: 'swimming',
+        name: 'Swimming',
+        category: 'cardio',
+        muscleGroups: ['full body', 'cardiovascular'],
+        equipment: 'pool',
+        instructions:
+          'Swim laps at a comfortable pace. Track your distance and time.',
+      },
     ]
 
     localStorage.setItem(
