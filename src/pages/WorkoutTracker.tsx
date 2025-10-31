@@ -68,11 +68,6 @@ const WorkoutTracker: React.FC = () => {
     new Set()
   )
   const [isCardioExercise, setIsCardioExercise] = useState(false)
-  const [cardioTimer, setCardioTimer] = useState(0)
-  const [cardioTimerInterval, setCardioTimerInterval] = useState<number | null>(
-    null
-  )
-  const [isCardioTimerActive, setIsCardioTimerActive] = useState(false)
 
   const aiTrainer = new AITrainerService()
 
@@ -99,11 +94,8 @@ const WorkoutTracker: React.FC = () => {
       if (timerInterval) {
         clearInterval(timerInterval)
       }
-      if (cardioTimerInterval) {
-        clearInterval(cardioTimerInterval)
-      }
     }
-  }, [timerInterval, cardioTimerInterval])
+  }, [timerInterval])
 
   const startWorkout = () => {
     const newWorkout: Workout = {
@@ -178,18 +170,11 @@ const WorkoutTracker: React.FC = () => {
         id: `${Date.now()}`,
         exerciseId: exercise.id,
         reps: 0, // Not used for cardio
-        duration: data.duration || cardioTimer || undefined,
+        duration: data.duration ? data.duration * 60 : timer, // Convert minutes to seconds if manually entered, otherwise use workout timer
         distance: data.distance || undefined,
         completed: false,
         isCardio: true,
       })
-      // Reset cardio timer
-      if (cardioTimerInterval) {
-        clearInterval(cardioTimerInterval)
-        setCardioTimerInterval(null)
-      }
-      setCardioTimer(0)
-      setIsCardioTimerActive(false)
     } else {
       // For strength exercises: create sets with reps and weight
       for (let i = 0; i < data.sets; i++) {
@@ -291,37 +276,10 @@ const WorkoutTracker: React.FC = () => {
     toast.success('Set updated!')
   }
 
-  const startCardioTimer = () => {
-    setIsCardioTimerActive(true)
-    const interval = setInterval(() => setCardioTimer((prev) => prev + 1), 1000)
-    setCardioTimerInterval(interval)
-  }
-
-  const stopCardioTimer = () => {
-    if (cardioTimerInterval) {
-      clearInterval(cardioTimerInterval)
-      setCardioTimerInterval(null)
-    }
-    setIsCardioTimerActive(false)
-  }
-
-  const resetCardioTimer = () => {
-    if (cardioTimerInterval) {
-      clearInterval(cardioTimerInterval)
-      setCardioTimerInterval(null)
-    }
-    setCardioTimer(0)
-    setIsCardioTimerActive(false)
-  }
-
   const handleExerciseChange = (exerciseId: string) => {
     const exercise = exercises.find((e) => e.id === exerciseId)
     if (exercise) {
       setIsCardioExercise(exercise.category === 'cardio')
-      // Reset cardio timer when changing exercises
-      if (exercise.category === 'cardio') {
-        resetCardioTimer()
-      }
     } else {
       setIsCardioExercise(false)
     }
@@ -564,47 +522,11 @@ const WorkoutTracker: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="border-t pt-4">
-                        <p className="text-sm font-medium text-gray-700 mb-2">
-                          Or use timer:
-                        </p>
-                        <div className="flex items-center space-x-4">
-                          <div className="flex-1 bg-gray-100 px-4 py-2 rounded-lg text-center">
-                            <span className="text-2xl font-bold text-gray-900">
-                              {formatTime(cardioTimer)}
-                            </span>
-                          </div>
-                          <div className="flex space-x-2">
-                            {!isCardioTimerActive ? (
-                              <button
-                                type="button"
-                                onClick={startCardioTimer}
-                                className="btn-secondary flex items-center space-x-1 px-3 py-2"
-                              >
-                                <Play className="h-4 w-4" />
-                                <span>Start</span>
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={stopCardioTimer}
-                                className="btn-secondary flex items-center space-x-1 px-3 py-2"
-                              >
-                                <Square className="h-4 w-4" />
-                                <span>Stop</span>
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={resetCardioTimer}
-                              className="btn-secondary px-3 py-2"
-                            >
-                              Reset
-                            </button>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                          Timer will be used if duration is not manually entered
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-sm text-blue-800">
+                          <strong>💡 Tip:</strong> Leave duration blank to use
+                          the workout timer automatically when you add the
+                          exercise.
                         </p>
                       </div>
                     </div>
