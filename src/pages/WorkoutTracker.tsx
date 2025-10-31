@@ -130,6 +130,19 @@ const WorkoutTracker: React.FC = () => {
   const finishWorkout = () => {
     if (!currentWorkout) return
 
+    // Check if there are any exercises in the workout
+    if (currentWorkout.sets.length === 0) {
+      toast.error('Please add exercises to your workout before finishing!')
+      return
+    }
+
+    // Check if at least one set is completed
+    const hasCompletedSets = currentWorkout.sets.some((set) => set.completed)
+    if (!hasCompletedSets) {
+      toast.error('Please complete at least one exercise before finishing!')
+      return
+    }
+
     const completedWorkout: Workout = {
       ...currentWorkout,
       duration: Math.floor(timer / 60),
@@ -446,6 +459,14 @@ const WorkoutTracker: React.FC = () => {
               ) : (
                 <button
                   onClick={() => {
+                    // Validate that there are exercises before starting
+                    if (!currentWorkout || currentWorkout.sets.length === 0) {
+                      toast.error(
+                        'Please add exercises to your workout before starting!'
+                      )
+                      return
+                    }
+
                     setIsWorkoutActive(true)
                     const interval = setInterval(
                       () => setTimer((prev) => prev + 1),
