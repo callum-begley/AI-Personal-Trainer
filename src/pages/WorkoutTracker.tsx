@@ -90,7 +90,9 @@ const WorkoutTracker: React.FC = () => {
   } = useForm<WorkoutPlanForm>()
 
   useEffect(() => {
-    setExercises(storageService.getExercises())
+    // Load exercises from localStorage on mount
+    const loadedExercises = storageService.getExercises()
+    setExercises(loadedExercises)
   }, [])
 
   useEffect(() => {
@@ -306,8 +308,13 @@ const WorkoutTracker: React.FC = () => {
       instructions: 'Custom exercise',
     }
 
+    // Save to localStorage
     storageService.saveExercise(newExercise)
-    setExercises([...exercises, newExercise])
+
+    // Reload exercises from localStorage to ensure sync
+    const updatedExercises = storageService.getExercises()
+    setExercises(updatedExercises)
+
     setShowCustomExerciseForm(false)
     toast.success(`Custom exercise "${data.name}" created!`)
 
@@ -1160,7 +1167,7 @@ const WorkoutTracker: React.FC = () => {
                   return
                 }
 
-                const category = type === 'cardio' ? 'cardio' : 'chest' // Default to chest for strength
+                const category = type === 'cardio' ? 'cardio' : 'strength' // Default to strength for strength exercises
                 const exerciseId = createCustomExercise({
                   name,
                   type,

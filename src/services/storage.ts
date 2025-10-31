@@ -46,7 +46,7 @@ class StorageService {
     if (exercises) {
       const parsed = JSON.parse(exercises)
       // Check if we need to add new default exercises
-      const defaults = this.getDefaultExercises()
+      const defaults = this.getDefaultExercises(false) // Don't save to localStorage
       const existingIds = new Set(parsed.map((e: Exercise) => e.id))
       const newExercises = defaults.filter((d) => !existingIds.has(d.id))
 
@@ -60,7 +60,9 @@ class StorageService {
       }
       return parsed
     }
-    return this.getDefaultExercises()
+    // First time - save defaults to localStorage
+    const defaults = this.getDefaultExercises(true)
+    return defaults
   }
 
   saveExercise(exercise: Exercise): void {
@@ -73,10 +75,12 @@ class StorageService {
       exercises.push(exercise)
     }
 
+    console.log('Saving exercises to localStorage:', exercises)
     localStorage.setItem(
       this.getStorageKey('exercises'),
       JSON.stringify(exercises)
     )
+    console.log('Exercises saved successfully. Total count:', exercises.length)
   }
 
   // User Profile
@@ -159,7 +163,7 @@ class StorageService {
     return Array.from(progressMap.values())
   }
 
-  private getDefaultExercises(): Exercise[] {
+  private getDefaultExercises(saveToStorage: boolean = false): Exercise[] {
     const defaultExercises: Exercise[] = [
       {
         id: 'bench-press',
@@ -259,10 +263,14 @@ class StorageService {
       },
     ]
 
-    localStorage.setItem(
-      this.getStorageKey('exercises'),
-      JSON.stringify(defaultExercises)
-    )
+    // Only save to localStorage when explicitly requested (first load)
+    if (saveToStorage) {
+      localStorage.setItem(
+        this.getStorageKey('exercises'),
+        JSON.stringify(defaultExercises)
+      )
+    }
+
     return defaultExercises
   }
 
