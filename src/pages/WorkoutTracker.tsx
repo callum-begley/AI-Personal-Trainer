@@ -53,6 +53,7 @@ interface WorkoutPlanForm {
 const WorkoutTracker: React.FC = () => {
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null)
   const [exercises, setExercises] = useState<Exercise[]>([])
+  const [savedWorkouts, setSavedWorkouts] = useState<Workout[]>([])
   const [isWorkoutActive, setIsWorkoutActive] = useState(false)
   const [timer, setTimer] = useState(0)
   const [timerInterval, setTimerInterval] = useState<number | null>(null)
@@ -93,6 +94,10 @@ const WorkoutTracker: React.FC = () => {
     // Load exercises from localStorage on mount
     const loadedExercises = storageService.getExercises()
     setExercises(loadedExercises)
+
+    // Load saved workouts
+    const loadedWorkouts = storageService.getWorkouts()
+    setSavedWorkouts(loadedWorkouts)
   }, [])
 
   useEffect(() => {
@@ -116,6 +121,32 @@ const WorkoutTracker: React.FC = () => {
     setCurrentWorkout(newWorkout)
     setIsWorkoutActive(false) // Don't start timing automatically
     setTimer(0)
+  }
+
+  const loadSavedWorkout = (workoutId: string) => {
+    if (!workoutId) return
+
+    const savedWorkout = savedWorkouts.find((w) => w.id === workoutId)
+    if (!savedWorkout) return
+
+    // Create a new workout based on the saved one (template)
+    const newWorkout: Workout = {
+      id: Date.now().toString(),
+      date: new Date(),
+      name: savedWorkout.name,
+      exercises: savedWorkout.exercises,
+      sets: savedWorkout.sets.map((set, index) => ({
+        ...set,
+        id: `${Date.now()}-${index}`,
+        completed: false, // Reset completion status
+      })),
+      completed: false,
+    }
+
+    setCurrentWorkout(newWorkout)
+    setIsWorkoutActive(false)
+    setTimer(0)
+    toast.success(`Loaded workout: ${savedWorkout.name}`)
   }
 
   const stopWorkout = () => {
@@ -523,6 +554,7 @@ const WorkoutTracker: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-6">
                 Add Exercise
               </h2>
+
               <form
                 onSubmit={handleSubmit(addExerciseToWorkout)}
                 className="space-y-4"
@@ -1009,6 +1041,40 @@ const WorkoutTracker: React.FC = () => {
             Start tracking your exercises manually or let AI generate a
             personalized workout plan for you.
           </p>
+
+          {/* Load Saved Workout Section */}
+          {savedWorkouts.length > 0 && (
+            <div className="mb-8 max-w-md mx-auto">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
+                  Or load a previous workout
+                </label>
+                <select
+                  onChange={(e) => loadSavedWorkout(e.target.value)}
+                  className="input-field"
+                  defaultValue=""
+                >
+                  <option value="">Select a saved workout...</option>
+                  {savedWorkouts
+                    .filter((w) => w.completed)
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                    )
+                    .map((workout) => (
+                      <option key={workout.id} value={workout.id}>
+                        {workout.name} -{' '}
+                        {new Date(workout.date).toLocaleDateString()}
+                      </option>
+                    ))}
+                </select>
+                <p className="text-xs text-gray-600 mt-1 text-left">
+                  Load exercises from a previous workout
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex space-x-4 justify-center flex-col sm:flex-row">
             <button
               onClick={startWorkout}
