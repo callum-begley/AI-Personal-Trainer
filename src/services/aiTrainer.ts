@@ -244,6 +244,20 @@ export class AITrainerService {
         }
       }
 
+      IMPORTANT: The "category" field for each exercise MUST be one of these exact values ONLY:
+      - "chest"
+      - "back"
+      - "shoulders"
+      - "arms"
+      - "legs"
+      - "core"
+      - "cardio"
+      - "full-body"
+      - "upper-body"
+      - "lower-body"
+      
+      Do NOT use any other category names. Match the workout type to the appropriate category from the list above.
+
       Create a workout specifically focused on "${workoutType}". 
       
       Workout Type Guidelines:
