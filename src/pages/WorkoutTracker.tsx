@@ -552,11 +552,14 @@ const WorkoutTracker: React.FC = () => {
                       className="input-field flex-1"
                     >
                       <option value="">Select an exercise</option>
-                      {exercises.map((exercise) => (
-                        <option key={exercise.id} value={exercise.id}>
-                          {exercise.name} ({exercise.category})
-                        </option>
-                      ))}
+                      {exercises
+                        .slice()
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((exercise) => (
+                          <option key={exercise.id} value={exercise.id}>
+                            {exercise.name} ({exercise.category})
+                          </option>
+                        ))}
                     </select>
                     <button
                       type="button"
