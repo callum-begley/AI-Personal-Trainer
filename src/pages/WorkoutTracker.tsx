@@ -1042,9 +1042,26 @@ const WorkoutTracker: React.FC = () => {
             personalized workout plan for you.
           </p>
 
+          <div className="flex space-x-4 justify-center flex-col sm:flex-row">
+            <button
+              onClick={startWorkout}
+              className="btn-primary flex items-center space-x-2 mx-auto sm:mx-0"
+            >
+              <Play className="h-4 w-4" />
+              <span>Start Workout</span>
+            </button>
+            <button
+              onClick={() => setShowPlanForm(true)}
+              className="btn-secondary flex items-center space-x-2 mx-auto sm:mx-0"
+            >
+              <Brain className="h-4 w-4" />
+              <span>Generate AI Plan</span>
+            </button>
+          </div>
+
           {/* Load Saved Workout Section */}
           {savedWorkouts.length > 0 && (
-            <div className="mb-8 max-w-md mx-auto">
+            <div className="mt-8 max-w-md mx-auto">
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
                   Or load a previous workout
@@ -1074,23 +1091,6 @@ const WorkoutTracker: React.FC = () => {
               </div>
             </div>
           )}
-
-          <div className="flex space-x-4 justify-center flex-col sm:flex-row">
-            <button
-              onClick={startWorkout}
-              className="btn-primary flex items-center space-x-2 mx-auto sm:mx-0"
-            >
-              <Play className="h-4 w-4" />
-              <span>Start Workout</span>
-            </button>
-            <button
-              onClick={() => setShowPlanForm(true)}
-              className="btn-secondary flex items-center space-x-2 mx-auto sm:mx-0"
-            >
-              <Brain className="h-4 w-4" />
-              <span>Generate AI Plan</span>
-            </button>
-          </div>
         </div>
       )}
 
