@@ -214,7 +214,7 @@ const Progress: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="input-field text-sm py-1.5 px-3"
+              className="input-field text-sm py-1.5 px-3 max-w-36"
             >
               <option value="all">All Categories</option>
               <option value="chest">Chest</option>
