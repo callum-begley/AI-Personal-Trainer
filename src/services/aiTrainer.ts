@@ -244,37 +244,16 @@ export class AITrainerService {
         }
       }
 
-      IMPORTANT: The "category" field for each exercise MUST be one of these exact values ONLY:
-      - "chest"
-      - "back"
-      - "shoulders"
-      - "arms"
-      - "legs"
-      - "core"
-      - "cardio"
-      - "full-body"
-      - "upper-body"
-      - "lower-body"
+      CRITICAL RULES:
+      1. Exercise "category" MUST be one of: chest, back, shoulders, arms, legs, core, cardio, full-body, upper-body, lower-body
       
-      Do NOT use any other category names. Match the workout type to the appropriate category from the list above.
-
-      Create a workout specifically focused on "${workoutType}". 
+      2. Match workout type "${workoutType}" EXACTLY:
+         - upper-body: ONLY chest/back/shoulders/arms exercises. NO legs/glutes
+         - lower-body: ONLY legs/glutes/hamstrings/calves exercises. NO chest/back/shoulders/arms
+         - full-body: Mix of upper AND lower body exercises
+         - chest/back/shoulders/arms/legs/core/cardio: ONLY that specific muscle group
       
-      Workout Type Guidelines:
-      - full-body: Include exercises for all major muscle groups
-      - upper-body: Focus on chest, back, shoulders, and arms
-      - lower-body: Focus on legs, glutes, and calves
-      - chest: Primarily chest exercises with supporting muscles
-      - back: Primarily back exercises with supporting muscles
-      - shoulders: Focus on all three deltoid heads
-      - arms: Focus on biceps, triceps, and forearms
-      - legs: Focus on quadriceps, hamstrings, glutes, and calves
-      - core: Focus on abs, obliques, and lower back
-      - cardio: Include high-intensity cardio exercises
-      - strength: Focus on compound movements with heavier weights/lower reps
-      - endurance: Focus on higher reps and circuit-style training
-      
-      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+      3. Always use KILOGRAMS (kgs) for weights, never pounds.
       
       Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
