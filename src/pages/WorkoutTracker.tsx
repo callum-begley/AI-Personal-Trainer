@@ -1313,6 +1313,8 @@ const WorkoutTracker: React.FC = () => {
                     <option value="legs">Legs</option>
                     <option value="core">Core/Abs</option>
                     <option value="full-body">Full Body</option>
+                    <option value="upper-body">Upper Body</option>
+                    <option value="lower-body">Lower Body</option>
                   </select>
                 </div>
               )}
