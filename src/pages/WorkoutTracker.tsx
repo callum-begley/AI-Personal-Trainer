@@ -1211,13 +1211,18 @@ const WorkoutTracker: React.FC = () => {
                 const formData = new FormData(e.currentTarget)
                 const name = formData.get('customName') as string
                 const type = formData.get('customType') as 'cardio' | 'strength'
+                const selectedCategory = formData.get(
+                  'customCategory'
+                ) as string
 
                 if (!name.trim()) {
                   toast.error('Please enter an exercise name')
                   return
                 }
 
-                const category = type === 'cardio' ? 'cardio' : 'strength' // Default to strength for strength exercises
+                // Use selected category for strength, 'cardio' for cardio
+                const category =
+                  type === 'cardio' ? 'cardio' : selectedCategory || 'strength'
                 const exerciseId = createCustomExercise({
                   name,
                   type,
@@ -1288,6 +1293,29 @@ const WorkoutTracker: React.FC = () => {
                   </label>
                 </div>
               </div>
+
+              {/* Category Selection - Show only for strength exercises */}
+              {customExerciseType === 'strength' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Muscle Group *
+                  </label>
+                  <select
+                    name="customCategory"
+                    className="input-field"
+                    defaultValue="chest"
+                    required
+                  >
+                    <option value="chest">Chest</option>
+                    <option value="back">Back</option>
+                    <option value="shoulders">Shoulders</option>
+                    <option value="arms">Arms</option>
+                    <option value="legs">Legs</option>
+                    <option value="core">Core/Abs</option>
+                    <option value="full-body">Full Body</option>
+                  </select>
+                </div>
+              )}
 
               <div className="flex space-x-3 pt-4">
                 <button
