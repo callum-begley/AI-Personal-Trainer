@@ -1,9 +1,7 @@
 ## To Add:
-- custom workouts set category, use ai to complete data?
+- custom workouts, use ai to complete data?
+- favorite workouts
 - better name?
-- save full workouts
-- load saved
-- check if already in saved exercises
 - send ai last workouts for recommended improvements
 - send saved for recommended improvements
 - set up database, remove from local storage
