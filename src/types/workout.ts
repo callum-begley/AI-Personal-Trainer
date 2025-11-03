@@ -10,6 +10,8 @@ export interface Exercise {
     | 'core'
     | 'cardio'
     | 'full-body'
+    | 'upper-body'
+    | 'lower-body'
   muscleGroups: string[]
   equipment?: string
   instructions?: string
