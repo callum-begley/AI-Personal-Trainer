@@ -17,6 +17,7 @@ const Progress: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<
     'week' | 'month' | 'all'
   >('month')
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [workoutToDelete, setWorkoutToDelete] = useState<{
     id: string
     name: string
@@ -43,6 +44,21 @@ const Progress: React.FC = () => {
     const exercises = storageService.getExercises()
     const exercise = exercises.find((e) => e.id === exerciseId)
     return exercise?.category === 'cardio'
+  }
+
+  const getExerciseCategory = (exerciseId: string): string => {
+    const exercises = storageService.getExercises()
+    const exercise = exercises.find((e) => e.id === exerciseId)
+    return exercise?.category || 'unknown'
+  }
+
+  const getFilteredProgress = () => {
+    if (selectedCategory === 'all') {
+      return progress
+    }
+    return progress.filter(
+      (prog) => getExerciseCategory(prog.exerciseId) === selectedCategory
+    )
   }
 
   const getFilteredWorkouts = () => {
@@ -191,16 +207,39 @@ const Progress: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Exercise Progress */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">
-            Exercise Progress
-          </h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Exercise Progress
+            </h2>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="input-field text-sm py-1.5 px-3"
+            >
+              <option value="all">All Categories</option>
+              <option value="chest">Chest</option>
+              <option value="back">Back</option>
+              <option value="shoulders">Shoulders</option>
+              <option value="arms">Arms</option>
+              <option value="legs">Legs</option>
+              <option value="core">Core/Abs</option>
+              <option value="cardio">Cardio</option>
+              <option value="full-body">Full Body</option>
+              <option value="upper-body">Upper Body</option>
+              <option value="lower-body">Lower Body</option>
+            </select>
+          </div>
           {progress.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
               Complete some workouts to see your progress here
             </p>
+          ) : getFilteredProgress().length === 0 ? (
+            <p className="text-gray-500 text-center py-8">
+              No exercises found in this category
+            </p>
           ) : (
             <div className="space-y-4">
-              {progress.map((prog) => {
+              {getFilteredProgress().map((prog) => {
                 const isCardio = isCardioExercise(prog.exerciseId)
                 return (
                   <div
