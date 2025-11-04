@@ -184,24 +184,24 @@ const Dashboard: React.FC = () => {
           <div className="space-y-3">
             <Link
               to="/workout"
-              className="block w-full text-left p-3 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
+              className="block w-full text-left p-3 bg-primary-50 dark:bg-blue-900 hover:bg-primary-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
             >
-              <div className="font-medium text-primary-700 dark:text-primary-400">
+              <div className="font-medium text-primary-700 dark:text-blue-300">
                 Start Workout
               </div>
-              <div className="text-sm text-primary-600 dark:text-primary-500">
+              <div className="text-sm text-primary-600 dark:text-blue-400">
                 Begin a new training session
               </div>
             </Link>
 
             <Link
               to="/recommendations"
-              className="block w-full text-left p-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors"
+              className="block w-full text-left p-3 bg-green-50 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-800 rounded-lg transition-colors"
             >
-              <div className="font-medium text-green-700 dark:text-green-400">
+              <div className="font-medium text-green-700 dark:text-green-300">
                 View AI Recommendations
               </div>
-              <div className="text-sm text-green-600 dark:text-green-500">
+              <div className="text-sm text-green-600 dark:text-green-400">
                 Get personalized training advice
               </div>
             </Link>

@@ -285,7 +285,9 @@ const AIRecommendations: React.FC = () => {
                         </div>
                       </div>
 
-                      <p className="text-gray-700 dark:text-gray-300 mb-3">{rec.description}</p>
+                      <p className="text-gray-700 dark:text-gray-300 mb-3">
+                        {rec.description}
+                      </p>
 
                       <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
                         <p className="text-sm text-gray-600 dark:text-gray-400">

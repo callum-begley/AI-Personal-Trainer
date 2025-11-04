@@ -466,12 +466,16 @@ const WorkoutTracker: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center md:flex-row flex-col">
-        <h1 className="text-3xl font-bold text-gray-800">Workout Tracker</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          Workout Tracker
+        </h1>
         <div className="flex items-center space-x-4">
           {currentWorkout && (
-            <div className="flex items-center space-x-2 bg-primary-50 px-4 py-2 rounded-lg md:flex-row flex-col">
-              <span className="text-primary-700 font-medium">Time:</span>
-              <span className="text-primary-900 font-bold text-lg">
+            <div className="flex items-center space-x-2 bg-primary-50 dark:bg-blue-900 px-4 py-2 rounded-lg md:flex-row flex-col">
+              <span className="text-primary-700 dark:text-blue-300 font-medium">
+                Time:
+              </span>
+              <span className="text-primary-900 dark:text-blue-50 font-bold text-lg">
                 {formatTime(timer)}
               </span>
             </div>
@@ -551,7 +555,7 @@ const WorkoutTracker: React.FC = () => {
           {/* Add Exercise Form - Hidden when workout is active */}
           {!isWorkoutActive && (
             <div className="card">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
                 Add Exercise
               </h2>
 
@@ -560,7 +564,7 @@ const WorkoutTracker: React.FC = () => {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Workout Name
                   </label>
                   <input
@@ -572,7 +576,7 @@ const WorkoutTracker: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Exercise *
                   </label>
                   <div className="flex space-x-2">
@@ -603,7 +607,7 @@ const WorkoutTracker: React.FC = () => {
                     </button>
                   </div>
                   {errors.exerciseId && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                       {errors.exerciseId.message}
                     </p>
                   )}
@@ -615,7 +619,7 @@ const WorkoutTracker: React.FC = () => {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Distance (km)
                           </label>
                           <input
@@ -629,7 +633,7 @@ const WorkoutTracker: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Duration (min)
                           </label>
                           <input
@@ -643,8 +647,8 @@ const WorkoutTracker: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <p className="text-sm text-blue-800">
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                        <p className="text-sm text-blue-800 dark:text-blue-200">
                           <strong>💡 Tip:</strong> Leave duration blank to use
                           the workout timer automatically when you add the
                           exercise.
@@ -656,7 +660,7 @@ const WorkoutTracker: React.FC = () => {
                   // Strength Exercise Fields
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Sets *
                       </label>
                       <input
@@ -670,14 +674,14 @@ const WorkoutTracker: React.FC = () => {
                         min="1"
                       />
                       {errors.sets && (
-                        <p className="text-red-600 text-sm mt-1">
+                        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                           {errors.sets.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Reps *
                       </label>
                       <input
@@ -691,14 +695,14 @@ const WorkoutTracker: React.FC = () => {
                         min="1"
                       />
                       {errors.reps && (
-                        <p className="text-red-600 text-sm mt-1">
+                        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                           {errors.reps.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Weight (kgs)
                       </label>
                       <input
@@ -727,7 +731,7 @@ const WorkoutTracker: React.FC = () => {
           {/* Current Workout */}
           <div className="card">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 Current Workout
               </h2>
               {currentWorkout.sets.length > 0 && (
@@ -743,14 +747,14 @@ const WorkoutTracker: React.FC = () => {
 
             {/* Workout Title and Notes */}
             {(currentWorkout.name || currentWorkout.notes) && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                 {currentWorkout.name && (
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                     {currentWorkout.name}
                   </h3>
                 )}
                 {currentWorkout.notes && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-medium">Notes:</span>{' '}
                     {currentWorkout.notes}
                   </p>
@@ -759,7 +763,7 @@ const WorkoutTracker: React.FC = () => {
             )}
 
             {currentWorkout.sets.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
+              <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                 No exercises added yet
               </p>
             ) : (
@@ -770,14 +774,17 @@ const WorkoutTracker: React.FC = () => {
                     if (!exercise) return null
 
                     return (
-                      <div key={exerciseId} className="border rounded-lg p-4">
+                      <div
+                        key={exerciseId}
+                        className="border dark:border-gray-600 rounded-lg p-4"
+                      >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center space-x-3">
-                            <h3 className="font-medium text-gray-900">
+                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
                               {exercise.name}
                             </h3>
                             {minimizedExercises.has(exerciseId) && (
-                              <span className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
                                 {sets.filter((set) => set.completed).length}/
                                 {sets.length} completed
                               </span>
@@ -788,7 +795,7 @@ const WorkoutTracker: React.FC = () => {
                               onClick={() =>
                                 toggleExerciseMinimized(exerciseId)
                               }
-                              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                               title={
                                 minimizedExercises.has(exerciseId)
                                   ? 'Maximize exercise'
@@ -810,7 +817,7 @@ const WorkoutTracker: React.FC = () => {
                                       : exerciseId
                                   )
                                 }
-                                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                                className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                                 title="Show exercise instructions"
                               >
                                 <HelpCircle className="h-4 w-4" />
@@ -823,8 +830,8 @@ const WorkoutTracker: React.FC = () => {
                           <>
                             {showInstructions === exerciseId &&
                               exercise.instructions && (
-                                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                  <p className="text-sm text-blue-800">
+                                <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                                  <p className="text-sm text-blue-800 dark:text-blue-200">
                                     <strong>Instructions:</strong>{' '}
                                     {exercise.instructions}
                                   </p>
@@ -835,7 +842,7 @@ const WorkoutTracker: React.FC = () => {
                               {sets.map((set, index) => (
                                 <div
                                   key={set.id}
-                                  className="bg-gray-50 p-3 rounded"
+                                  className="bg-gray-50 dark:bg-gray-700 p-3 rounded"
                                 >
                                   {set.isCardio ? (
                                     // Cardio Exercise Display
@@ -853,8 +860,8 @@ const WorkoutTracker: React.FC = () => {
                                           <span
                                             className={`font-medium ${
                                               set.completed
-                                                ? 'line-through text-gray-500'
-                                                : 'text-gray-900'
+                                                ? 'line-through text-gray-500 dark:text-gray-400'
+                                                : 'text-gray-900 dark:text-gray-100'
                                             }`}
                                           >
                                             Cardio Exercise
@@ -862,8 +869,8 @@ const WorkoutTracker: React.FC = () => {
                                           <div
                                             className={`text-sm ${
                                               set.completed
-                                                ? 'text-gray-500'
-                                                : 'text-gray-700'
+                                                ? 'text-gray-500 dark:text-gray-400'
+                                                : 'text-gray-700 dark:text-gray-300'
                                             }`}
                                           >
                                             {set.distance && (
@@ -879,7 +886,7 @@ const WorkoutTracker: React.FC = () => {
                                               </span>
                                             )}
                                             {!set.distance && !set.duration && (
-                                              <span className="text-gray-500 italic">
+                                              <span className="text-gray-500 dark:text-gray-400 italic">
                                                 No time/distance recorded
                                               </span>
                                             )}
@@ -982,8 +989,8 @@ const WorkoutTracker: React.FC = () => {
                                         <span
                                           className={`font-medium ${
                                             set.completed
-                                              ? 'line-through text-gray-500'
-                                              : 'text-gray-900'
+                                              ? 'line-through text-gray-500 dark:text-gray-400'
+                                              : 'text-gray-900 dark:text-gray-100'
                                           }`}
                                         >
                                           Set {index + 1}:
@@ -991,8 +998,8 @@ const WorkoutTracker: React.FC = () => {
                                         <span
                                           className={
                                             set.completed
-                                              ? 'text-gray-500'
-                                              : 'text-gray-700'
+                                              ? 'text-gray-500 dark:text-gray-400'
+                                              : 'text-gray-700 dark:text-gray-300'
                                           }
                                         >
                                           {set.reps} reps{' '}
@@ -1034,10 +1041,10 @@ const WorkoutTracker: React.FC = () => {
         </div>
       ) : (
         <div className="card text-center py-12">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Ready to start your workout?
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Start tracking your exercises manually or let AI generate a
             personalized workout plan for you.
           </p>
@@ -1062,8 +1069,8 @@ const WorkoutTracker: React.FC = () => {
           {/* Load Saved Workout Section */}
           {savedWorkouts.length > 0 && (
             <div className="mt-8 max-w-md mx-auto">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
                   Or load a previous workout
                 </label>
                 <select
@@ -1085,7 +1092,7 @@ const WorkoutTracker: React.FC = () => {
                       </option>
                     ))}
                 </select>
-                <p className="text-xs text-gray-600 mt-1 text-left">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-left">
                   Load exercises from a previous workout
                 </p>
               </div>
@@ -1097,18 +1104,18 @@ const WorkoutTracker: React.FC = () => {
       {/* AI Workout Plan Form Modal */}
       {showPlanForm && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50"
           style={{ margin: '-2rem -1rem' }}
         >
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto m-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto m-4">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
-                <Wand2 className="h-5 w-5 text-primary-600" />
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center space-x-2">
+                <Wand2 className="h-5 w-5 text-primary-600 dark:text-primary-500" />
                 <span>Generate AI Workout Plan</span>
               </h2>
               <button
                 onClick={() => setShowPlanForm(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1119,7 +1126,7 @@ const WorkoutTracker: React.FC = () => {
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Fitness Level *
                 </label>
                 <select
@@ -1134,14 +1141,14 @@ const WorkoutTracker: React.FC = () => {
                   <option value="advanced">Advanced</option>
                 </select>
                 {planErrors.fitnessLevel && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                     {planErrors.fitnessLevel.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Workout Type/Focus *
                 </label>
                 <select
@@ -1165,14 +1172,14 @@ const WorkoutTracker: React.FC = () => {
                   <option value="endurance">Endurance</option>
                 </select>
                 {planErrors.workoutType && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                     {planErrors.workoutType.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Fitness Goals *
                 </label>
                 <input
@@ -1183,17 +1190,17 @@ const WorkoutTracker: React.FC = () => {
                   placeholder="e.g., build muscle, lose weight, improve endurance"
                 />
                 {planErrors.goals && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                     {planErrors.goals.message}
                   </p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Separate multiple goals with commas
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Available Time (minutes) *
                 </label>
                 <input
@@ -1209,14 +1216,14 @@ const WorkoutTracker: React.FC = () => {
                   max="180"
                 />
                 {planErrors.availableTime && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-red-600 dark:text-red-400 text-sm mt-1">
                     {planErrors.availableTime.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Available Equipment
                 </label>
                 <input
@@ -1224,7 +1231,7 @@ const WorkoutTracker: React.FC = () => {
                   className="input-field"
                   placeholder="e.g., barbell, dumbbells, resistance bands, bodyweight"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Separate multiple equipment with commas. Leave empty for
                   bodyweight exercises.
                 </p>
@@ -1260,15 +1267,15 @@ const WorkoutTracker: React.FC = () => {
 
       {/* Custom Exercise Form Modal */}
       {showCustomExerciseForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md m-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md m-4">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 Create Custom Exercise
               </h2>
               <button
                 onClick={() => setShowCustomExerciseForm(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1310,7 +1317,7 @@ const WorkoutTracker: React.FC = () => {
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Exercise Name *
                 </label>
                 <input
@@ -1323,7 +1330,7 @@ const WorkoutTracker: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Exercise Type *
                 </label>
                 <div className="space-y-2">
@@ -1337,10 +1344,10 @@ const WorkoutTracker: React.FC = () => {
                       className="h-4 w-4 text-primary-600"
                     />
                     <div>
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
                         Strength/Weights
                       </span>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         Track sets, reps, and weight
                       </p>
                     </div>
@@ -1354,8 +1361,10 @@ const WorkoutTracker: React.FC = () => {
                       className="h-4 w-4 text-primary-600"
                     />
                     <div>
-                      <span className="font-medium text-gray-900">Cardio</span>
-                      <p className="text-xs text-gray-500">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        Cardio
+                      </span>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         Track distance and time
                       </p>
                     </div>
@@ -1366,7 +1375,7 @@ const WorkoutTracker: React.FC = () => {
               {/* Category Selection - Show only for strength exercises */}
               {customExerciseType === 'strength' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Muscle Group *
                   </label>
                   <select

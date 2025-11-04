@@ -133,17 +133,19 @@ const Progress: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Progress</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          Progress
+        </h1>
         <div className="flex space-x-2">
           {(['week', 'month', 'all'] as const).map((period) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedPeriod === period
+                selectedPeriod === period
                   ? 'bg-primary-600 text-white dark:bg-primary-500'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
-            }`}
+              }`}
             >
               {period === 'all' ? 'All Time' : `Last ${period}`}
             </button>
@@ -156,7 +158,9 @@ const Progress: React.FC = () => {
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Workouts</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Workouts
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.totalWorkouts}
               </p>
@@ -168,7 +172,9 @@ const Progress: React.FC = () => {
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Sets</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Total Sets
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.totalSets}
               </p>
@@ -194,7 +200,9 @@ const Progress: React.FC = () => {
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Duration</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Avg Duration
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.averageDuration}m
               </p>
@@ -258,7 +266,9 @@ const Progress: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-600 dark:text-gray-400">Personal Best</p>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          Personal Best
+                        </p>
                         {isCardio ? (
                           <div>
                             <p className="font-semibold dark:text-gray-200">
@@ -299,7 +309,9 @@ const Progress: React.FC = () => {
                         )}
                       </div>
                       <div>
-                        <p className="text-gray-600 dark:text-gray-400">Current Session</p>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          Current Session
+                        </p>
                         {isCardio ? (
                           <p className="font-semibold dark:text-gray-200">
                             {prog.currentSession.distance
@@ -351,7 +363,10 @@ const Progress: React.FC = () => {
               {filteredWorkouts
                 .sort((a, b) => b.date.getTime() - a.date.getTime())
                 .map((workout) => (
-                  <div key={workout.id} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div
+                    key={workout.id}
+                    className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
+                  >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-2">
@@ -373,19 +388,25 @@ const Progress: React.FC = () => {
                         </p>
                         <div className="grid grid-cols-3 gap-4 text-sm mb-3">
                           <div>
-                            <p className="text-gray-600 dark:text-gray-400">Exercises</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              Exercises
+                            </p>
                             <p className="font-semibold dark:text-gray-200">
                               {workout.exercises.length}
                             </p>
                           </div>
                           <div>
-                            <p className="text-gray-600 dark:text-gray-400">Sets</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              Sets
+                            </p>
                             <p className="font-semibold dark:text-gray-200">
                               {workout.sets.filter((s) => s.completed).length}
                             </p>
                           </div>
                           <div>
-                            <p className="text-gray-600 dark:text-gray-400">Duration</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              Duration
+                            </p>
                             <p className="font-semibold dark:text-gray-200">
                               {workout.duration
                                 ? `${workout.duration}m`
