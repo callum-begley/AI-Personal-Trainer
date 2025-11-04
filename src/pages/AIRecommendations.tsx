@@ -149,10 +149,10 @@ const AIRecommendations: React.FC = () => {
     <div className="space-y-8">
       <div className="flex justify-between items-center flex-col">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
             AI Recommendations
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             Get personalized training advice based on your workout history and
             progress
           </p>
