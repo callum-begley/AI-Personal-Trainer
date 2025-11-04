@@ -1,6 +1,7 @@
 ## To Add:
 - custom workouts, use ai to complete data?
-- favorite workouts
+- add steps tracker
+- favorite workouts - show big on workout start screen
 - ai returns more fun quirky workout names
 - better name?
 - send ai last workouts for recommended improvements
