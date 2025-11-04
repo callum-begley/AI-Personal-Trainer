@@ -2,6 +2,7 @@
 - custom workouts, use ai to complete data?
 - add steps tracker
 - favorite workouts - show big on workout start screen
+- motivational quotes
 - ai returns more fun quirky workout names
 - better name?
 - send ai last workouts for recommended improvements
