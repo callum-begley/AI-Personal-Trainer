@@ -133,17 +133,17 @@ const Progress: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Progress</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Progress</h1>
         <div className="flex space-x-2">
           {(['week', 'month', 'all'] as const).map((period) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                selectedPeriod === period
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              selectedPeriod === period
+                  ? 'bg-primary-600 text-white dark:bg-primary-500'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+            }`}
             >
               {period === 'all' ? 'All Time' : `Last ${period}`}
             </button>
@@ -156,50 +156,50 @@ const Progress: React.FC = () => {
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Workouts</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Workouts</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.totalWorkouts}
               </p>
             </div>
-            <Calendar className="h-8 w-8 text-primary-600" />
+            <Calendar className="h-8 w-8 text-primary-600 dark:text-primary-500" />
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Sets</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Sets</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.totalSets}
               </p>
             </div>
-            <TrendingUp className="h-8 w-8 text-green-600" />
+            <TrendingUp className="h-8 w-8 text-green-600 dark:text-green-500" />
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total Duration
               </p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.totalDuration}m
               </p>
             </div>
-            <Award className="h-8 w-8 text-blue-600" />
+            <Award className="h-8 w-8 text-blue-600 dark:text-blue-500" />
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Avg Duration</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Duration</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {stats.averageDuration}m
               </p>
             </div>
-            <TrendingUp className="h-8 w-8 text-purple-600" />
+            <TrendingUp className="h-8 w-8 text-purple-600 dark:text-purple-500" />
           </div>
         </div>
       </div>
@@ -208,7 +208,7 @@ const Progress: React.FC = () => {
         {/* Exercise Progress */}
         <div className="card">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               Exercise Progress
             </h2>
             <select
@@ -230,11 +230,11 @@ const Progress: React.FC = () => {
             </select>
           </div>
           {progress.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
               Complete some workouts to see your progress here
             </p>
           ) : getFilteredProgress().length === 0 ? (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
               No exercises found in this category
             </p>
           ) : (
@@ -244,10 +244,10 @@ const Progress: React.FC = () => {
                 return (
                   <div
                     key={prog.exerciseId}
-                    className="bg-gray-50 p-4 rounded-lg"
+                    className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
                         {prog.exerciseName}
                       </h3>
                       {prog.improvement && (
@@ -258,10 +258,10 @@ const Progress: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-600">Personal Best</p>
+                        <p className="text-gray-600 dark:text-gray-400">Personal Best</p>
                         {isCardio ? (
                           <div>
-                            <p className="font-semibold">
+                            <p className="font-semibold dark:text-gray-200">
                               {prog.previousBest.distance
                                 ? `${prog.previousBest.distance} km`
                                 : ''}
@@ -285,7 +285,7 @@ const Progress: React.FC = () => {
                           </div>
                         ) : (
                           <div>
-                            <p className="font-semibold">
+                            <p className="font-semibold dark:text-gray-200">
                               {prog.previousBest.reps} reps
                               {prog.previousBest.weight &&
                               Number(prog.previousBest.weight) > 0
@@ -299,9 +299,9 @@ const Progress: React.FC = () => {
                         )}
                       </div>
                       <div>
-                        <p className="text-gray-600">Current Session</p>
+                        <p className="text-gray-600 dark:text-gray-400">Current Session</p>
                         {isCardio ? (
-                          <p className="font-semibold">
+                          <p className="font-semibold dark:text-gray-200">
                             {prog.currentSession.distance
                               ? `${prog.currentSession.distance} km`
                               : ''}
@@ -320,7 +320,7 @@ const Progress: React.FC = () => {
                               : ''}
                           </p>
                         ) : (
-                          <p className="font-semibold">
+                          <p className="font-semibold dark:text-gray-200">
                             {prog.currentSession.reps} reps
                             {prog.currentSession.weight &&
                             Number(prog.currentSession.weight) > 0
