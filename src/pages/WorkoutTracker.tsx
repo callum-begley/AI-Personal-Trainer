@@ -1088,7 +1088,7 @@ const WorkoutTracker: React.FC = () => {
                     .map((workout) => (
                       <option key={workout.id} value={workout.id}>
                         {workout.name} -{' '}
-                        {new Date(workout.date).toLocaleDateString()}
+                        {new Date(workout.date).toLocaleDateString('en-GB')}
                       </option>
                     ))}
                 </select>
