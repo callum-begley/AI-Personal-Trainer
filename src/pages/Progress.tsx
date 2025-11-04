@@ -339,11 +339,11 @@ const Progress: React.FC = () => {
 
         {/* Workout History */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
             Workout History
           </h2>
           {filteredWorkouts.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
               No workouts found for the selected period
             </p>
           ) : (
@@ -351,42 +351,42 @@ const Progress: React.FC = () => {
               {filteredWorkouts
                 .sort((a, b) => b.date.getTime() - a.date.getTime())
                 .map((workout) => (
-                  <div key={workout.id} className="bg-gray-50 p-4 rounded-lg">
+                  <div key={workout.id} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-2">
-                          <h3 className="font-medium text-gray-900">
+                          <h3 className="font-medium text-gray-900 dark:text-gray-100">
                             {workout.name}
                           </h3>
                           <button
                             onClick={() =>
                               showDeleteConfirmation(workout.id, workout.name)
                             }
-                            className="text-red-600 hover:text-red-800 p-1"
+                            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
                             title="Delete workout"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                           {formatDate(workout.date)}
                         </p>
                         <div className="grid grid-cols-3 gap-4 text-sm mb-3">
                           <div>
-                            <p className="text-gray-600">Exercises</p>
-                            <p className="font-semibold">
+                            <p className="text-gray-600 dark:text-gray-400">Exercises</p>
+                            <p className="font-semibold dark:text-gray-200">
                               {workout.exercises.length}
                             </p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Sets</p>
-                            <p className="font-semibold">
+                            <p className="text-gray-600 dark:text-gray-400">Sets</p>
+                            <p className="font-semibold dark:text-gray-200">
                               {workout.sets.filter((s) => s.completed).length}
                             </p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Duration</p>
-                            <p className="font-semibold">
+                            <p className="text-gray-600 dark:text-gray-400">Duration</p>
+                            <p className="font-semibold dark:text-gray-200">
                               {workout.duration
                                 ? `${workout.duration}m`
                                 : 'N/A'}
@@ -395,7 +395,7 @@ const Progress: React.FC = () => {
                         </div>
 
                         {/* Exercise Details */}
-                        <div className="space-y-1 border-t pt-2">
+                        <div className="space-y-1 border-t dark:border-gray-600 pt-2">
                           {workout.exercises.map((exercise) => {
                             const exerciseSets = workout.sets.filter(
                               (s) => s.exerciseId === exercise.id && s.completed
@@ -407,7 +407,7 @@ const Progress: React.FC = () => {
                             return (
                               <div
                                 key={exercise.id}
-                                className="text-xs text-gray-600 flex justify-between"
+                                className="text-xs text-gray-600 dark:text-gray-400 flex justify-between"
                               >
                                 <span className="font-medium">
                                   {exercise.name}:
@@ -449,25 +449,25 @@ const Progress: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {workoutToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md m-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md m-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
-                <h3 className="text-lg font-semibold text-gray-900">
+                <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Delete Workout
                 </h3>
               </div>
               <button
                 onClick={cancelDeleteWorkout}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="mb-6">
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Are you sure you want to delete the workout "
                 {workoutToDelete.name}"? This action cannot be undone.
               </p>
@@ -476,13 +476,13 @@ const Progress: React.FC = () => {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelDeleteWorkout}
-                className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDeleteWorkout}
-                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center space-x-2"
+                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 rounded-md transition-colors flex items-center space-x-2"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>Delete</span>

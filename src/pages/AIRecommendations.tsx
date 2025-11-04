@@ -169,11 +169,11 @@ const AIRecommendations: React.FC = () => {
 
       {workouts.length === 0 ? (
         <div className="card text-center py-12">
-          <Brain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <Brain className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
             No Workout Data Available
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Complete some workouts first to get personalized AI recommendations
             based on your performance and progress.
           </p>
@@ -188,42 +188,42 @@ const AIRecommendations: React.FC = () => {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Total Workouts
                   </p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {workouts.length}
                   </p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-primary-600" />
+                <TrendingUp className="h-8 w-8 text-primary-600 dark:text-primary-500" />
               </div>
             </div>
 
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Exercises Tracked
                   </p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {progress.length}
                   </p>
                 </div>
-                <Lightbulb className="h-8 w-8 text-green-600" />
+                <Lightbulb className="h-8 w-8 text-green-600 dark:text-green-500" />
               </div>
             </div>
 
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Recommendations
                   </p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {recommendations.length}
                   </p>
                 </div>
-                <Brain className="h-8 w-8 text-blue-600" />
+                <Brain className="h-8 w-8 text-blue-600 dark:text-blue-500" />
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@ const AIRecommendations: React.FC = () => {
           {/* Recommendations */}
           {recommendations.length > 0 ? (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 Your Personalized Recommendations
               </h2>
 
@@ -251,21 +251,21 @@ const AIRecommendations: React.FC = () => {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
-                          <div className="flex-shrink-0 p-2 bg-gray-100 rounded-lg">
+                          <div className="flex-shrink-0 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
                             {getTypeIcon(rec.type)}
                           </div>
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                                 {rec.title}
                               </h3>
                               {rec.exerciseName && (
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-gray-500 dark:text-gray-400">
                                   • {rec.exerciseName}
                                 </span>
                               )}
                             </div>
-                            <span className="text-sm font-medium text-gray-600">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                               {getTypeLabel(rec.type)}
                             </span>
                           </div>
@@ -279,16 +279,16 @@ const AIRecommendations: React.FC = () => {
                           >
                             {rec.priority.toUpperCase()}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {Math.round(rec.confidence * 100)}% confidence
                           </span>
                         </div>
                       </div>
 
-                      <p className="text-gray-700 mb-3">{rec.description}</p>
+                      <p className="text-gray-700 dark:text-gray-300 mb-3">{rec.description}</p>
 
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-sm text-gray-600">
+                      <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
                           <span className="font-medium">AI Reasoning:</span>{' '}
                           {rec.reasoning}
                         </p>
@@ -300,11 +300,11 @@ const AIRecommendations: React.FC = () => {
           ) : (
             !loading && (
               <div className="card text-center py-12">
-                <Brain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                <Brain className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                   No Recommendations Yet
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
                   Click "Refresh Recommendations" to get AI-powered training
                   advice based on your workout history.
                 </p>
