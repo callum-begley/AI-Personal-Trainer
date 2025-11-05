@@ -2,6 +2,9 @@
 - dark toasts
 - more goal options, setting editing
 - custom workouts, use ai to complete data?
+- prompt before deleting set
+- add another set [+]
+- minimize workout notes
 - intervals for cardio eg plank 3 sets of 1 min ??
 - 0kg change to bodyweight in current workout
 - add steps tracker
