@@ -481,28 +481,28 @@ const WorkoutTracker: React.FC = () => {
             </div>
           )}
           {!currentWorkout ? (
-            <div className="flex space-x-2 flex-col md:flex-row">
+            <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
               <button
                 onClick={startWorkout}
-                className="btn-primary flex items-center space-x-2"
+                className="btn-primary flex items-center justify-center space-x-2 w-full md:w-auto"
               >
                 <Play className="h-4 w-4" />
                 <span>Start Workout</span>
               </button>
               <button
                 onClick={() => setShowPlanForm(true)}
-                className="btn-secondary flex items-center space-x-2"
+                className="btn-secondary flex items-center justify-center space-x-2 w-full md:w-auto"
               >
                 <Brain className="h-4 w-4" />
                 <span>AI Plan</span>
               </button>
             </div>
           ) : (
-            <div className="flex md:space-x-2 md:flex-row flex-col">
+            <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
               {isWorkoutActive ? (
                 <button
                   onClick={stopWorkout}
-                  className="btn-secondary flex items-center space-x-2"
+                  className="btn-secondary flex items-center justify-center space-x-2 w-full md:w-auto"
                 >
                   <Square className="h-4 w-4" />
                   <span>Pause</span>
@@ -528,7 +528,7 @@ const WorkoutTracker: React.FC = () => {
                       timer === 0 ? 'Workout started!' : 'Timer resumed!'
                     )
                   }}
-                  className="btn-secondary flex items-center space-x-2"
+                  className="btn-secondary flex items-center justify-center space-x-2 w-full md:w-auto"
                 >
                   <Play className="h-4 w-4" />
                   <span>{timer === 0 ? 'Start' : 'Resume'}</span>
@@ -536,7 +536,7 @@ const WorkoutTracker: React.FC = () => {
               )}
               <button
                 onClick={finishWorkout}
-                className="btn-primary flex items-center space-x-2"
+                className="btn-primary flex items-center justify-center space-x-2 w-full md:w-auto"
               >
                 <Save className="h-4 w-4" />
                 <span>Finish</span>
@@ -1049,17 +1049,17 @@ const WorkoutTracker: React.FC = () => {
             personalized workout plan for you.
           </p>
 
-          <div className="flex space-x-4 justify-center flex-col sm:flex-row">
+          <div className="flex gap-2 justify-center flex-col sm:flex-row">
             <button
               onClick={startWorkout}
-              className="btn-primary flex items-center space-x-2 mx-auto sm:mx-0"
+              className="btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto"
             >
               <Play className="h-4 w-4" />
               <span>Start Workout</span>
             </button>
             <button
               onClick={() => setShowPlanForm(true)}
-              className="btn-secondary flex items-center space-x-2 mx-auto sm:mx-0"
+              className="btn-secondary flex items-center justify-center space-x-2 w-full sm:w-auto"
             >
               <Brain className="h-4 w-4" />
               <span>Generate AI Plan</span>
