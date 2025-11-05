@@ -1,5 +1,6 @@
 ## To Add:
 - custom workouts, use ai to complete data?
+- intervals for cardio eg plank 3 sets of 1 min ??
 - add steps tracker
 - favorite workouts - show big on workout start screen
 - motivational quotes
