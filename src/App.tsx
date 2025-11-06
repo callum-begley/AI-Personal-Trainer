@@ -21,7 +21,16 @@ function App() {
               <Route path="/recommendations" element={<AIRecommendations />} />
             </Routes>
           </main>
-          <Toaster position="top-right" />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              className: 'dark:!bg-gray-800 dark:!text-gray-100',
+              style: {
+                border: '1px solid',
+                borderColor: 'rgb(229 231 235)',
+              },
+            }}
+          />
         </div>
       </Router>
     </DarkModeProvider>
