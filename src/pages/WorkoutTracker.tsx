@@ -57,6 +57,8 @@ const WorkoutTracker: React.FC = () => {
   const [isWorkoutActive, setIsWorkoutActive] = useState(false)
   const [timer, setTimer] = useState(0)
   const [timerInterval, setTimerInterval] = useState<number | null>(null)
+  const [startTime, setStartTime] = useState<number | null>(null)
+  const [pausedTime, setPausedTime] = useState(0)
   const [editingSetId, setEditingSetId] = useState<string | null>(null)
   const [editingValues, setEditingValues] = useState<{
     reps: number
@@ -108,6 +110,22 @@ const WorkoutTracker: React.FC = () => {
     }
   }, [timerInterval])
 
+  // Update timer based on elapsed time
+  useEffect(() => {
+    if (isWorkoutActive && startTime !== null) {
+      const interval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000) + pausedTime
+        setTimer(elapsed)
+      }, 100) // Update every 100ms for accuracy
+      setTimerInterval(interval)
+
+      return () => clearInterval(interval)
+    } else if (timerInterval) {
+      clearInterval(timerInterval)
+      setTimerInterval(null)
+    }
+  }, [isWorkoutActive, startTime])
+
   const startWorkout = () => {
     const newWorkout: Workout = {
       id: Date.now().toString(),
@@ -121,6 +139,8 @@ const WorkoutTracker: React.FC = () => {
     setCurrentWorkout(newWorkout)
     setIsWorkoutActive(false) // Don't start timing automatically
     setTimer(0)
+    setStartTime(null)
+    setPausedTime(0)
   }
 
   const loadSavedWorkout = (workoutId: string) => {
@@ -146,6 +166,8 @@ const WorkoutTracker: React.FC = () => {
     setCurrentWorkout(newWorkout)
     setIsWorkoutActive(false)
     setTimer(0)
+    setStartTime(null)
+    setPausedTime(0)
     toast.success(`Loaded workout: ${savedWorkout.name}`)
   }
 
@@ -155,6 +177,11 @@ const WorkoutTracker: React.FC = () => {
       setTimerInterval(null)
     }
     setIsWorkoutActive(false)
+    // Save the current elapsed time
+    if (startTime !== null) {
+      setPausedTime(Math.floor((Date.now() - startTime) / 1000) + pausedTime)
+      setStartTime(null)
+    }
     toast.success('Workout paused')
   }
 
@@ -519,11 +546,7 @@ const WorkoutTracker: React.FC = () => {
                     }
 
                     setIsWorkoutActive(true)
-                    const interval = setInterval(
-                      () => setTimer((prev) => prev + 1),
-                      1000
-                    )
-                    setTimerInterval(interval)
+                    setStartTime(Date.now())
                     toast.success(
                       timer === 0 ? 'Workout started!' : 'Timer resumed!'
                     )
