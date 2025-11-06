@@ -276,16 +276,19 @@ const Progress: React.FC = () => {
                                 ? `${prog.previousBest.distance} km`
                                 : ''}
                               {prog.previousBest.distance &&
-                              prog.previousBest.duration
+                              prog.previousBest.duration &&
+                              prog.previousBest.duration > 0
                                 ? ' • '
                                 : ''}
-                              {prog.previousBest.duration
+                              {prog.previousBest.duration &&
+                              prog.previousBest.duration > 0
                                 ? `${Math.floor(
                                     prog.previousBest.duration / 60
                                   )} min ${prog.previousBest.duration % 60} sec`
                                 : ''}
                               {!prog.previousBest.distance &&
-                              !prog.previousBest.duration
+                              (!prog.previousBest.duration ||
+                                prog.previousBest.duration === 0)
                                 ? 'No data'
                                 : ''}
                             </p>
@@ -318,16 +321,19 @@ const Progress: React.FC = () => {
                               ? `${prog.currentSession.distance} km`
                               : ''}
                             {prog.currentSession.distance &&
-                            prog.currentSession.duration
+                            prog.currentSession.duration &&
+                            prog.currentSession.duration > 0
                               ? ' • '
                               : ''}
-                            {prog.currentSession.duration
+                            {prog.currentSession.duration &&
+                            prog.currentSession.duration > 0
                               ? `${Math.floor(
                                   prog.currentSession.duration / 60
                                 )} min ${prog.currentSession.duration % 60} sec`
                               : ''}
                             {!prog.currentSession.distance &&
-                            !prog.currentSession.duration
+                            (!prog.currentSession.duration ||
+                              prog.currentSession.duration === 0)
                               ? 'No data'
                               : ''}
                           </p>

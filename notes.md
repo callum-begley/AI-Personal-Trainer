@@ -1,5 +1,6 @@
 ## To Add:
-- dark toasts
+- save seconds from timer not just minutes
+- cardio in current workout ==  0 don't show
 - more goal options, setting editing
 - custom workouts, use ai to complete data?
 - prompt before deleting set

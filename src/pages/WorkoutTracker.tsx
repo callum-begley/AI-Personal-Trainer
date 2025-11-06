@@ -201,8 +201,26 @@ const WorkoutTracker: React.FC = () => {
       return
     }
 
+    // Update cardio exercises that don't have a manually entered duration
+    // to use the final workout timer value
+    const updatedSets = currentWorkout.sets.map((set) => {
+      if (
+        set.isCardio &&
+        set.completed &&
+        (!set.duration || set.duration === 0)
+      ) {
+        // If cardio exercise has no duration or duration is 0, use the workout timer
+        return {
+          ...set,
+          duration: timer,
+        }
+      }
+      return set
+    })
+
     const completedWorkout: Workout = {
       ...currentWorkout,
+      sets: updatedSets,
       duration: Math.floor(timer / 60),
       completed: true,
     }
@@ -217,6 +235,8 @@ const WorkoutTracker: React.FC = () => {
     setCurrentWorkout(null)
     setIsWorkoutActive(false)
     setTimer(0)
+    setStartTime(null)
+    setPausedTime(0)
 
     toast.success('Workout completed and saved!')
   }
@@ -248,8 +268,8 @@ const WorkoutTracker: React.FC = () => {
         reps: 0, // Not used for cardio
         duration:
           data.duration != null && data.duration > 0
-            ? data.duration * 60
-            : timer, // Convert minutes to seconds if manually entered, otherwise use workout timer
+            ? data.duration * 60 // Convert minutes to seconds if manually entered
+            : 0, // Set to 0 initially, will be updated with workout timer on finish
         distance: data.distance || undefined,
         completed: false,
         isCardio: true,
