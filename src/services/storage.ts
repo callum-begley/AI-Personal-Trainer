@@ -127,6 +127,16 @@ class StorageService {
             },
           })
         } else {
+          // Update current session if this workout is more recent
+          if (workout.date >= existing.previousBest.date) {
+            existing.currentSession = {
+              weight: set.weight,
+              reps: set.reps,
+              distance: set.distance,
+              duration: set.duration,
+            }
+          }
+
           // Update if this is a better performance
           let isBetter = false
 
