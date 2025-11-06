@@ -132,16 +132,16 @@ const Progress: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+      <div className="sm:flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 sm:mb-0 mb-4">
           Progress
         </h1>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 justify-around">
           {(['week', 'month', 'all'] as const).map((period) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium sm:text-base transition-colors ${
                 selectedPeriod === period
                   ? 'bg-primary-600 text-white dark:bg-primary-500'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
