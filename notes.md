@@ -5,6 +5,8 @@
 - prompt before deleting set
 - add another set [+]
 - minimize workout notes
+- mobile navbar
+- persist data on page change ???
 - intervals for cardio eg plank 3 sets of 1 min ??
 - 0kg change to bodyweight in current workout
 - add steps tracker
