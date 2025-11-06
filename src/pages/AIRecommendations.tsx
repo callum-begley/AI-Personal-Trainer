@@ -261,7 +261,7 @@ const AIRecommendations: React.FC = () => {
                           </div>
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                              <h3 className="font-semibold text-gray-900 dark:text-primary-500">
                                 {rec.title}
                               </h3>
                             </div>
@@ -271,7 +271,7 @@ const AIRecommendations: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 flex-col sm:flex-row">
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded border ${getPriorityColor(
                               rec.priority
