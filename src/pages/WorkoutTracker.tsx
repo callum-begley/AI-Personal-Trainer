@@ -493,7 +493,7 @@ const WorkoutTracker: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center md:flex-row flex-col">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 sm:mb-0 mb-4">
           Workout Tracker
         </h1>
         <div className="flex items-center space-x-4">

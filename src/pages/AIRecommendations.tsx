@@ -249,6 +249,11 @@ const AIRecommendations: React.FC = () => {
                       key={index}
                       className="card hover:shadow-lg transition-shadow"
                     >
+                      {rec.exerciseName && (
+                        <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2 border-b">
+                          {rec.exerciseName}
+                        </div>
+                      )}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
                           <div className="flex-shrink-0 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
@@ -259,11 +264,6 @@ const AIRecommendations: React.FC = () => {
                               <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                                 {rec.title}
                               </h3>
-                              {rec.exerciseName && (
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  • {rec.exerciseName}
-                                </span>
-                              )}
                             </div>
                             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                               {getTypeLabel(rec.type)}
