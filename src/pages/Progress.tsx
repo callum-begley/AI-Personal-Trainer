@@ -246,7 +246,7 @@ const Progress: React.FC = () => {
               No exercises found in this category
             </p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
               {getFilteredProgress().map((prog) => {
                 const isCardio = isCardioExercise(prog.exerciseId)
                 return (
