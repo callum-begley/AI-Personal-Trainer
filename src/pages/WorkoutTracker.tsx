@@ -28,6 +28,7 @@ interface WorkoutForm {
   weight: number
   distance: number
   duration: number
+  durationSeconds: number
 }
 
 interface WorkoutPlanForm {
@@ -262,14 +263,17 @@ const WorkoutTracker: React.FC = () => {
 
     if (isCardio) {
       // For cardio: create a single entry with duration and/or distance
+      // Calculate total duration in seconds (minutes * 60 + seconds)
+      const minutes = Number(data.duration) || 0
+      const seconds = Number(data.durationSeconds) || 0
+      const totalDuration =
+        minutes > 0 || seconds > 0 ? minutes * 60 + seconds : 0
+
       newSets.push({
         id: `${Date.now()}`,
         exerciseId: exercise.id,
         reps: 0, // Not used for cardio
-        duration:
-          data.duration != null && data.duration > 0
-            ? data.duration * 60 // Convert minutes to seconds if manually entered
-            : 0, // Set to 0 initially, will be updated with workout timer on finish
+        duration: totalDuration, // Use calculated duration or 0 (will be updated with workout timer on finish)
         distance: data.distance || undefined,
         completed: false,
         isCardio: true,
@@ -660,33 +664,49 @@ const WorkoutTracker: React.FC = () => {
                   // Cardio Exercise Fields
                   <>
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Distance (km)
-                          </label>
-                          <input
-                            {...register('distance', { min: 0 })}
-                            type="number"
-                            className="input-field"
-                            placeholder="5.0"
-                            min="0"
-                            step="0.1"
-                          />
-                        </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Distance (km)
+                        </label>
+                        <input
+                          {...register('distance', { min: 0 })}
+                          type="number"
+                          className="input-field"
+                          placeholder="5.0"
+                          min="0"
+                          step="0.1"
+                        />
+                      </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Duration (min)
-                          </label>
-                          <input
-                            {...register('duration', { min: 0 })}
-                            type="number"
-                            className="input-field"
-                            placeholder="30"
-                            min="0"
-                            step="1"
-                          />
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Duration
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <input
+                              {...register('duration', { min: 0 })}
+                              type="number"
+                              className="input-field"
+                              placeholder="Minutes"
+                              min="0"
+                              step="1"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              {...register('durationSeconds', {
+                                min: 0,
+                                max: 59,
+                              })}
+                              type="number"
+                              className="input-field"
+                              placeholder="Seconds"
+                              min="0"
+                              max="59"
+                              step="1"
+                            />
+                          </div>
                         </div>
                       </div>
 
