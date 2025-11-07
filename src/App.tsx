@@ -13,7 +13,7 @@ function App() {
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Navbar />
-          <main className="container mx-auto sm:px-4 py-8 px-1">
+          <main className="container mx-auto sm:px-4 py-8 px-1 pb-24 sm:pb-8">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/workout" element={<WorkoutTracker />} />
