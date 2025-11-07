@@ -1,14 +1,9 @@
 ## To Add:
-- clear current workout button
 - user can add workout notes
-- save seconds from timer not just minutes
 - edit cardio values in current
 - cardio in current workout ==  0 don't show
 - more goal options, setting editing
 - custom workouts, use ai to complete data?
-- prompt before deleting set
-- add another set [+]
-- minimize workout notes
 - intervals for cardio eg plank 3 sets of 1 min ?? or separate
 - ask to input for amrap
 - ai suggests alternative workouts
@@ -21,5 +16,4 @@
 - send ai last workouts for recommended improvements
 - send saved for recommended improvements
 - set up database, remove from local storage
-- cache ai recs and only update on button push
 - select lb/kg
