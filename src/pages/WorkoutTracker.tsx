@@ -19,6 +19,7 @@ import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
 import { AITrainerService } from '../services/aiTrainer'
 import { Workout, Exercise, WorkoutSet } from '../types/workout'
+import { useWorkout } from '../contexts/WorkoutContext'
 
 interface WorkoutForm {
   name: string
@@ -52,14 +53,23 @@ interface WorkoutPlanForm {
 }
 
 const WorkoutTracker: React.FC = () => {
-  const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null)
+  // Use workout context for shared state
+  const {
+    currentWorkout,
+    setCurrentWorkout,
+    isWorkoutActive,
+    setIsWorkoutActive,
+    timer,
+    setTimer,
+    startTime,
+    setStartTime,
+    pausedTime,
+    setPausedTime,
+  } = useWorkout()
+
+  // Local state
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [savedWorkouts, setSavedWorkouts] = useState<Workout[]>([])
-  const [isWorkoutActive, setIsWorkoutActive] = useState(false)
-  const [timer, setTimer] = useState(0)
-  const [timerInterval, setTimerInterval] = useState<number | null>(null)
-  const [startTime, setStartTime] = useState<number | null>(null)
-  const [pausedTime, setPausedTime] = useState(0)
   const [editingSetId, setEditingSetId] = useState<string | null>(null)
   const [editingValues, setEditingValues] = useState<{
     reps: number
@@ -102,30 +112,6 @@ const WorkoutTracker: React.FC = () => {
     const loadedWorkouts = storageService.getWorkouts()
     setSavedWorkouts(loadedWorkouts)
   }, [])
-
-  useEffect(() => {
-    return () => {
-      if (timerInterval) {
-        clearInterval(timerInterval)
-      }
-    }
-  }, [timerInterval])
-
-  // Update timer based on elapsed time
-  useEffect(() => {
-    if (isWorkoutActive && startTime !== null) {
-      const interval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000) + pausedTime
-        setTimer(elapsed)
-      }, 100) // Update every 100ms for accuracy
-      setTimerInterval(interval)
-
-      return () => clearInterval(interval)
-    } else if (timerInterval) {
-      clearInterval(timerInterval)
-      setTimerInterval(null)
-    }
-  }, [isWorkoutActive, startTime])
 
   const startWorkout = () => {
     const newWorkout: Workout = {
@@ -173,10 +159,6 @@ const WorkoutTracker: React.FC = () => {
   }
 
   const stopWorkout = () => {
-    if (timerInterval) {
-      clearInterval(timerInterval)
-      setTimerInterval(null)
-    }
     setIsWorkoutActive(false)
     // Save the current elapsed time
     if (startTime !== null) {
@@ -239,11 +221,6 @@ const WorkoutTracker: React.FC = () => {
     }
 
     storageService.saveWorkout(completedWorkout)
-
-    if (timerInterval) {
-      clearInterval(timerInterval)
-      setTimerInterval(null)
-    }
 
     setCurrentWorkout(null)
     setIsWorkoutActive(false)

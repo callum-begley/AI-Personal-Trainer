@@ -8,8 +8,9 @@
 - add another set [+]
 - minimize workout notes
 - mobile navbar
-- persist data on page change ???
-- intervals for cardio eg plank 3 sets of 1 min ??
+- intervals for cardio eg plank 3 sets of 1 min ?? or separate
+- ask to input for amrap
+- ai suggests alternative workouts
 - 0kg change to bodyweight in current workout
 - add steps tracker
 - favorite workouts - show big on workout start screen

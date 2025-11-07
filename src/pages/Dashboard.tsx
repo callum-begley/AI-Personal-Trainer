@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, TrendingUp, Target, Clock } from 'lucide-react'
+import { Calendar, TrendingUp, Target, Clock, Dumbbell } from 'lucide-react'
 import { storageService } from '../services/storage'
 import { Workout } from '../types/workout'
+import { useWorkout } from '../contexts/WorkoutContext'
 
 const Dashboard: React.FC = () => {
+  const { currentWorkout, timer } = useWorkout()
   const [recentWorkouts, setRecentWorkouts] = useState<Workout[]>([])
   const [stats, setStats] = useState({
     totalWorkouts: 0,
@@ -61,6 +63,39 @@ const Dashboard: React.FC = () => {
           Start New Workout
         </Link>
       </div>
+
+      {/* Active Workout Indicator */}
+      {currentWorkout && (
+        <div className="card bg-primary-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 border-2 border-primary-200 dark:border-primary-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-primary-600 dark:bg-primary-500 rounded-full p-3">
+                <Dumbbell className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Active Workout
+                </p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  {currentWorkout.name}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {currentWorkout.sets.length} exercise
+                  {currentWorkout.sets.length !== 1 ? 's' : ''} •{' '}
+                  {Math.floor(timer / 60)}:
+                  {(timer % 60).toString().padStart(2, '0')}
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/workout"
+              className="btn-primary flex items-center space-x-2"
+            >
+              <span>Continue</span>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">

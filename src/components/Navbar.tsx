@@ -10,12 +10,15 @@ import {
   DumbbellIcon,
   Moon,
   Sun,
+  Clock,
 } from 'lucide-react'
 import { useDarkMode } from '../contexts/DarkModeContext'
+import { useWorkout } from '../contexts/WorkoutContext'
 
 const Navbar: React.FC = () => {
   const location = useLocation()
   const { isDarkMode, toggleDarkMode } = useDarkMode()
+  const { currentWorkout, timer } = useWorkout()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>(
     'desktop'
@@ -156,17 +159,31 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMobileMenu}
-              className="sm:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
+            <div className="sm:hidden flex items-center space-x-2">
+              {currentWorkout && (
+                <Link
+                  to="/workout"
+                  className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400"
+                >
+                  <Clock className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    {Math.floor(timer / 60)}:
+                    {(timer % 60).toString().padStart(2, '0')}
+                  </span>
+                </Link>
               )}
-            </button>
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
