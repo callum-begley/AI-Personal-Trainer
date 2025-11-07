@@ -185,9 +185,13 @@ const Navbar: React.FC = () => {
             <div className="p-4 border-b dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Activity className="h-6 w-6 text-primary-600 dark:text-primary-500" />
+                  <DumbbellIcon className="h-6 w-6 text-primary-600 dark:text-primary-500" />
                   <span className="font-bold text-gray-800 dark:text-gray-200">
-                    AI Trainer
+                    TR
+                    <span className="text-primary-600 dark:text-primary-500 font-extrabold">
+                      AI
+                    </span>
+                    NER
                   </span>
                 </div>
                 <button
