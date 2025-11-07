@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
 
       {/* Active Workout Indicator */}
       {currentWorkout && (
-        <div className="card bg-primary-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 border-2 border-primary-200 dark:border-primary-700">
+        <div className="card bg-primary-50 bg-gradient-to-r from-primary-50 to-gray-300 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 border-2 border-primary-200 border-primary-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="bg-primary-600 dark:bg-primary-500 rounded-full p-3">
