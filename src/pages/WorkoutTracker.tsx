@@ -832,20 +832,13 @@ const WorkoutTracker: React.FC = () => {
                 Current Workout
               </h2>
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setShowClearConfirmation(true)}
-                  className="btn-secondary flex items-center space-x-2 text-sm"
-                >
-                  <X className="h-4 w-4" />
-                  <span className="hidden sm:inline">Clear</span>
-                </button>
                 {currentWorkout.sets.length > 0 && (
                   <button
                     onClick={completeAllSets}
                     className="btn-secondary flex items-center space-x-2 text-sm"
                   >
                     <Check className="h-4 w-4" />
-                    <span className="hidden sm:inline">Complete All</span>
+                    <span>Complete All</span>
                   </button>
                 )}
               </div>
@@ -1171,6 +1164,17 @@ const WorkoutTracker: React.FC = () => {
                 )}
               </div>
             )}
+
+            {/* Clear Workout Button */}
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setShowClearConfirmation(true)}
+                className="btn-secondary flex items-center justify-center space-x-2 w-full text-sm"
+              >
+                <X className="h-4 w-4" />
+                <span>Clear Workout</span>
+              </button>
+            </div>
           </div>
         </div>
       ) : (
