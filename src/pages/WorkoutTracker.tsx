@@ -219,10 +219,22 @@ const WorkoutTracker: React.FC = () => {
       return set
     })
 
+    // Calculate workout duration
+    // If timer was used (timer > 0), use that. Otherwise, sum up cardio durations
+    let workoutDuration = Math.floor(timer / 60)
+
+    if (timer === 0) {
+      // No timer was used, calculate from cardio exercises
+      const totalCardioSeconds = updatedSets
+        .filter((set) => set.isCardio && set.completed && set.duration)
+        .reduce((sum, set) => sum + (set.duration || 0), 0)
+      workoutDuration = Math.floor(totalCardioSeconds / 60)
+    }
+
     const completedWorkout: Workout = {
       ...currentWorkout,
       sets: updatedSets,
-      duration: Math.floor(timer / 60),
+      duration: workoutDuration,
       completed: true,
     }
 
