@@ -14,6 +14,7 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
+  AlertTriangle,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
@@ -86,6 +87,7 @@ const WorkoutTracker: React.FC = () => {
   const [customExerciseType, setCustomExerciseType] = useState<
     'cardio' | 'strength'
   >('strength')
+  const [showClearConfirmation, setShowClearConfirmation] = useState(false)
 
   const aiTrainer = new AITrainerService()
 
@@ -230,6 +232,20 @@ const WorkoutTracker: React.FC = () => {
     setPausedTime(0)
 
     toast.success('Workout completed and saved!')
+  }
+
+  const confirmClearWorkout = () => {
+    setCurrentWorkout(null)
+    setIsWorkoutActive(false)
+    setTimer(0)
+    setStartTime(null)
+    setPausedTime(0)
+    setShowClearConfirmation(false)
+    toast.success('Workout cleared')
+  }
+
+  const cancelClearWorkout = () => {
+    setShowClearConfirmation(false)
   }
 
   const addExerciseToWorkout = (data: WorkoutForm) => {
@@ -787,15 +803,24 @@ const WorkoutTracker: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 Current Workout
               </h2>
-              {currentWorkout.sets.length > 0 && (
+              <div className="flex items-center space-x-2">
                 <button
-                  onClick={completeAllSets}
+                  onClick={() => setShowClearConfirmation(true)}
                   className="btn-secondary flex items-center space-x-2 text-sm"
                 >
-                  <Check className="h-4 w-4" />
-                  <span>Complete All</span>
+                  <X className="h-4 w-4" />
+                  <span className="hidden sm:inline">Clear</span>
                 </button>
-              )}
+                {currentWorkout.sets.length > 0 && (
+                  <button
+                    onClick={completeAllSets}
+                    className="btn-secondary flex items-center space-x-2 text-sm"
+                  >
+                    <Check className="h-4 w-4" />
+                    <span className="hidden sm:inline">Complete All</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Workout Title and Notes */}
@@ -1467,6 +1492,51 @@ const WorkoutTracker: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Workout Confirmation Modal */}
+      {showClearConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md m-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Clear Workout
+                </h3>
+              </div>
+              <button
+                onClick={cancelClearWorkout}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-600 dark:text-gray-300">
+                Are you sure you want to clear this workout? All unsaved
+                progress will be lost.
+              </p>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelClearWorkout}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmClearWorkout}
+                className="px-4 py-2 text-white bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 rounded-md transition-colors flex items-center space-x-2"
+              >
+                <X className="h-4 w-4" />
+                <span>Clear</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
