@@ -16,6 +16,7 @@ const AIRecommendations: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [progress, setProgress] = useState<WorkoutProgress[]>([])
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null)
 
   const aiTrainer = new AITrainerService()
 
@@ -32,9 +33,16 @@ const AIRecommendations: React.FC = () => {
     setWorkouts(completedWorkouts)
     setProgress(workoutProgress)
 
-    // Auto-load recommendations if we have data
-    if (completedWorkouts.length > 0) {
-      loadRecommendations(completedWorkouts, workoutProgress)
+    // Load saved recommendations from localStorage
+    const savedRecommendations = storageService.getAIRecommendations()
+    if (savedRecommendations) {
+      setRecommendations(savedRecommendations)
+      // Get timestamp from localStorage
+      const stored = localStorage.getItem('ai-trainer-ai-recommendations')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        setLastUpdated(parsed.timestamp)
+      }
     }
   }, [])
 
@@ -57,6 +65,8 @@ const AIRecommendations: React.FC = () => {
         progressToUse
       )
       setRecommendations(recs)
+      storageService.saveAIRecommendations(recs)
+      setLastUpdated(new Date().toISOString())
       toast.success('AI recommendations loaded!')
     } catch (error) {
       console.error('Error loading recommendations:', error)
@@ -65,7 +75,7 @@ const AIRecommendations: React.FC = () => {
       )
 
       // Provide some mock recommendations for demo purposes
-      setRecommendations([
+      const mockRecommendations = [
         {
           type: 'progression',
           exerciseId: 'bench-press',
@@ -98,7 +108,10 @@ const AIRecommendations: React.FC = () => {
           confidence: 0.9,
           priority: 'high',
         },
-      ])
+      ] as AIRecommendation[]
+      setRecommendations(mockRecommendations)
+      storageService.saveAIRecommendations(mockRecommendations)
+      setLastUpdated(new Date().toISOString())
     } finally {
       setLoading(false)
     }
@@ -156,6 +169,21 @@ const AIRecommendations: React.FC = () => {
             Get personalized training advice based on your workout history and
             progress
           </p>
+          {lastUpdated && (
+            <p className="text-sm text-gray-500 dark:text-primary-500 mt-1">
+              Last updated:{' '}
+              {new Date(lastUpdated).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+              {' - '}
+              {new Date(lastUpdated).toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </p>
+          )}
         </div>
         <button
           onClick={() => loadRecommendations()}

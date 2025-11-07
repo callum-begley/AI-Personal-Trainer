@@ -1,4 +1,10 @@
-import { Workout, Exercise, WorkoutProgress, User } from '../types/workout'
+import {
+  Workout,
+  Exercise,
+  WorkoutProgress,
+  User,
+  AIRecommendation,
+} from '../types/workout'
 
 class StorageService {
   private getStorageKey(key: string): string {
@@ -266,9 +272,35 @@ class StorageService {
     return defaultExercises
   }
 
+  // AI Recommendations
+  getAIRecommendations(): AIRecommendation[] | null {
+    const recommendations = localStorage.getItem(
+      this.getStorageKey('ai-recommendations')
+    )
+    if (!recommendations) return null
+
+    const parsed = JSON.parse(recommendations)
+    return parsed.recommendations
+  }
+
+  saveAIRecommendations(recommendations: AIRecommendation[]): void {
+    const data = {
+      recommendations,
+      timestamp: new Date().toISOString(),
+    }
+    localStorage.setItem(
+      this.getStorageKey('ai-recommendations'),
+      JSON.stringify(data)
+    )
+  }
+
+  clearAIRecommendations(): void {
+    localStorage.removeItem(this.getStorageKey('ai-recommendations'))
+  }
+
   // Clear all data
   clearAllData(): void {
-    const keys = ['workouts', 'exercises', 'user']
+    const keys = ['workouts', 'exercises', 'user', 'ai-recommendations']
     keys.forEach((key) => {
       localStorage.removeItem(this.getStorageKey(key))
     })
