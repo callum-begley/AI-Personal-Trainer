@@ -12,6 +12,10 @@ interface WorkoutContextType {
   setStartTime: (time: number | null) => void
   pausedTime: number
   setPausedTime: (time: number) => void
+  isNotesMinimized: boolean
+  setIsNotesMinimized: (minimized: boolean) => void
+  minimizedExercises: Set<string>
+  setMinimizedExercises: (exercises: Set<string>) => void
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined)
@@ -62,6 +66,27 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({
     return saved ? parseInt(saved, 10) : 0
   })
 
+  const [isNotesMinimized, setIsNotesMinimized] = useState(() => {
+    const saved = localStorage.getItem('ai-trainer-notes-minimized')
+    return saved === 'true'
+  })
+
+  const [minimizedExercises, setMinimizedExercisesState] = useState<
+    Set<string>
+  >(() => {
+    const saved = localStorage.getItem('ai-trainer-minimized-exercises')
+    return saved ? new Set(JSON.parse(saved)) : new Set()
+  })
+
+  // Wrapper to save minimized exercises to localStorage
+  const setMinimizedExercises = (exercises: Set<string>) => {
+    setMinimizedExercisesState(exercises)
+    localStorage.setItem(
+      'ai-trainer-minimized-exercises',
+      JSON.stringify(Array.from(exercises))
+    )
+  }
+
   // Wrapper to save to localStorage when currentWorkout changes
   const setCurrentWorkout = (workout: Workout | null) => {
     setCurrentWorkoutState(workout)
@@ -99,6 +124,13 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem('ai-trainer-paused-time', pausedTime.toString())
   }, [pausedTime])
 
+  useEffect(() => {
+    localStorage.setItem(
+      'ai-trainer-notes-minimized',
+      isNotesMinimized.toString()
+    )
+  }, [isNotesMinimized])
+
   // Update timer when workout is active
   useEffect(() => {
     if (isWorkoutActive && startTime !== null) {
@@ -124,6 +156,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({
         setStartTime,
         pausedTime,
         setPausedTime,
+        isNotesMinimized,
+        setIsNotesMinimized,
+        minimizedExercises,
+        setMinimizedExercises,
       }}
     >
       {children}

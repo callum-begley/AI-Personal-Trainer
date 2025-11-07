@@ -66,6 +66,10 @@ const WorkoutTracker: React.FC = () => {
     setStartTime,
     pausedTime,
     setPausedTime,
+    isNotesMinimized,
+    setIsNotesMinimized,
+    minimizedExercises,
+    setMinimizedExercises,
   } = useWorkout()
 
   // Local state
@@ -79,9 +83,6 @@ const WorkoutTracker: React.FC = () => {
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
   const [showPlanForm, setShowPlanForm] = useState(false)
   const [showInstructions, setShowInstructions] = useState<string | null>(null)
-  const [minimizedExercises, setMinimizedExercises] = useState<Set<string>>(
-    new Set()
-  )
   const [isCardioExercise, setIsCardioExercise] = useState(false)
   const [showCustomExerciseForm, setShowCustomExerciseForm] = useState(false)
   const [customExerciseType, setCustomExerciseType] = useState<
@@ -355,16 +356,43 @@ const WorkoutTracker: React.FC = () => {
     toast.success('Set removed')
   }
 
-  const toggleExerciseMinimized = (exerciseId: string) => {
-    setMinimizedExercises((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(exerciseId)) {
-        newSet.delete(exerciseId)
-      } else {
-        newSet.add(exerciseId)
-      }
-      return newSet
+  const addSet = (exerciseId: string) => {
+    if (!currentWorkout) return
+
+    const exercise = exercises.find((e) => e.id === exerciseId)
+    if (!exercise) return
+
+    // Find an existing set for this exercise to copy values from
+    const existingSet = currentWorkout.sets.find(
+      (set) => set.exerciseId === exerciseId
+    )
+
+    const newSet: WorkoutSet = {
+      id: `${Date.now()}`,
+      exerciseId: exerciseId,
+      reps: existingSet?.reps || 0,
+      weight: existingSet?.weight,
+      duration: existingSet?.duration,
+      distance: existingSet?.distance,
+      completed: false,
+      isCardio: exercise.category === 'cardio',
+    }
+
+    setCurrentWorkout({
+      ...currentWorkout,
+      sets: [...currentWorkout.sets, newSet],
     })
+    toast.success('Set added')
+  }
+
+  const toggleExerciseMinimized = (exerciseId: string) => {
+    const newSet = new Set(minimizedExercises)
+    if (newSet.has(exerciseId)) {
+      newSet.delete(exerciseId)
+    } else {
+      newSet.add(exerciseId)
+    }
+    setMinimizedExercises(newSet)
   }
 
   const startEditingSet = (setId: string) => {
@@ -826,17 +854,36 @@ const WorkoutTracker: React.FC = () => {
             {/* Workout Title and Notes */}
             {(currentWorkout.name || currentWorkout.notes) && (
               <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                {currentWorkout.name && (
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    {currentWorkout.name}
-                  </h3>
-                )}
-                {currentWorkout.notes && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <span className="font-medium">Notes:</span>{' '}
-                    {currentWorkout.notes}
-                  </p>
-                )}
+                <div className="flex items-start">
+                  {currentWorkout.notes && (
+                    <button
+                      onClick={() => setIsNotesMinimized(!isNotesMinimized)}
+                      className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex-shrink-0"
+                      title={
+                        isNotesMinimized ? 'Expand notes' : 'Minimize notes'
+                      }
+                    >
+                      {isNotesMinimized ? (
+                        <ChevronDown className="h-5 w-5" />
+                      ) : (
+                        <ChevronUp className="h-5 w-5" />
+                      )}
+                    </button>
+                  )}
+                  <div className="flex-1">
+                    {currentWorkout.name && (
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                        {currentWorkout.name}
+                      </h3>
+                    )}
+                    {!isNotesMinimized && currentWorkout.notes && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-medium">Notes:</span>{' '}
+                        {currentWorkout.notes}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -857,23 +904,12 @@ const WorkoutTracker: React.FC = () => {
                         className="border dark:border-gray-600 rounded-lg p-4"
                       >
                         <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                              {exercise.name}
-                            </h3>
-                            {minimizedExercises.has(exerciseId) && (
-                              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-                                {sets.filter((set) => set.completed).length}/
-                                {sets.length} completed
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-1">
+                          <div className="flex items-center space-x-2">
                             <button
                               onClick={() =>
                                 toggleExerciseMinimized(exerciseId)
                               }
-                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
                               title={
                                 minimizedExercises.has(exerciseId)
                                   ? 'Maximize exercise'
@@ -886,20 +922,40 @@ const WorkoutTracker: React.FC = () => {
                                 <ChevronUp className="h-4 w-4" />
                               )}
                             </button>
+                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                              {exercise.name}
+                            </h3>
+                            {minimizedExercises.has(exerciseId) && (
+                              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
+                                {sets.filter((set) => set.completed).length}/
+                                {sets.length} completed
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-1">
                             {!minimizedExercises.has(exerciseId) && (
-                              <button
-                                onClick={() =>
-                                  setShowInstructions(
-                                    showInstructions === exerciseId
-                                      ? null
-                                      : exerciseId
-                                  )
-                                }
-                                className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                                title="Show exercise instructions"
-                              >
-                                <HelpCircle className="h-4 w-4" />
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => addSet(exerciseId)}
+                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                                  title="Add set"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    setShowInstructions(
+                                      showInstructions === exerciseId
+                                        ? null
+                                        : exerciseId
+                                    )
+                                  }
+                                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                  title="Show exercise instructions"
+                                >
+                                  <HelpCircle className="h-4 w-4" />
+                                </button>
+                              </>
                             )}
                           </div>
                         </div>
