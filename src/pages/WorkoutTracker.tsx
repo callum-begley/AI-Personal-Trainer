@@ -147,6 +147,7 @@ const WorkoutTracker: React.FC = () => {
         id: `${Date.now()}-${index}`,
         completed: false, // Reset completion status
       })),
+      notes: savedWorkout.notes, // Preserve notes from saved workout
       completed: false,
     }
 

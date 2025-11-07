@@ -1,4 +1,6 @@
 ## To Add:
+- clear current workout button
+
 - save seconds from timer not just minutes
 - edit cardio values in current
 - cardio in current workout ==  0 don't show
@@ -7,7 +9,6 @@
 - prompt before deleting set
 - add another set [+]
 - minimize workout notes
-- mobile navbar
 - intervals for cardio eg plank 3 sets of 1 min ?? or separate
 - ask to input for amrap
 - ai suggests alternative workouts
