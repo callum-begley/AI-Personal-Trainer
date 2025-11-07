@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 ml-4 sm:ml-0">
           Dashboard
         </h1>
         <Link to="/workout" className="btn-primary">
