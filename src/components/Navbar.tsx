@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   Dumbbell,
   Home,
-  Activity,
   TrendingUp,
   Brain,
   Menu,
