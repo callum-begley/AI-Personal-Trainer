@@ -956,13 +956,13 @@ const WorkoutTracker: React.FC = () => {
                                           }
                                           className="h-4 w-4 text-primary-600 rounded"
                                         />
-                                        <span className="font-medium text-gray-900">
+                                        <span className="font-medium text-gray-900 dark:text-gray-100">
                                           Set {index + 1}:
                                         </span>
                                       </div>
                                       <div className="flex items-center space-x-4">
                                         <div className="flex items-center space-x-2">
-                                          <label className="text-sm font-medium text-gray-700">
+                                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Reps:
                                           </label>
                                           <input
@@ -975,12 +975,12 @@ const WorkoutTracker: React.FC = () => {
                                                   parseInt(e.target.value) || 0,
                                               })
                                             }
-                                            className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
+                                            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                             min="1"
                                           />
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                          <label className="text-sm font-medium text-gray-700">
+                                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Weight (kgs):
                                           </label>
                                           <input
@@ -994,7 +994,7 @@ const WorkoutTracker: React.FC = () => {
                                                   : undefined,
                                               })
                                             }
-                                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                                            className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                             min="0"
                                             step="0.5"
                                           />
