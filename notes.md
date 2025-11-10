@@ -3,9 +3,11 @@
 - edit cardio values in current
 - cardio in current workout ==  0 don't show
 - more goal options, setting editing
+- ai chat for suggestions questions etc
 - custom workouts, use ai to complete data?
 - intervals for cardio eg plank 3 sets of 1 min ?? or separate
 - ask to input for amrap
+- remove old workouts from load if the have the same title
 - ai suggests alternative workouts
 - 0kg change to bodyweight in current workout
 - add steps tracker
