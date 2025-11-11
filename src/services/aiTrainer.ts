@@ -75,10 +75,23 @@ export class AITrainerService {
 
   async getProgressionRecommendations(
     workoutHistory: Workout[],
-    currentProgress: WorkoutProgress[]
+    currentProgress: WorkoutProgress[],
+    focusCategory: string = 'all'
   ): Promise<AIRecommendation[]> {
+    const categoryFocus =
+      focusCategory === 'all'
+        ? ''
+        : `
+      CATEGORY FOCUS: Generate recommendations specifically for "${focusCategory}" exercises only.
+      - Only analyze and provide recommendations for exercises in the ${focusCategory} category
+      - If no ${focusCategory} exercises are found in workout history, suggest new ${focusCategory} exercises to add
+      - Focus on progression, variations, and improvements specific to ${focusCategory} training
+    `
+
     const prompt = `
       As an AI personal trainer, analyze the following workout history and current progress data to provide specific recommendations for the next workout session.
+
+      ${categoryFocus}
 
       Workout History (last 5 sessions):
       ${JSON.stringify(workoutHistory.slice(-5), null, 2)}
@@ -107,10 +120,17 @@ export class AITrainerService {
       2. Exercise variations to prevent plateaus
       3. Recovery recommendations if overtraining is detected
       4. Form corrections if inconsistent performance is observed
+      ${
+        focusCategory !== 'all'
+          ? `5. Specific improvements for ${focusCategory} training`
+          : ''
+      }
 
       Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
       
-      Provide 3-5 specific, actionable recommendations.
+      Provide 3-5 specific, actionable recommendations${
+        focusCategory !== 'all' ? ` focused on ${focusCategory} exercises` : ''
+      }.
     `
 
     try {

@@ -17,8 +17,23 @@ const AIRecommendations: React.FC = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [progress, setProgress] = useState<WorkoutProgress[]>([])
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const aiTrainer = new AITrainerService()
+
+  const categories = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'chest', label: 'Chest' },
+    { value: 'back', label: 'Back' },
+    { value: 'shoulders', label: 'Shoulders' },
+    { value: 'arms', label: 'Arms' },
+    { value: 'legs', label: 'Legs' },
+    { value: 'core', label: 'Core' },
+    { value: 'cardio', label: 'Cardio' },
+    { value: 'full-body', label: 'Full Body' },
+    { value: 'upper-body', label: 'Upper Body' },
+    { value: 'lower-body', label: 'Lower Body' },
+  ]
 
   useEffect(() => {
     const allWorkouts = storageService.getWorkouts()
@@ -62,7 +77,8 @@ const AIRecommendations: React.FC = () => {
     try {
       const recs = await aiTrainer.getProgressionRecommendations(
         workoutsToUse,
-        progressToUse
+        progressToUse,
+        selectedCategory
       )
       setRecommendations(recs)
       storageService.saveAIRecommendations(recs)
@@ -74,41 +90,93 @@ const AIRecommendations: React.FC = () => {
         'Failed to load AI recommendations. Please check your API configuration.'
       )
 
-      // Provide some mock recommendations for demo purposes
-      const mockRecommendations = [
-        {
-          type: 'progression',
-          exerciseId: 'bench-press',
-          exerciseName: 'Bench Press',
-          title: 'Increase Weight',
-          description:
-            "You've been consistent with your current weight. Time to increase by 2-5 kgs.",
-          reasoning:
-            "You've completed all sets with proper form for the last 3 sessions.",
-          confidence: 0.85,
-          priority: 'high',
-        },
-        {
-          type: 'exercise',
-          title: 'Add Incline Variations',
-          description:
-            'Consider adding incline bench press to target your upper chest more effectively.',
-          reasoning:
-            'Your chest development could benefit from hitting different angles.',
-          confidence: 0.75,
-          priority: 'medium',
-        },
-        {
-          type: 'rest',
-          title: 'Recovery Day Needed',
-          description:
-            "You've trained intensely this week. Consider taking a rest day or doing light cardio.",
-          reasoning:
-            'Consistent training without adequate rest can lead to overtraining.',
-          confidence: 0.9,
-          priority: 'high',
-        },
-      ] as AIRecommendation[]
+      // Provide category-specific mock recommendations for demo purposes
+      const getMockRecommendations = (): AIRecommendation[] => {
+        const baseRecs: { [key: string]: AIRecommendation[] } = {
+          all: [
+            {
+              type: 'progression',
+              exerciseId: 'bench-press',
+              exerciseName: 'Bench Press',
+              title: 'Increase Weight',
+              description:
+                "You've been consistent with your current weight. Time to increase by 2-5 kgs.",
+              reasoning:
+                "You've completed all sets with proper form for the last 3 sessions.",
+              confidence: 0.85,
+              priority: 'high',
+            },
+            {
+              type: 'rest',
+              title: 'Recovery Day Needed',
+              description:
+                "You've trained intensely this week. Consider taking a rest day or doing light cardio.",
+              reasoning:
+                'Consistent training without adequate rest can lead to overtraining.',
+              confidence: 0.9,
+              priority: 'high',
+            },
+          ],
+          chest: [
+            {
+              type: 'progression',
+              exerciseId: 'bench-press',
+              exerciseName: 'Bench Press',
+              title: 'Increase Bench Press Weight',
+              description:
+                'Your chest strength has improved. Increase weight by 2.5-5 kgs.',
+              reasoning:
+                'Consistent performance over last 3 chest sessions shows readiness for progression.',
+              confidence: 0.88,
+              priority: 'high',
+            },
+            {
+              type: 'exercise',
+              exerciseId: 'incline-press',
+              exerciseName: 'Incline Chest Press',
+              title: 'Add Incline Variations',
+              description:
+                'Include incline presses to target upper chest development.',
+              reasoning:
+                'Upper chest activation improves overall chest aesthetics and strength.',
+              confidence: 0.75,
+              priority: 'medium',
+            },
+          ],
+          legs: [
+            {
+              type: 'progression',
+              exerciseId: 'squat',
+              exerciseName: 'Squat',
+              title: 'Increase Squat Depth',
+              description:
+                'Focus on achieving full depth squats for better leg development.',
+              reasoning:
+                'Full range of motion maximizes quadriceps and glute activation.',
+              confidence: 0.82,
+              priority: 'high',
+            },
+            {
+              type: 'exercise',
+              exerciseId: 'lunge',
+              exerciseName: 'Walking Lunges',
+              title: 'Add Unilateral Training',
+              description:
+                'Include single-leg exercises to improve balance and strength imbalances.',
+              reasoning:
+                'Unilateral training addresses muscle imbalances common in bilateral exercises.',
+              confidence: 0.78,
+              priority: 'medium',
+            },
+          ],
+        }
+
+        return (
+          baseRecs[selectedCategory as keyof typeof baseRecs] || baseRecs.all
+        )
+      }
+
+      const mockRecommendations = getMockRecommendations()
       setRecommendations(mockRecommendations)
       storageService.saveAIRecommendations(mockRecommendations)
       setLastUpdated(new Date().toISOString())
@@ -185,14 +253,36 @@ const AIRecommendations: React.FC = () => {
             </p>
           )}
         </div>
-        <button
-          onClick={() => loadRecommendations()}
-          disabled={loading || workouts.length === 0}
-          className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'Loading...' : 'Get AI Recommendations'}</span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+          <div className="flex items-center space-x-2">
+            <label
+              htmlFor="category-select"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap"
+            >
+              Focus on:
+            </label>
+            <select
+              id="category-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="input-field text-sm min-w-[150px]"
+            >
+              {categories.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            onClick={() => loadRecommendations()}
+            disabled={loading || workouts.length === 0}
+            className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>{loading ? 'Loading...' : 'Get AI Recommendations'}</span>
+          </button>
+        </div>
       </div>
 
       {workouts.length === 0 ? (
