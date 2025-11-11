@@ -15,7 +15,5 @@
 - motivational quotes
 - ai returns more fun quirky workout names
 - better name?
-- send ai last workouts for recommended improvements
-- send saved for recommended improvements
 - set up database, remove from local storage
 - select lb/kg

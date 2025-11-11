@@ -302,7 +302,14 @@ const AIRecommendations: React.FC = () => {
       ) : (
         <>
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 grid-rows-2">
+            <button className="select-none z-40 opacity-30 hover:opacity-100 row-span-3">
+              <img
+                src="public/aila.webp"
+                alt="AI Personal Trainer Avatar"
+                className="w-72 h-72 object-cover"
+              />
+            </button>
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
