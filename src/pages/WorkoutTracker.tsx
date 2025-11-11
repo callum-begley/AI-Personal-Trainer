@@ -217,9 +217,12 @@ const WorkoutTracker: React.FC = () => {
       workoutDuration = Math.floor(totalCardioSeconds / 60)
     }
 
+    // Only include sets that were actually completed to avoid polluting AI recommendations
+    const completedSetsOnly = updatedSets.filter((set) => set.completed)
+
     const completedWorkout: Workout = {
       ...currentWorkout,
-      sets: updatedSets,
+      sets: completedSetsOnly,
       duration: workoutDuration,
       completed: true,
     }
