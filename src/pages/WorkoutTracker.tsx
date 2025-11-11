@@ -919,7 +919,15 @@ const WorkoutTracker: React.FC = () => {
                               {exercise.name}
                             </h3>
                             {minimizedExercises.has(exerciseId) && (
-                              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
+                              <span
+                                className={`text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded
+                              ${
+                                sets.filter((set) => set.completed).length ===
+                                sets.length
+                                  ? 'bg-green-200 dark:bg-green-700'
+                                  : ''
+                              }`}
+                              >
                                 {sets.filter((set) => set.completed).length}/
                                 {sets.length} completed
                               </span>
