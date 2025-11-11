@@ -254,7 +254,7 @@ const AIRecommendations: React.FC = () => {
           )}
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 ring-2 px-3 rounded-lg">
             <label
               htmlFor="category-select"
               className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap"
