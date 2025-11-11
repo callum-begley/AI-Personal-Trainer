@@ -666,7 +666,7 @@ const WorkoutTracker: React.FC = () => {
                         required: 'Please select an exercise',
                         onChange: (e) => handleExerciseChange(e.target.value),
                       })}
-                      className="input-field flex-1"
+                      className="input-field flex-1 capitalize"
                     >
                       <option value="">Select an exercise</option>
                       {exercises
