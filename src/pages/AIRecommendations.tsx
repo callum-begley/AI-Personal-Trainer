@@ -191,7 +191,7 @@ const AIRecommendations: React.FC = () => {
           className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'Loading...' : 'Refresh Recommendations'}</span>
+          <span>{loading ? 'Loading...' : 'Get AI Recommendations'}</span>
         </button>
       </div>
 
@@ -335,7 +335,7 @@ const AIRecommendations: React.FC = () => {
                   No Recommendations Yet
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Click "Refresh Recommendations" to get AI-powered training
+                  Click "Get AI Recommendations" to get AI-powered training
                   advice based on your workout history.
                 </p>
                 <button
@@ -343,6 +343,11 @@ const AIRecommendations: React.FC = () => {
                   className="btn-primary"
                   disabled={loading}
                 >
+                  <RefreshCw
+                    className={`inline self-center mr-2 h-4 w-4 ${
+                      loading ? 'animate-spin' : ''
+                    }`}
+                  />
                   Get AI Recommendations
                 </button>
               </div>
