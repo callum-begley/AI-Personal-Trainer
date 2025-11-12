@@ -298,9 +298,7 @@ const WorkoutTracker: React.FC = () => {
           exerciseId: exercise.id,
           reps: data.reps,
           weight:
-            data.weight !== undefined &&
-            data.weight !== null &&
-            data.weight !== ''
+            data.weight !== undefined && data.weight !== null
               ? Number(data.weight)
               : 0,
           completed: false,
