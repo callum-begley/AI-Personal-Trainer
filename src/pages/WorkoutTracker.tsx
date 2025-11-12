@@ -1285,7 +1285,11 @@ const WorkoutTracker: React.FC = () => {
                                           }
                                         >
                                           {set.reps} reps{' '}
-                                          {set.weight && `@ ${set.weight} kgs`}
+                                          {set.weight
+                                            ? set.weight === 0
+                                              ? '@ bodyweight'
+                                              : `@ ${set.weight} kgs`
+                                            : ''}
                                         </span>
                                       </div>
                                       <div className="flex items-center space-x-2">

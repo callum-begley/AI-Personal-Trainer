@@ -1,6 +1,5 @@
 ## To Add:
 - user can add workout notes
-- edit cardio values in current
 - more goal options, setting editing
 - ai chat for suggestions questions etc
 - custom workouts, use ai to complete data?

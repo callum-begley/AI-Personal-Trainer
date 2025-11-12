@@ -300,9 +300,11 @@ const Progress: React.FC = () => {
                           <div>
                             <p className="font-semibold dark:text-gray-200">
                               {prog.previousBest.reps} reps
-                              {prog.previousBest.weight &&
-                              Number(prog.previousBest.weight) > 0
-                                ? ` @ ${prog.previousBest.weight} kgs`
+                              {prog.previousBest.weight !== undefined &&
+                              prog.previousBest.weight !== null
+                                ? Number(prog.previousBest.weight) === 0
+                                  ? ' @ bodyweight'
+                                  : ` @ ${prog.previousBest.weight} kgs`
                                 : ''}
                             </p>
                             <p className="text-xs text-gray-500">
@@ -340,9 +342,11 @@ const Progress: React.FC = () => {
                         ) : (
                           <p className="font-semibold dark:text-gray-200">
                             {prog.currentSession.reps} reps
-                            {prog.currentSession.weight &&
-                            Number(prog.currentSession.weight) > 0
-                              ? ` @ ${prog.currentSession.weight} kgs`
+                            {prog.currentSession.weight !== undefined &&
+                            prog.currentSession.weight !== null
+                              ? Number(prog.currentSession.weight) === 0
+                                ? ' @ bodyweight'
+                                : ` @ ${prog.currentSession.weight} kgs`
                               : ''}
                           </p>
                         )}
