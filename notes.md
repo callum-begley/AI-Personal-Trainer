@@ -7,7 +7,6 @@
 - ask to input for amrap
 - remove old workouts from load if the have the same title
 - ai suggests alternative workouts
-- 0kg change to bodyweight in current workout
 - add steps tracker
 - favorite workouts - show big on workout start screen
 - motivational quotes
