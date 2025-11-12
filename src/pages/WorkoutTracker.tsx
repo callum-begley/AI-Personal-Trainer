@@ -277,13 +277,13 @@ const WorkoutTracker: React.FC = () => {
       const minutes = Number(data.duration) || 0
       const seconds = Number(data.durationSeconds) || 0
       const totalDuration =
-        minutes > 0 || seconds > 0 ? minutes * 60 + seconds : 0
+        minutes > 0 || seconds > 0 ? minutes * 60 + seconds : undefined
 
       newSets.push({
         id: `${Date.now()}`,
         exerciseId: exercise.id,
         reps: 0, // Not used for cardio
-        duration: totalDuration, // Use calculated duration or 0 (will be updated with workout timer on finish)
+        duration: totalDuration, // Use calculated duration or undefined when no time provided
         distance: data.distance || undefined,
         completed: false,
         isCardio: true,
@@ -1011,11 +1011,12 @@ const WorkoutTracker: React.FC = () => {
                                                 : 'text-gray-700 dark:text-gray-300'
                                             }`}
                                           >
-                                            {set.distance && (
-                                              <span className="mr-3">
-                                                Distance: {set.distance} km
-                                              </span>
-                                            )}
+                                            {set.distance &&
+                                              set.distance > 0 && (
+                                                <span className="mr-3">
+                                                  Distance: {set.distance} km
+                                                </span>
+                                              )}
                                             {set.duration && (
                                               <span>
                                                 Time:{' '}
@@ -1023,11 +1024,13 @@ const WorkoutTracker: React.FC = () => {
                                                 min {set.duration % 60} sec
                                               </span>
                                             )}
-                                            {!set.distance && !set.duration && (
-                                              <span className="text-gray-500 dark:text-gray-400 italic">
-                                                No time/distance recorded
-                                              </span>
-                                            )}
+                                            {(!set.distance ||
+                                              set.distance === 0) &&
+                                              !set.duration && (
+                                                <span className="text-gray-500 dark:text-gray-400 italic">
+                                                  No time/distance recorded
+                                                </span>
+                                              )}
                                           </div>
                                         </div>
                                       </div>
