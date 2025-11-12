@@ -297,7 +297,12 @@ const WorkoutTracker: React.FC = () => {
           id: `${Date.now()}-${i}`,
           exerciseId: exercise.id,
           reps: data.reps,
-          weight: data.weight || undefined,
+          weight:
+            data.weight !== undefined &&
+            data.weight !== null &&
+            data.weight !== ''
+              ? Number(data.weight)
+              : 0,
           completed: false,
           isCardio: false,
         })
@@ -1156,9 +1161,12 @@ const WorkoutTracker: React.FC = () => {
                                               onChange={(e) =>
                                                 setEditingValues({
                                                   ...editingValues,
-                                                  weight: e.target.value
-                                                    ? parseFloat(e.target.value)
-                                                    : undefined,
+                                                  weight:
+                                                    e.target.value !== ''
+                                                      ? parseFloat(
+                                                          e.target.value
+                                                        ) || 0
+                                                      : 0,
                                                 })
                                               }
                                               className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
@@ -1285,7 +1293,8 @@ const WorkoutTracker: React.FC = () => {
                                           }
                                         >
                                           {set.reps} reps{' '}
-                                          {set.weight
+                                          {set.weight !== undefined &&
+                                          set.weight !== null
                                             ? set.weight === 0
                                               ? '@ bodyweight'
                                               : `@ ${set.weight} kgs`

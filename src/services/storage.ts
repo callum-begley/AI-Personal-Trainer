@@ -147,11 +147,29 @@ class StorageService {
           let isBetter = false
 
           if (isCardio) {
-            // For cardio, better = longer distance or faster time
-            if (set.distance && existing.previousBest.distance) {
-              isBetter = set.distance > existing.previousBest.distance
-            } else if (set.duration && existing.previousBest.duration) {
-              isBetter = set.duration > existing.previousBest.duration
+            // For cardio, better = longer distance or faster time (shorter duration)
+
+            // Check distance first
+            if (set.distance && set.distance > 0) {
+              if (
+                !existing.previousBest.distance ||
+                existing.previousBest.distance === 0
+              ) {
+                isBetter = true // New distance vs no previous distance
+              } else {
+                isBetter = set.distance > existing.previousBest.distance
+              }
+            }
+            // Check duration (faster time is better, so shorter duration is better)
+            else if (set.duration && set.duration > 0) {
+              if (
+                !existing.previousBest.duration ||
+                existing.previousBest.duration === 0
+              ) {
+                isBetter = true // New time vs no previous time
+              } else {
+                isBetter = set.duration < existing.previousBest.duration // Shorter time is better
+              }
             }
           } else {
             // For strength exercises
