@@ -79,6 +79,8 @@ const WorkoutTracker: React.FC = () => {
   const [editingValues, setEditingValues] = useState<{
     reps: number
     weight?: number
+    duration?: number
+    distance?: number
   }>({ reps: 0 })
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false)
   const [showPlanForm, setShowPlanForm] = useState(false)
@@ -404,7 +406,18 @@ const WorkoutTracker: React.FC = () => {
     const set = currentWorkout.sets.find((s) => s.id === setId)
     if (set) {
       setEditingSetId(setId)
-      setEditingValues({ reps: set.reps, weight: set.weight })
+      if (set.isCardio) {
+        setEditingValues({
+          reps: 0,
+          duration: set.duration,
+          distance: set.distance,
+        })
+      } else {
+        setEditingValues({
+          reps: set.reps,
+          weight: set.weight,
+        })
+      }
     }
   }
 
@@ -416,11 +429,24 @@ const WorkoutTracker: React.FC = () => {
   const saveEditingSet = () => {
     if (!currentWorkout || !editingSetId) return
 
-    const updatedSets = currentWorkout.sets.map((set) =>
-      set.id === editingSetId
-        ? { ...set, reps: editingValues.reps, weight: editingValues.weight }
-        : set
-    )
+    const updatedSets = currentWorkout.sets.map((set) => {
+      if (set.id === editingSetId) {
+        if (set.isCardio) {
+          return {
+            ...set,
+            duration: editingValues.duration,
+            distance: editingValues.distance,
+          }
+        } else {
+          return {
+            ...set,
+            reps: editingValues.reps,
+            weight: editingValues.weight,
+          }
+        }
+      }
+      return set
+    })
 
     setCurrentWorkout({
       ...currentWorkout,
@@ -429,7 +455,7 @@ const WorkoutTracker: React.FC = () => {
 
     setEditingSetId(null)
     setEditingValues({ reps: 0 })
-    toast.success('Set updated!')
+    toast.success('Exercise updated!')
   }
 
   const handleExerciseChange = (exerciseId: string) => {
@@ -982,7 +1008,184 @@ const WorkoutTracker: React.FC = () => {
                                   key={set.id}
                                   className="bg-gray-50 dark:bg-gray-700 p-3 rounded"
                                 >
-                                  {set.isCardio ? (
+                                  {editingSetId === set.id ? (
+                                    // Editing mode
+                                    <div className="space-y-3">
+                                      <div className="flex items-center space-x-4">
+                                        <input
+                                          type="checkbox"
+                                          checked={Boolean(set.completed)}
+                                          onChange={() =>
+                                            toggleSetCompletion(set.id)
+                                          }
+                                          className="h-4 w-4 text-primary-600 rounded"
+                                        />
+                                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                                          {set.isCardio
+                                            ? 'Cardio Exercise'
+                                            : `Set ${index + 1}`}
+                                          :
+                                        </span>
+                                      </div>
+
+                                      {set.isCardio ? (
+                                        // Cardio editing fields
+                                        <div className="space-y-3">
+                                          <div className="flex items-center space-x-4">
+                                            <div className="flex items-center space-x-2">
+                                              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Distance (km):
+                                              </label>
+                                              <input
+                                                type="number"
+                                                value={
+                                                  editingValues.distance || ''
+                                                }
+                                                onChange={(e) =>
+                                                  setEditingValues({
+                                                    ...editingValues,
+                                                    distance: e.target.value
+                                                      ? parseFloat(
+                                                          e.target.value
+                                                        )
+                                                      : undefined,
+                                                  })
+                                                }
+                                                className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                                min="0"
+                                                step="0.1"
+                                                placeholder="0.0"
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="flex items-center space-x-4">
+                                            <div className="flex items-center space-x-2">
+                                              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Duration:
+                                              </label>
+                                              <input
+                                                type="number"
+                                                value={Math.floor(
+                                                  (editingValues.duration ||
+                                                    0) / 60
+                                                )}
+                                                onChange={(e) => {
+                                                  const minutes =
+                                                    parseInt(e.target.value) ||
+                                                    0
+                                                  const seconds =
+                                                    (editingValues.duration ||
+                                                      0) % 60
+                                                  setEditingValues({
+                                                    ...editingValues,
+                                                    duration:
+                                                      minutes > 0 || seconds > 0
+                                                        ? minutes * 60 + seconds
+                                                        : undefined,
+                                                  })
+                                                }}
+                                                className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                                min="0"
+                                                placeholder="Min"
+                                              />
+                                              <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                min
+                                              </span>
+                                              <input
+                                                type="number"
+                                                value={
+                                                  (editingValues.duration ||
+                                                    0) % 60
+                                                }
+                                                onChange={(e) => {
+                                                  const seconds =
+                                                    parseInt(e.target.value) ||
+                                                    0
+                                                  const minutes = Math.floor(
+                                                    (editingValues.duration ||
+                                                      0) / 60
+                                                  )
+                                                  setEditingValues({
+                                                    ...editingValues,
+                                                    duration:
+                                                      minutes > 0 || seconds > 0
+                                                        ? minutes * 60 + seconds
+                                                        : undefined,
+                                                  })
+                                                }}
+                                                className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                                min="0"
+                                                max="59"
+                                                placeholder="Sec"
+                                              />
+                                              <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                sec
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        // Strength exercise editing fields
+                                        <div className="flex items-center space-x-4">
+                                          <div className="flex items-center space-x-2">
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                              Reps:
+                                            </label>
+                                            <input
+                                              type="number"
+                                              value={editingValues.reps}
+                                              onChange={(e) =>
+                                                setEditingValues({
+                                                  ...editingValues,
+                                                  reps:
+                                                    parseInt(e.target.value) ||
+                                                    0,
+                                                })
+                                              }
+                                              className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                              min="1"
+                                            />
+                                          </div>
+                                          <div className="flex items-center space-x-2">
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                              Weight (kgs):
+                                            </label>
+                                            <input
+                                              type="number"
+                                              value={editingValues.weight || ''}
+                                              onChange={(e) =>
+                                                setEditingValues({
+                                                  ...editingValues,
+                                                  weight: e.target.value
+                                                    ? parseFloat(e.target.value)
+                                                    : undefined,
+                                                })
+                                              }
+                                              className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                              min="0"
+                                              step="0.5"
+                                            />
+                                          </div>
+                                        </div>
+                                      )}
+                                      <div className="flex items-center space-x-2">
+                                        <button
+                                          onClick={saveEditingSet}
+                                          className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                                        >
+                                          <Check className="h-3 w-3" />
+                                          <span>Save</span>
+                                        </button>
+                                        <button
+                                          onClick={cancelEditingSet}
+                                          className="flex items-center space-x-1 px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                                        >
+                                          <X className="h-3 w-3" />
+                                          <span>Cancel</span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : set.isCardio ? (
                                     // Cardio Exercise Display
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center space-x-4">
@@ -1034,84 +1237,22 @@ const WorkoutTracker: React.FC = () => {
                                           </div>
                                         </div>
                                       </div>
-                                      <button
-                                        onClick={() => removeSet(set.id)}
-                                        className="text-red-600 hover:text-red-800"
-                                        title="Remove exercise"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </button>
-                                    </div>
-                                  ) : editingSetId === set.id ? (
-                                    // Editing mode for strength exercises
-                                    <div className="space-y-3">
-                                      <div className="flex items-center space-x-4">
-                                        <input
-                                          type="checkbox"
-                                          checked={Boolean(set.completed)}
-                                          onChange={() =>
-                                            toggleSetCompletion(set.id)
-                                          }
-                                          className="h-4 w-4 text-primary-600 rounded"
-                                        />
-                                        <span className="font-medium text-gray-900 dark:text-gray-100">
-                                          Set {index + 1}:
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center space-x-4">
-                                        <div className="flex items-center space-x-2">
-                                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Reps:
-                                          </label>
-                                          <input
-                                            type="number"
-                                            value={editingValues.reps}
-                                            onChange={(e) =>
-                                              setEditingValues({
-                                                ...editingValues,
-                                                reps:
-                                                  parseInt(e.target.value) || 0,
-                                              })
-                                            }
-                                            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                            min="1"
-                                          />
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Weight (kgs):
-                                          </label>
-                                          <input
-                                            type="number"
-                                            value={editingValues.weight || ''}
-                                            onChange={(e) =>
-                                              setEditingValues({
-                                                ...editingValues,
-                                                weight: e.target.value
-                                                  ? parseFloat(e.target.value)
-                                                  : undefined,
-                                              })
-                                            }
-                                            className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                            min="0"
-                                            step="0.5"
-                                          />
-                                        </div>
-                                      </div>
                                       <div className="flex items-center space-x-2">
                                         <button
-                                          onClick={saveEditingSet}
-                                          className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                                          onClick={() =>
+                                            startEditingSet(set.id)
+                                          }
+                                          className="text-blue-600 hover:text-blue-800"
+                                          title="Edit cardio exercise"
                                         >
-                                          <Check className="h-3 w-3" />
-                                          <span>Save</span>
+                                          <Edit2 className="h-4 w-4" />
                                         </button>
                                         <button
-                                          onClick={cancelEditingSet}
-                                          className="flex items-center space-x-1 px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                                          onClick={() => removeSet(set.id)}
+                                          className="text-red-600 hover:text-red-800"
+                                          title="Remove exercise"
                                         >
-                                          <X className="h-3 w-3" />
-                                          <span>Cancel</span>
+                                          <Trash2 className="h-4 w-4" />
                                         </button>
                                       </div>
                                     </div>
