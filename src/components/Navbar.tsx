@@ -11,6 +11,7 @@ import {
   Moon,
   Sun,
   Clock,
+  Settings,
 } from 'lucide-react'
 import { useDarkMode } from '../contexts/DarkModeContext'
 import { useWorkout } from '../contexts/WorkoutContext'
@@ -43,6 +44,12 @@ const Navbar: React.FC = () => {
       label: 'AI Recommendations',
       icon: Brain,
       shortLabel: 'AI',
+    },
+    {
+      path: '/settings',
+      label: 'Settings',
+      icon: Settings,
+      shortLabel: 'Settings',
     },
   ]
 

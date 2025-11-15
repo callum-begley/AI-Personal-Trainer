@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import WorkoutTracker from './pages/WorkoutTracker'
 import Progress from './pages/Progress'
 import AIRecommendations from './pages/AIRecommendations'
+import Settings from './pages/Settings'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
                   path="/recommendations"
                   element={<AIRecommendations />}
                 />
+                <Route path="/settings" element={<Settings />} />
               </Routes>
             </main>
             <Toaster
