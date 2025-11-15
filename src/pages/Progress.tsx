@@ -315,7 +315,7 @@ const Progress: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">
-                          Current Session
+                          Last Session
                         </p>
                         {isCardio ? (
                           <p className="font-semibold dark:text-gray-200">
