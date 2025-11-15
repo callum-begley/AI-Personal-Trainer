@@ -493,7 +493,9 @@ const Settings: React.FC = () => {
                               Duration
                             </p>
                             <p className="font-semibold text-gray-900 dark:text-gray-100">
-                              {workout.duration ? `${workout.duration}m` : 'N/A'}
+                              {workout.duration
+                                ? `${workout.duration}m`
+                                : 'N/A'}
                             </p>
                           </div>
                         </div>
@@ -546,7 +548,10 @@ const Settings: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Delete {deleteConfirmation.type === 'exercise' ? 'Exercise' : 'Workout'}
+                  Delete{' '}
+                  {deleteConfirmation.type === 'exercise'
+                    ? 'Exercise'
+                    : 'Workout'}
                 </h3>
               </div>
               <button
