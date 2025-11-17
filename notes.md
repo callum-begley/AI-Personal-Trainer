@@ -13,4 +13,3 @@
 - ai returns more fun quirky workout names
 - better name?
 - set up database, remove from local storage
-- select lb/kg
