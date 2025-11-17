@@ -409,6 +409,12 @@ export class AITrainerService {
 
       Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
 
+      Do not talk about their workout history if it is not relevant to the question asked.
+
+      Use emojis to help make your response more engaging.
+
+      Do not mention that you are an AI model.
+
       Keep your response conversational and under 200 words unless more detail is specifically requested.
     `
 
