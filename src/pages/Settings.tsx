@@ -228,11 +228,11 @@ const Settings: React.FC = () => {
             </button>
           </div>
 
-          {/* Exercise Form (Edit/Add) */}
-          {(editingExercise || isAddingExercise) && (
+          {/* Exercise Form (Add Only) */}
+          {isAddingExercise && (
             <div className="card border-2 border-primary-500 dark:border-primary-600">
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                {isAddingExercise ? 'Add New Exercise' : 'Edit Exercise'}
+                Add New Exercise
               </h3>
 
               <div className="space-y-4">
