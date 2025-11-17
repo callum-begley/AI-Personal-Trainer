@@ -272,11 +272,20 @@ const AIRecommendations: React.FC = () => {
     setChatLoading(true)
 
     try {
-      // Call AI service to get response
+      // Prepare chat history (exclude the welcome message and current user message)
+      const historyForContext = chatMessages
+        .filter((_msg, index) => index > 0) // Skip welcome message
+        .map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        }))
+
+      // Call AI service to get response with chat history
       const response = await aiTrainer.getChatResponse(
         chatInput,
         workouts,
-        progress
+        progress,
+        historyForContext
       )
 
       const aiMessage: ChatMessage = {

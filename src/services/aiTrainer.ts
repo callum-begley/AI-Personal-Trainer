@@ -390,10 +390,27 @@ export class AITrainerService {
   async getChatResponse(
     userMessage: string,
     workoutHistory: Workout[],
-    progress: WorkoutProgress[]
+    progress: WorkoutProgress[],
+    chatHistory: Array<{ role: string; content: string }> = []
   ): Promise<string> {
+    // Format chat history for context
+    const conversationContext =
+      chatHistory.length > 0
+        ? `
+      Previous conversation:
+      ${chatHistory
+        .map(
+          (msg) =>
+            `${msg.role === 'user' ? 'User' : 'AI Trainer'}: ${msg.content}`
+        )
+        .join('\n')}
+      `
+        : ''
+
     const prompt = `
-      You are an experienced AI personal trainer assistant. A user has asked you the following question:
+      You are an experienced AI personal trainer assistant. ${conversationContext}
+
+      The user has now asked you the following question:
 
       "${userMessage}"
 
