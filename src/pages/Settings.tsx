@@ -355,70 +355,72 @@ const Settings: React.FC = () => {
 
           {/* Exercise List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {exercises.map((exercise) => (
-              <div
-                key={exercise.id}
-                className="card hover:shadow-lg transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                      {exercise.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-                      {exercise.category}
-                    </p>
+            {exercises
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((exercise) => (
+                <div
+                  key={exercise.id}
+                  className="card hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                        {exercise.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                        {exercise.category}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEditExercise(exercise)}
+                        className="text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 p-1"
+                        title="Edit exercise"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteExercise(exercise.id)}
+                        className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1"
+                        title="Delete exercise"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEditExercise(exercise)}
-                      className="text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 p-1"
-                      title="Edit exercise"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteExercise(exercise.id)}
-                      className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1"
-                      title="Delete exercise"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
 
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Muscle Groups:{' '}
-                    </span>
-                    <span className="text-gray-800 dark:text-gray-200 capitalize">
-                      {exercise.muscleGroups.join(', ')}
-                    </span>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Muscle Groups:{' '}
+                      </span>
+                      <span className="text-gray-800 dark:text-gray-200 capitalize">
+                        {exercise.muscleGroups.join(', ')}
+                      </span>
+                    </div>
+                    {exercise.equipment && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Equipment:{' '}
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-200">
+                          {exercise.equipment}
+                        </span>
+                      </div>
+                    )}
+                    {exercise.instructions && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Instructions:{' '}
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-200 text-xs">
+                          {exercise.instructions}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  {exercise.equipment && (
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Equipment:{' '}
-                      </span>
-                      <span className="text-gray-800 dark:text-gray-200">
-                        {exercise.equipment}
-                      </span>
-                    </div>
-                  )}
-                  {exercise.instructions && (
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Instructions:{' '}
-                      </span>
-                      <span className="text-gray-800 dark:text-gray-200 text-xs">
-                        {exercise.instructions}
-                      </span>
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       )}
