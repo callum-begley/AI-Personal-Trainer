@@ -191,44 +191,44 @@ const Settings: React.FC = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex space-x-1 sm:space-x-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
         <button
           onClick={() => setActiveTab('exercises')}
-          className={`px-6 py-3 font-medium transition-colors ${
+          className={`px-3 sm:px-6 py-3 font-medium transition-colors whitespace-nowrap ${
             activeTab === 'exercises'
               ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
           <div className="flex items-center space-x-2">
-            <Dumbbell className="h-5 w-5" />
-            <span>Exercises</span>
+            <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-sm sm:text-base">Exercises</span>
           </div>
         </button>
         <button
           onClick={() => setActiveTab('workouts')}
-          className={`px-6 py-3 font-medium transition-colors ${
+          className={`px-3 sm:px-6 py-3 font-medium transition-colors whitespace-nowrap ${
             activeTab === 'workouts'
               ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
           <div className="flex items-center space-x-2">
-            <Calendar className="h-5 w-5" />
-            <span>Workouts</span>
+            <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-sm sm:text-base">Workouts</span>
           </div>
         </button>
         <button
           onClick={() => setActiveTab('preferences')}
-          className={`px-6 py-3 font-medium transition-colors ${
+          className={`px-3 sm:px-6 py-3 font-medium transition-colors whitespace-nowrap ${
             activeTab === 'preferences'
               ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
           <div className="flex items-center space-x-2">
-            <Scale className="h-5 w-5" />
-            <span>Preferences</span>
+            <Scale className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-sm sm:text-base">Preferences</span>
           </div>
         </button>
       </div>
