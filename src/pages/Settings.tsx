@@ -9,12 +9,13 @@ import {
   AlertTriangle,
   Dumbbell,
   Calendar,
+  Scale,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
 import { Exercise, Workout } from '../types/workout'
 
-type TabType = 'exercises' | 'workouts'
+type TabType = 'exercises' | 'workouts' | 'preferences'
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('exercises')
@@ -22,6 +23,7 @@ const Settings: React.FC = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
   const [isAddingExercise, setIsAddingExercise] = useState(false)
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     type: 'exercise' | 'workout'
     id: string
@@ -39,11 +41,18 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     loadData()
+    setWeightUnit(storageService.getWeightUnit())
   }, [])
 
   const loadData = () => {
     setExercises(storageService.getExercises())
     setWorkouts(storageService.getWorkouts())
+  }
+
+  const handleWeightUnitChange = (unit: 'kg' | 'lb') => {
+    setWeightUnit(unit)
+    storageService.saveWeightUnit(unit)
+    toast.success(`Weight unit changed to ${unit.toUpperCase()}`)
   }
 
   const handleEditExercise = (exercise: Exercise) => {
@@ -207,6 +216,19 @@ const Settings: React.FC = () => {
           <div className="flex items-center space-x-2">
             <Calendar className="h-5 w-5" />
             <span>Workouts</span>
+          </div>
+        </button>
+        <button
+          onClick={() => setActiveTab('preferences')}
+          className={`px-6 py-3 font-medium transition-colors ${
+            activeTab === 'preferences'
+              ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+          }`}
+        >
+          <div className="flex items-center space-x-2">
+            <Scale className="h-5 w-5" />
+            <span>Preferences</span>
           </div>
         </button>
       </div>
@@ -646,6 +668,66 @@ const Settings: React.FC = () => {
                 ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Preferences Tab */}
+      {activeTab === 'preferences' && (
+        <div className="space-y-6">
+          <p className="text-gray-600 dark:text-gray-400">
+            Customize your workout preferences and units.
+          </p>
+
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
+              Weight Units
+            </h2>
+
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Choose your preferred unit for weight measurements throughout
+                the app and AI recommendations.
+              </p>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => handleWeightUnitChange('kg')}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    weightUnit === 'kg'
+                      ? 'bg-primary-600 text-white dark:bg-primary-500'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex flex-col items-center">
+                    <span className="text-lg">KG</span>
+                    <span className="text-xs opacity-75">Kilograms</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleWeightUnitChange('lb')}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    weightUnit === 'lb'
+                      ? 'bg-primary-600 text-white dark:bg-primary-500'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex flex-col items-center">
+                    <span className="text-lg">LB</span>
+                    <span className="text-xs opacity-75">Pounds</span>
+                  </div>
+                </button>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-4">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Note:</strong> This setting affects how weights are
+                  displayed and what units the AI uses in recommendations and
+                  workout plans.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

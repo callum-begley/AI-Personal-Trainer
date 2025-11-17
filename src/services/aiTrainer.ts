@@ -4,6 +4,7 @@ import {
   Exercise,
   Workout,
 } from '../types/workout'
+import { storageService } from './storage'
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
@@ -90,6 +91,9 @@ export class AITrainerService {
     currentProgress: WorkoutProgress[],
     focusCategory: string = 'all'
   ): Promise<AIRecommendation[]> {
+    const weightUnit = storageService.getWeightUnit()
+    const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
+
     const categoryFocus =
       focusCategory === 'all'
         ? ''
@@ -138,7 +142,7 @@ export class AITrainerService {
           : ''
       }
 
-      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+      Important: Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weight measurements.
       
       Provide 3-5 specific, actionable recommendations${
         focusCategory !== 'all' ? ` focused on ${focusCategory} exercises` : ''
@@ -173,6 +177,9 @@ export class AITrainerService {
     userGoals: string[],
     fitnessLevel: string
   ): Promise<Exercise[]> {
+    const weightUnit = storageService.getWeightUnit()
+    const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
+
     const prompt = `
       As an AI personal trainer, suggest new exercises to add variety to the current workout routine.
 
@@ -202,7 +209,7 @@ export class AITrainerService {
       3. Progressive difficulty appropriate for fitness level
       4. Variety in movement patterns
 
-      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+      Important: Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weight measurements.
     `
 
     try {
@@ -235,6 +242,9 @@ export class AITrainerService {
     availableTime: number,
     equipment: string[]
   ): Promise<Workout> {
+    const weightUnit = storageService.getWeightUnit()
+    const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
+
     const prompt = `
       Create a complete workout plan for today's session.
 
@@ -285,7 +295,7 @@ export class AITrainerService {
          - full-body: Mix of upper AND lower body exercises
          - chest/back/shoulders/arms/legs/core/cardio: ONLY that specific muscle group
       
-      3. Always use KILOGRAMS (kgs) for weights, never pounds.
+      3. Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weights.
       
       Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
@@ -405,6 +415,9 @@ export class AITrainerService {
     progress: WorkoutProgress[],
     chatHistory: Array<{ role: string; content: string }> = []
   ): Promise<string> {
+    const weightUnit = storageService.getWeightUnit()
+    const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
+
     // Format chat history for context
     const conversationContext =
       chatHistory.length > 0
@@ -441,7 +454,7 @@ export class AITrainerService {
       - Provide a helpful, concise, and friendly response.
       - If the question is about their specific workouts or progress, reference the data provided.
 
-      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+      Important: Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weight measurements.
 
       Do not talk about their workout history if it is not relevant to the question asked.
 

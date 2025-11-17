@@ -83,5 +83,6 @@ export interface User {
     workoutDuration: number // preferred workout duration in minutes
     workoutFrequency: number // times per week
     equipment: string[]
+    weightUnit?: 'kg' | 'lb' // preferred weight unit
   }
 }

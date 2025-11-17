@@ -97,6 +97,16 @@ class StorageService {
     localStorage.setItem(this.getStorageKey('user'), JSON.stringify(user))
   }
 
+  // Weight Unit Preference
+  getWeightUnit(): 'kg' | 'lb' {
+    const unit = localStorage.getItem(this.getStorageKey('weight-unit'))
+    return unit === 'lb' ? 'lb' : 'kg' // Default to kg
+  }
+
+  saveWeightUnit(unit: 'kg' | 'lb'): void {
+    localStorage.setItem(this.getStorageKey('weight-unit'), unit)
+  }
+
   // Progress calculations
   getWorkoutProgress(): WorkoutProgress[] {
     const workouts = this.getWorkouts().filter((w) => w.completed)
