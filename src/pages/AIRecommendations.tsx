@@ -402,12 +402,12 @@ const AIRecommendations: React.FC = () => {
           <div className="grid grid-cols-2 gap-6 grid-rows-2">
             <button
               onClick={openChat}
-              className="select-none z-40 row-span-3 card p-0 hover:shadow-xl transition-shadow"
+              className="select-none z-40 row-span-3 card p-0 hover:shadow-xl transition-shadow bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700"
             >
               <img
-                src="/aila.webp"
+                src="/aila.png"
                 alt="AI Personal Trainer Avatar"
-                className="w-72 h-72 object-cover place-self-center translate-x-3"
+                className="h-72 object-cover place-self-center"
               />
               <p className="text-md font-medium mt-3 text-gray-900 dark:text-gray-100">
                 Chat with AI Trainer
