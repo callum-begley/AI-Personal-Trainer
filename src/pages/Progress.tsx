@@ -22,6 +22,7 @@ const Progress: React.FC = () => {
     id: string
     name: string
   } | null>(null)
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
 
   useEffect(() => {
     const allWorkouts = storageService.getWorkouts()
@@ -29,6 +30,7 @@ const Progress: React.FC = () => {
 
     setWorkouts(allWorkouts.filter((w) => w.completed))
     setProgress(workoutProgress)
+    setWeightUnit(storageService.getWeightUnit())
   }, [])
 
   const formatDate = (date: Date) => {
@@ -304,7 +306,7 @@ const Progress: React.FC = () => {
                               prog.previousBest.weight !== null
                                 ? Number(prog.previousBest.weight) === 0
                                   ? ' @ bodyweight'
-                                  : ` @ ${prog.previousBest.weight} kgs`
+                                  : ` @ ${prog.previousBest.weight} ${weightUnit}`
                                 : ''}
                             </p>
                             <p className="text-xs text-gray-500">
@@ -346,7 +348,7 @@ const Progress: React.FC = () => {
                             prog.currentSession.weight !== null
                               ? Number(prog.currentSession.weight) === 0
                                 ? ' @ bodyweight'
-                                : ` @ ${prog.currentSession.weight} kgs`
+                                : ` @ ${prog.currentSession.weight} ${weightUnit}`
                               : ''}
                           </p>
                         )}

@@ -91,6 +91,7 @@ const WorkoutTracker: React.FC = () => {
     'cardio' | 'strength'
   >('strength')
   const [showClearConfirmation, setShowClearConfirmation] = useState(false)
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
 
   const aiTrainer = new AITrainerService()
 
@@ -116,6 +117,9 @@ const WorkoutTracker: React.FC = () => {
     // Load saved workouts
     const loadedWorkouts = storageService.getWorkouts()
     setSavedWorkouts(loadedWorkouts)
+    
+    // Load weight unit preference
+    setWeightUnit(storageService.getWeightUnit())
   }, [])
 
   const startWorkout = () => {
@@ -832,7 +836,7 @@ const WorkoutTracker: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Weight (kgs)
+                        Weight ({weightUnit})
                       </label>
                       <input
                         {...register('weight', { min: 0 })}
@@ -1151,7 +1155,7 @@ const WorkoutTracker: React.FC = () => {
                                           </div>
                                           <div className="flex items-center space-x-2">
                                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                              Weight (kgs):
+                                              Weight ({weightUnit}):
                                             </label>
                                             <input
                                               type="number"
@@ -1295,7 +1299,7 @@ const WorkoutTracker: React.FC = () => {
                                           set.weight !== null
                                             ? set.weight === 0
                                               ? '@ bodyweight'
-                                              : `@ ${set.weight} kgs`
+                                              : `@ ${set.weight} ${weightUnit}`
                                             : ''}
                                         </span>
                                       </div>
