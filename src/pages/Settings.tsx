@@ -360,70 +360,173 @@ const Settings: React.FC = () => {
               .map((exercise) => (
                 <div
                   key={exercise.id}
-                  className="card hover:shadow-lg transition-shadow"
+                  className={`card transition-shadow ${
+                    editingExercise?.id === exercise.id
+                      ? 'border-2 border-primary-500 dark:border-primary-600'
+                      : 'hover:shadow-lg'
+                  }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                        {exercise.name}
-                      </h3>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEditExercise(exercise)}
-                        className="text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 p-1"
-                        title="Edit exercise"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteExercise(exercise.id)}
-                        className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1"
-                        title="Delete exercise"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
+                  {editingExercise?.id === exercise.id ? (
+                    // Edit form inline
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                          Edit Exercise
+                        </h3>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
 
-                  {editingExercise?.id === exercise.id && (
-                    <div className="space-y-2 text-sm mt-3">
                       <div>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          Category:{' '}
-                        </span>
-                        <span className="text-gray-800 dark:text-gray-200 capitalize">
-                          {exercise.category}
-                        </span>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Exercise Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={exerciseForm.name}
+                          onChange={(e) =>
+                            setExerciseForm({
+                              ...exerciseForm,
+                              name: e.target.value,
+                            })
+                          }
+                          className="input-field"
+                          placeholder="e.g., Barbell Curl"
+                        />
                       </div>
+
                       <div>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          Muscle Groups:{' '}
-                        </span>
-                        <span className="text-gray-800 dark:text-gray-200 capitalize">
-                          {exercise.muscleGroups.join(', ')}
-                        </span>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Category *
+                        </label>
+                        <select
+                          value={exerciseForm.category}
+                          onChange={(e) =>
+                            setExerciseForm({
+                              ...exerciseForm,
+                              category: e.target.value as Exercise['category'],
+                            })
+                          }
+                          className="input-field"
+                        >
+                          <option value="chest">Chest</option>
+                          <option value="back">Back</option>
+                          <option value="shoulders">Shoulders</option>
+                          <option value="arms">Arms</option>
+                          <option value="legs">Legs</option>
+                          <option value="core">Core/Abs</option>
+                          <option value="cardio">Cardio</option>
+                          <option value="full-body">Full Body</option>
+                          <option value="upper-body">Upper Body</option>
+                          <option value="lower-body">Lower Body</option>
+                        </select>
                       </div>
-                      {exercise.equipment && (
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Equipment:{' '}
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200">
-                            {exercise.equipment}
-                          </span>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Muscle Groups * (select at least one)
+                        </label>
+                        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                          {muscleGroupOptions.map((muscle) => (
+                            <label
+                              key={muscle}
+                              className="flex items-center space-x-2 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={exerciseForm.muscleGroups.includes(
+                                  muscle
+                                )}
+                                onChange={() => handleMuscleGroupChange(muscle)}
+                                className="rounded text-primary-600 focus:ring-primary-500"
+                              />
+                              <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">
+                                {muscle}
+                              </span>
+                            </label>
+                          ))}
                         </div>
-                      )}
-                      {exercise.instructions && (
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Instructions:{' '}
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200 text-xs">
-                            {exercise.instructions}
-                          </span>
-                        </div>
-                      )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Equipment
+                        </label>
+                        <input
+                          type="text"
+                          value={exerciseForm.equipment || ''}
+                          onChange={(e) =>
+                            setExerciseForm({
+                              ...exerciseForm,
+                              equipment: e.target.value,
+                            })
+                          }
+                          className="input-field"
+                          placeholder="e.g., Barbell, Dumbbells, Bodyweight"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Instructions
+                        </label>
+                        <textarea
+                          value={exerciseForm.instructions || ''}
+                          onChange={(e) =>
+                            setExerciseForm({
+                              ...exerciseForm,
+                              instructions: e.target.value,
+                            })
+                          }
+                          className="input-field min-h-20"
+                          placeholder="Brief instructions on how to perform this exercise"
+                        />
+                      </div>
+
+                      <div className="flex justify-end space-x-3 pt-4 border-t dark:border-gray-700">
+                        <button
+                          onClick={handleCancelEdit}
+                          className="btn-secondary"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveExercise}
+                          className="btn-primary flex items-center space-x-2"
+                        >
+                          <Save className="h-5 w-5" />
+                          <span>Save</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    // View mode
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                          {exercise.name}
+                        </h3>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEditExercise(exercise)}
+                          className="text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 p-1"
+                          title="Edit exercise"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteExercise(exercise.id)}
+                          className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1"
+                          title="Delete exercise"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
