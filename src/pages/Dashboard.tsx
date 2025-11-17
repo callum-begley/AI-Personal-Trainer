@@ -156,58 +156,90 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Workouts */}
-      <div className="card">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            Recent Workouts
-          </h2>
-          <Link
-            to="/progress"
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-          >
-            View All →
-          </Link>
-        </div>
-
-        {recentWorkouts.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              No workouts recorded yet
-            </p>
-            <Link to="/workout" className="btn-primary">
-              Start Your First Workout
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {recentWorkouts.map((workout) => (
-              <div
-                key={workout.id}
-                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-              >
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                    {workout.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {formatDate(workout.date)} • {workout.exercises.length}{' '}
-                    exercises
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {workout.duration ? `${workout.duration}m` : 'No duration'}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {workout.sets.filter((s) => s.completed).length} sets
-                    completed
-                  </p>
+      {/* Recent Workouts and AILA Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* AILA AI Assistant */}
+        <Link to="/recommendations" className="block order-1 lg:order-1">
+          <div className="card h-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700 hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-64 h-64 rounded-full border-4 border-blue-300 dark:border-blue-600 overflow-hidden">
+                <img
+                  src="/aila.webp"
+                  alt="AILA"
+                  className="w-64 h-64 translate-x-3 object-cover "
+                />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  AILA - Your AI Personal Trainer
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
+                  Get personalized workout recommendations, chat about your
+                  fitness goals, or ask any training-related questions
+                </p>
+                <div className="mt-4 text-blue-600 dark:text-blue-400 font-semibold text-lg">
+                  Chat Now →
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-        )}
+        </Link>
+
+        {/* Recent Workouts */}
+        <div className="card order-2 lg:order-2">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              Recent Workouts
+            </h2>
+            <Link
+              to="/progress"
+              className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+            >
+              View All →
+            </Link>
+          </div>
+
+          {recentWorkouts.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                No workouts recorded yet
+              </p>
+              <Link to="/workout" className="btn-primary">
+                Start Your First Workout
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentWorkouts.map((workout) => (
+                <div
+                  key={workout.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                >
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                      {workout.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {formatDate(workout.date)} • {workout.exercises.length}{' '}
+                      exercises
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {workout.duration
+                        ? `${workout.duration}m`
+                        : 'No duration'}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {workout.sets.filter((s) => s.completed).length} sets
+                      completed
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Quick Actions */}

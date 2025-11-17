@@ -559,12 +559,12 @@ const AIRecommendations: React.FC = () => {
       {/* Chat Modal */}
       {showChat && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 lg:px-40"
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 lg:px-40 "
           style={{ margin: 0 }}
           onClick={closeChat}
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-lg w-full h-[800px] flex flex-col"
+            className="bg-white dark:bg-gray-800 rounded-lg w-full h-full flex flex-col my-10"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Chat Header */}
