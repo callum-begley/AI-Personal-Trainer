@@ -1,8 +1,11 @@
 // Simple service worker for offline support
-const CACHE_NAME = 'ai-trainer-v1'
+// IMPORTANT: Update the version number every time you deploy new changes
+const CACHE_NAME = 'ai-trainer-v' + new Date().getTime()
 const urlsToCache = ['/', '/index.html']
 
 self.addEventListener('install', (event) => {
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting()
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   )
@@ -21,16 +24,20 @@ self.addEventListener('fetch', (event) => {
 })
 
 self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME]
+  // Take control of all pages immediately
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName)
-          }
-        })
-      )
+    clients.claim().then(() => {
+      // Delete all old caches
+      return caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName)
+              return caches.delete(cacheName)
+            }
+          })
+        )
+      })
     })
   )
 })
