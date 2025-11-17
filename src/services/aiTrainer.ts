@@ -386,4 +386,38 @@ export class AITrainerService {
       })
     }
   }
+
+  async getChatResponse(
+    userMessage: string,
+    workoutHistory: Workout[],
+    progress: WorkoutProgress[]
+  ): Promise<string> {
+    const prompt = `
+      You are an experienced AI personal trainer assistant. A user has asked you the following question:
+
+      "${userMessage}"
+
+      Here is their workout history and progress data for context:
+      
+      Recent Workouts:
+      ${JSON.stringify(workoutHistory.slice(-5), null, 2)}
+
+      Current Progress:
+      ${JSON.stringify(progress, null, 2)}
+
+      Provide a helpful, concise, and friendly response. If the question is about their specific workouts or progress, reference the data provided. If it's a general fitness question, provide expert advice.
+
+      Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
+
+      Keep your response conversational and under 200 words unless more detail is specifically requested.
+    `
+
+    try {
+      const response = await this.callGeminiAPI(prompt)
+      return response.trim()
+    } catch (error) {
+      console.error('Error getting chat response:', error)
+      throw error
+    }
+  }
 }
