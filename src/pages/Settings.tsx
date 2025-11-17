@@ -362,14 +362,11 @@ const Settings: React.FC = () => {
                   key={exercise.id}
                   className="card hover:shadow-lg transition-shadow"
                 >
-                  <div className="flex justify-between items-start mb-3">
+                  <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                         {exercise.name}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-                        {exercise.category}
-                      </p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -389,36 +386,46 @@ const Settings: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Muscle Groups:{' '}
-                      </span>
-                      <span className="text-gray-800 dark:text-gray-200 capitalize">
-                        {exercise.muscleGroups.join(', ')}
-                      </span>
+                  {editingExercise?.id === exercise.id && (
+                    <div className="space-y-2 text-sm mt-3">
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Category:{' '}
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-200 capitalize">
+                          {exercise.category}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Muscle Groups:{' '}
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-200 capitalize">
+                          {exercise.muscleGroups.join(', ')}
+                        </span>
+                      </div>
+                      {exercise.equipment && (
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Equipment:{' '}
+                          </span>
+                          <span className="text-gray-800 dark:text-gray-200">
+                            {exercise.equipment}
+                          </span>
+                        </div>
+                      )}
+                      {exercise.instructions && (
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Instructions:{' '}
+                          </span>
+                          <span className="text-gray-800 dark:text-gray-200 text-xs">
+                            {exercise.instructions}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    {exercise.equipment && (
-                      <div>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          Equipment:{' '}
-                        </span>
-                        <span className="text-gray-800 dark:text-gray-200">
-                          {exercise.equipment}
-                        </span>
-                      </div>
-                    )}
-                    {exercise.instructions && (
-                      <div>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          Instructions:{' '}
-                        </span>
-                        <span className="text-gray-800 dark:text-gray-200 text-xs">
-                          {exercise.instructions}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               ))}
           </div>
