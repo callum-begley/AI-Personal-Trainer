@@ -117,7 +117,7 @@ const WorkoutTracker: React.FC = () => {
     // Load saved workouts
     const loadedWorkouts = storageService.getWorkouts()
     setSavedWorkouts(loadedWorkouts)
-    
+
     // Load weight unit preference
     setWeightUnit(storageService.getWeightUnit())
   }, [])
