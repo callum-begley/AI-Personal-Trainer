@@ -31,12 +31,36 @@ export class AITrainerService {
     }
   }
 
-  private async callGeminiAPI(prompt: string): Promise<string> {
+  private async callGeminiAPI(
+    prompt: string,
+    useGrounding: boolean = false
+  ): Promise<string> {
     if (!GEMINI_API_KEY) {
       throw new Error('Gemini API key not configured')
     }
 
     try {
+      const requestBody: any = {
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+      }
+
+      // Add Google Search grounding if requested
+      if (useGrounding) {
+        requestBody.tools = [
+          {
+            googleSearch: {},
+          },
+        ]
+      }
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
@@ -44,17 +68,7 @@ export class AITrainerService {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: prompt,
-                  },
-                ],
-              },
-            ],
-          }),
+          body: JSON.stringify(requestBody),
         }
       )
 
@@ -69,8 +83,6 @@ export class AITrainerService {
       console.error('Error in callGeminiAPI:', error)
       throw error
     }
-
-    throw new Error('No valid response received from AI')
   }
 
   async getProgressionRecommendations(
@@ -408,7 +420,7 @@ export class AITrainerService {
         : ''
 
     const prompt = `
-      You are an experienced AI personal trainer assistant. ${conversationContext}
+      You are an experienced AI personal trainer assistant with access to web search. ${conversationContext}
 
       The user has now asked you the following question:
 
@@ -422,7 +434,12 @@ export class AITrainerService {
       Current Progress:
       ${JSON.stringify(progress, null, 2)}
 
-      Provide a helpful, concise, and friendly response. If the question is about their specific workouts or progress, reference the data provided. If it's a general fitness question, provide expert advice.
+      Instructions:
+      - If the question requires current information, latest research, specific studies, nutrition facts, supplement information, or trending fitness topics, use web search to provide accurate, up-to-date information.
+      - If the question is about the user's personal workout data or general fitness knowledge you already have, answer directly without searching.
+      - When using web search results, cite your sources naturally in the response.
+      - Provide a helpful, concise, and friendly response.
+      - If the question is about their specific workouts or progress, reference the data provided.
 
       Important: Always use KILOGRAMS (kgs) for weight measurements, never pounds (lbs).
 
@@ -432,11 +449,12 @@ export class AITrainerService {
 
       Do not mention that you are an AI model.
 
-      Keep your response conversational and under 200 words unless more detail is specifically requested.
+      Keep your response conversational and under 250 words unless more detail is specifically requested.
     `
 
     try {
-      const response = await this.callGeminiAPI(prompt)
+      // Enable Google Search grounding for the chat
+      const response = await this.callGeminiAPI(prompt, true)
       return response.trim()
     } catch (error) {
       console.error('Error getting chat response:', error)

@@ -399,7 +399,7 @@ const AIRecommendations: React.FC = () => {
       ) : (
         <>
           {/* Stats Overview */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 grid-rows-2">
+          <div className="grid grid-cols-2 gap-6 grid-rows-2">
             <button
               onClick={openChat}
               className="select-none z-40 row-span-3 card p-0 hover:shadow-xl transition-shadow"
