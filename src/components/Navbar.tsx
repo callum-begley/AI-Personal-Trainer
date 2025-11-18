@@ -47,14 +47,15 @@ const Navbar: React.FC = () => {
       icon: Brain,
       shortLabel: 'AI',
     },
-    {
-      path: '/settings',
-      label: 'Settings',
-      icon: Settings,
-      shortLabel: 'Settings',
-      excludeFromMobile: true,
-    },
   ]
+
+  const settingsItem = {
+    path: '/settings',
+    label: 'Settings',
+    icon: Settings,
+    shortLabel: 'Settings',
+    excludeFromMobile: true,
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -137,6 +138,18 @@ const Navbar: React.FC = () => {
                 />
                 <span className="font-medium">Chat</span>
               </button>
+              {/* Settings Link */}
+              <Link
+                to={settingsItem.path}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                  location.pathname === settingsItem.path
+                    ? 'bg-primary-600 text-white dark:bg-primary-500'
+                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                <settingsItem.icon className="h-4 w-4" />
+                <span className="font-medium">{settingsItem.label}</span>
+              </Link>
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
@@ -180,6 +193,20 @@ const Navbar: React.FC = () => {
                 />
                 <span className="text-xs font-medium">Chat</span>
               </button>
+              {/* Settings Link */}
+              <Link
+                to={settingsItem.path}
+                className={`flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  location.pathname === settingsItem.path
+                    ? 'bg-primary-600 text-white dark:bg-primary-500'
+                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                <settingsItem.icon className="h-4 w-4 mb-1" />
+                <span className="text-xs font-medium">
+                  {settingsItem.shortLabel}
+                </span>
+              </Link>
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
@@ -286,6 +313,19 @@ const Navbar: React.FC = () => {
                   />
                   <span className="font-medium">Chat</span>
                 </button>
+                {/* Settings Link in Mobile Menu */}
+                <Link
+                  to={settingsItem.path}
+                  onClick={closeMobileMenu}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    location.pathname === settingsItem.path
+                      ? 'bg-primary-600 text-white dark:bg-primary-500'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <settingsItem.icon className="h-5 w-5" />
+                  <span className="font-medium">{settingsItem.label}</span>
+                </Link>
                 {/* Dark Mode Toggle in Mobile Menu */}
                 <button
                   onClick={toggleDarkMode}
@@ -313,22 +353,20 @@ const Navbar: React.FC = () => {
       {screenSize === 'mobile' && (
         <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50">
           <nav className="flex justify-around items-center px-2 py-1">
-            {navItems
-              .filter((item) => !item.excludeFromMobile)
-              .map(({ path, shortLabel, icon: Icon }) => (
-                <Link
-                  key={path}
-                  to={path}
-                  className={`flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-colors duration-200 ${
-                    location.pathname === path
-                      ? 'text-primary-600 dark:text-primary-400'
-                      : 'text-gray-500 dark:text-gray-400'
-                  }`}
-                >
-                  <Icon className="h-6 w-6 mb-1" />
-                  <span className="text-xs font-medium">{shortLabel}</span>
-                </Link>
-              ))}
+            {navItems.map(({ path, shortLabel, icon: Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-colors duration-200 ${
+                  location.pathname === path
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
+                <Icon className="h-6 w-6 mb-1" />
+                <span className="text-xs font-medium">{shortLabel}</span>
+              </Link>
+            ))}
             <button
               onClick={() => setIsChatOpen(true)}
               className="flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-colors duration-200 text-gray-500 dark:text-gray-400"
