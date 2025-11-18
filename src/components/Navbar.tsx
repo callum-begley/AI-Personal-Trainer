@@ -133,7 +133,7 @@ const Navbar: React.FC = () => {
                 <img
                   src="/aila-face.png"
                   alt="Chat with AILA"
-                  className="h-5 w-5 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                  className="h-7 w-7 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
                 />
                 <span className="font-medium">Chat</span>
               </button>
@@ -282,7 +282,7 @@ const Navbar: React.FC = () => {
                   <img
                     src="/aila-face.png"
                     alt="Chat"
-                    className="h-5 w-5 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                    className="h-7 w-7 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
                   />
                   <span className="font-medium">Chat</span>
                 </button>
@@ -312,7 +312,7 @@ const Navbar: React.FC = () => {
       {/* Bottom Mobile Navigation */}
       {screenSize === 'mobile' && (
         <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50">
-          <nav className="flex justify-around items-center px-2 py-2">
+          <nav className="flex justify-around items-center px-2 py-1">
             {navItems
               .filter((item) => !item.excludeFromMobile)
               .map(({ path, shortLabel, icon: Icon }) => (
@@ -336,7 +336,7 @@ const Navbar: React.FC = () => {
               <img
                 src="/aila-face.png"
                 alt="Chat"
-                className="h-6 w-6 mb-1 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                className="h-8 w-8 mb-1 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
               />
               <span className="text-xs font-medium">Chat</span>
             </button>
