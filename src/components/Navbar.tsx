@@ -196,18 +196,6 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Menu Button */}
             <div className="sm:hidden flex items-center space-x-2">
-              {/* Chat Button for Mobile */}
-              <button
-                onClick={() => setIsChatOpen(true)}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                aria-label="Chat with AILA"
-              >
-                <img
-                  src="/aila-face.png"
-                  alt="Chat"
-                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
-                />
-              </button>
               {currentWorkout && (
                 <Link
                   to="/workout"
