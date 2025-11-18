@@ -292,7 +292,7 @@ const AIRecommendations: React.FC = () => {
           {/* Show chat even without workouts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <button
-              onClick={openChat}
+              onClick={() => setShowChat(true)}
               className="select-none z-40 card p-0 hover:shadow-xl transition-shadow bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700"
             >
               <img
