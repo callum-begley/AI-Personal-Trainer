@@ -127,14 +127,15 @@ const Navbar: React.FC = () => {
               {/* Chat Button */}
               <button
                 onClick={() => setIsChatOpen(true)}
-                className="ml-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                className="flex items-center space-x-2 ml-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-600 dark:text-gray-300"
                 aria-label="Chat with AILA"
               >
                 <img
                   src="/aila-face.png"
                   alt="Chat with AILA"
-                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                  className="h-5 w-5 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
                 />
+                <span className="font-medium">Chat</span>
               </button>
               {/* Dark Mode Toggle */}
               <button
@@ -169,14 +170,15 @@ const Navbar: React.FC = () => {
               {/* Chat Button */}
               <button
                 onClick={() => setIsChatOpen(true)}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                className="flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                 aria-label="Chat with AILA"
               >
                 <img
                   src="/aila-face.png"
                   alt="Chat"
-                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                  className="h-4 w-4 mb-1 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
                 />
+                <span className="text-xs font-medium">Chat</span>
               </button>
               {/* Dark Mode Toggle */}
               <button
@@ -281,6 +283,21 @@ const Navbar: React.FC = () => {
                     <span className="font-medium">{label}</span>
                   </Link>
                 ))}
+                {/* Chat Button in Mobile Menu */}
+                <button
+                  onClick={() => {
+                    setIsChatOpen(true)
+                    closeMobileMenu()
+                  }}
+                  className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
+                >
+                  <img
+                    src="/aila-face.png"
+                    alt="Chat"
+                    className="h-5 w-5 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                  />
+                  <span className="font-medium">Chat</span>
+                </button>
                 {/* Dark Mode Toggle in Mobile Menu */}
                 <button
                   onClick={toggleDarkMode}
@@ -324,6 +341,17 @@ const Navbar: React.FC = () => {
                   <span className="text-xs font-medium">{shortLabel}</span>
                 </Link>
               ))}
+            <button
+              onClick={() => setIsChatOpen(true)}
+              className="flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-colors duration-200 text-gray-500 dark:text-gray-400"
+            >
+              <img
+                src="/aila-face.png"
+                alt="Chat"
+                className="h-6 w-6 mb-1 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+              />
+              <span className="text-xs font-medium">Chat</span>
+            </button>
           </nav>
         </div>
       )}
