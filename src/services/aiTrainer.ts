@@ -83,11 +83,6 @@ export class AITrainerService {
       if (data.candidates && data.candidates[0] && data.candidates[0].content) {
         const candidate = data.candidates[0]
 
-        // Check if the model used grounding (web search)
-        if (candidate.groundingMetadata) {
-          console.log('Web search was used:', candidate.groundingMetadata)
-        }
-
         // Extract text from all parts (sometimes grounding creates multiple parts)
         const textParts = candidate.content.parts
           .filter((part: any) => part.text)
