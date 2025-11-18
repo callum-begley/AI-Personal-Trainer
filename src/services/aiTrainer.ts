@@ -34,23 +34,28 @@ export class AITrainerService {
 
   private async callGeminiAPI(
     prompt: string,
-    useGrounding: boolean = false
+    useGrounding: boolean = false,
+    conversationHistory: Array<{
+      role: string
+      parts: Array<{ text: string }>
+    }> = []
   ): Promise<string> {
     if (!GEMINI_API_KEY) {
       throw new Error('Gemini API key not configured')
     }
 
     try {
+      // Build contents array with history + new prompt
+      const contents = [
+        ...conversationHistory,
+        {
+          role: 'user',
+          parts: [{ text: prompt }],
+        },
+      ]
+
       const requestBody: any = {
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
+        contents: contents,
       }
 
       // Add Google Search grounding if requested
@@ -76,7 +81,20 @@ export class AITrainerService {
       const data = await response.json()
 
       if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text
+        const candidate = data.candidates[0]
+
+        // Check if the model used grounding (web search)
+        if (candidate.groundingMetadata) {
+          console.log('Web search was used:', candidate.groundingMetadata)
+        }
+
+        // Extract text from all parts (sometimes grounding creates multiple parts)
+        const textParts = candidate.content.parts
+          .filter((part: any) => part.text)
+          .map((part: any) => part.text)
+          .join('\n')
+
+        return textParts
       } else {
         throw new Error('No valid response from AI')
       }
@@ -418,56 +436,41 @@ export class AITrainerService {
     const weightUnit = storageService.getWeightUnit()
     const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
 
-    // Format chat history for context
-    const conversationContext =
-      chatHistory.length > 0
-        ? `
-      Previous conversation:
-      ${chatHistory
-        .map(
-          (msg) =>
-            `${msg.role === 'user' ? 'User' : 'AI Trainer'}: ${msg.content}`
-        )
-        .join('\n')}
-      `
-        : ''
+    // Convert chat history to Gemini format
+    const geminiHistory = chatHistory.map((msg) => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }],
+    }))
 
-    const prompt = `
-      You are an experienced AI personal trainer assistant with access to web search. ${conversationContext}
+    // Create system context as the first user message if history is empty
+    const systemContext = `
+      You are AILA, an experienced AI personal trainer assistant with access to real-time web search capabilities.
 
-      The user has now asked you the following question:
-
-      "${userMessage}"
-
-      Here is their workout history and progress data for context:
-      
-      Recent Workouts:
-      ${JSON.stringify(workoutHistory.slice(-5), null, 2)}
-
-      Current Progress:
-      ${JSON.stringify(progress, null, 2)}
+      The user's workout data:
+      - Recent Workouts: ${JSON.stringify(workoutHistory.slice(-5))}
+      - Current Progress: ${JSON.stringify(progress)}
+      - Weight Unit Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
 
       Instructions:
-      - If the question requires current information, latest research, specific studies, nutrition facts, supplement information, or trending fitness topics, use web search to provide accurate, up-to-date information.
-      - If the question is about the user's personal workout data or general fitness knowledge you already have, answer directly without searching.
-      - When using web search results, cite your sources naturally in the response.
-      - Provide a helpful, concise, and friendly response.
-      - If the question is about their specific workouts or progress, reference the data provided.
-
-      Important: Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weight measurements.
-
-      Do not talk about their workout history if it is not relevant to the question asked.
-
-      Use emojis to help make your response more engaging.
-
-      Do not mention that you are an AI model.
-
-      Keep your response conversational and under 250 words unless more detail is specifically requested.
+      - When the user asks about current information, latest research, specific studies, nutrition facts, supplement information, trending fitness topics, or anything requiring up-to-date knowledge, AUTOMATICALLY use web search to find accurate information.
+      - You have web search enabled - use it proactively when needed.
+      - When you use web search results, naturally mention your sources.
+      - For questions about the user's personal workout data or general fitness knowledge, answer directly.
+      - Provide helpful, concise, and friendly responses.
+      - Use emojis to make responses engaging.
+      - Keep responses under 250 words unless more detail is requested.
+      - Always use ${weightUnitName.toUpperCase()} for weights.
+      - Don't mention that you are an AI model or talk about your capabilities unless asked.
     `
+
+    const prompt =
+      chatHistory.length === 0
+        ? `${systemContext}\n\nUser question: ${userMessage}`
+        : userMessage
 
     try {
       // Enable Google Search grounding for the chat
-      const response = await this.callGeminiAPI(prompt, true)
+      const response = await this.callGeminiAPI(prompt, true, geminiHistory)
       return response.trim()
     } catch (error) {
       console.error('Error getting chat response:', error)
