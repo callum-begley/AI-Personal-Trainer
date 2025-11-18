@@ -4,10 +4,12 @@ import { Calendar, TrendingUp, Target, Clock, Dumbbell } from 'lucide-react'
 import { storageService } from '../services/storage'
 import { Workout } from '../types/workout'
 import { useWorkout } from '../contexts/WorkoutContext'
+import AIChatModal from '../components/AIChatModal'
 
 const Dashboard: React.FC = () => {
   const { currentWorkout, timer } = useWorkout()
   const [recentWorkouts, setRecentWorkouts] = useState<Workout[]>([])
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [stats, setStats] = useState({
     totalWorkouts: 0,
     thisWeekWorkouts: 0,
@@ -159,7 +161,10 @@ const Dashboard: React.FC = () => {
       {/* Recent Workouts and AILA Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* AILA AI Assistant */}
-        <Link to="/recommendations" className="block order-1 lg:order-1">
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="block order-1 lg:order-1 text-left w-full"
+        >
           <div className="card h-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700 hover:shadow-lg transition-shadow cursor-pointer">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-64 h-64 rounded-full border-4 border-blue-300 dark:border-blue-600 overflow-hidden flex items-center justify-center">
@@ -179,7 +184,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </Link>
+        </button>
 
         {/* Recent Workouts */}
         <div className="card order-2 lg:order-2">
@@ -304,6 +309,9 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* AI Chat Modal */}
+      <AIChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   )
 }
