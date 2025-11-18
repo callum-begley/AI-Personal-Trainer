@@ -19,6 +19,54 @@ interface ChatMessage {
   timestamp: Date
 }
 
+// Utility function to convert markdown to HTML
+const formatMarkdownToHtml = (text: string): string => {
+  let formatted = text
+
+  // Convert **bold** to <strong>
+  formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+
+  // Convert *italic* to <em> (but not * bullet points at start of line)
+  formatted = formatted.replace(/(?<!\*)\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>')
+
+  // Convert bullet points (lines starting with * or -) to list items
+  const lines = formatted.split('\n')
+  let inList = false
+  const processedLines: string[] = []
+
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim()
+    const isBullet = /^[\*\-]\s+/.test(trimmedLine)
+
+    if (isBullet) {
+      if (!inList) {
+        processedLines.push('<ul class="list-disc list-inside space-y-1 my-2">')
+        inList = true
+      }
+      const bulletContent = trimmedLine.replace(/^[\*\-]\s+/, '')
+      processedLines.push(`<li class="ml-2">${bulletContent}</li>`)
+    } else {
+      if (inList) {
+        processedLines.push('</ul>')
+        inList = false
+      }
+      if (trimmedLine) {
+        processedLines.push(line)
+      } else if (index > 0 && index < lines.length - 1) {
+        // Preserve empty lines between content for spacing
+        processedLines.push('<br/>')
+      }
+    }
+  })
+
+  // Close any open list
+  if (inList) {
+    processedLines.push('</ul>')
+  }
+
+  return processedLines.join('\n')
+}
+
 const AIRecommendations: React.FC = () => {
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([])
   const [loading, setLoading] = useState(false)
@@ -615,9 +663,12 @@ const AIRecommendations: React.FC = () => {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                     }`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">
-                      {message.content}
-                    </p>
+                    <div
+                      className="text-sm whitespace-pre-wrap"
+                      dangerouslySetInnerHTML={{
+                        __html: formatMarkdownToHtml(message.content),
+                      }}
+                    />
                     <p className="text-xs mt-1 opacity-70">
                       {message.timestamp.toLocaleTimeString('en-US', {
                         hour: '2-digit',
