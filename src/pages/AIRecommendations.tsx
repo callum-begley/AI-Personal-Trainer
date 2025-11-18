@@ -431,18 +431,37 @@ const AIRecommendations: React.FC = () => {
       </div>
 
       {workouts.length === 0 ? (
-        <div className="card text-center py-12">
-          <Brain className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-            No Workout Data Available
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Complete some workouts first to get personalized AI recommendations
-            based on your performance and progress.
-          </p>
-          <a href="/workout" className="btn-primary">
-            Start Your First Workout
-          </a>
+        <div className="space-y-6">
+          {/* Show chat even without workouts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <button
+              onClick={openChat}
+              className="select-none z-40 card p-0 hover:shadow-xl transition-shadow bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700"
+            >
+              <img
+                src="/aila.png"
+                alt="AI Personal Trainer Avatar"
+                className="h-72 object-cover place-self-center"
+              />
+              <p className="text-md font-medium mt-3 text-gray-900 dark:text-gray-100">
+                Chat with AI Trainer
+              </p>
+            </button>
+
+            <div className="card text-center py-12 flex flex-col justify-center">
+              <Brain className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                No Workout Data Available
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Complete some workouts first to get personalized AI
+                recommendations based on your performance and progress.
+              </p>
+              <a href="/workout" className="btn-primary mx-auto">
+                Start Your First Workout
+              </a>
+            </div>
+          </div>
         </div>
       ) : (
         <>
