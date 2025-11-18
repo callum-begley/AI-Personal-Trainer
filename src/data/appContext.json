@@ -1,0 +1,191 @@
+{
+  "appName": "AI Personal Trainer",
+  "appDescription": "A progressive web app that helps users track workouts, monitor progress, and get AI-powered training recommendations.",
+  "features": {
+    "dashboard": {
+      "name": "Dashboard",
+      "route": "/",
+      "description": "The main overview page showing workout statistics and quick actions",
+      "features": [
+        "View total workouts completed",
+        "See this week's workout count",
+        "Track total exercises available",
+        "Monitor average workout duration",
+        "Quick access to start new workout",
+        "Recent workouts list showing last 5 completed sessions",
+        "Active workout indicator (if a workout is in progress)",
+        "Progress overview with workout streak and weekly goal tracker",
+        "AILA AI assistant card to access AI recommendations and chat"
+      ],
+      "usage": "Users land here after opening the app. It provides an at-a-glance view of their fitness progress and quick navigation to key features."
+    },
+    "workoutTracker": {
+      "name": "Workout Tracker",
+      "route": "/workout",
+      "description": "The main workout logging interface where users track their exercises in real-time",
+      "features": [
+        "Add exercises to the current session",
+        "Log sets with reps and weight for each exercise",
+        "Built-in timer that tracks workout duration",
+        "Mark sets as completed with checkboxes",
+        "Add notes to individual sets",
+        "Complete workout to save it to history",
+        "Cancel workout if needed",
+        "Weight units display based on user preference (kg or lb)"
+      ],
+      "workflow": [
+        "1. User clicks 'Start New Workout' from Dashboard or navigates to Workout Tracker",
+        "2. User adds exercises from their saved library using the 'Add Exercise' button",
+        "3. For each exercise, user can add multiple sets",
+        "4. As user performs each set, they input reps and weight, then mark it complete",
+        "5. Timer runs automatically to track total workout duration",
+        "6. When finished, user clicks 'Complete Workout' to save to history",
+        "7. Workout data is stored in localStorage and used for progress tracking and AI recommendations"
+      ],
+      "usage": "This is where users spend most of their active training time. The timer and set completion make it easy to track workouts in real-time at the gym."
+    },
+    "progress": {
+      "name": "Progress",
+      "route": "/progress",
+      "description": "Detailed view of workout history and exercise-specific progress tracking",
+      "features": [
+        "Filter workouts by date range (Last 7 days, Last 30 days, Last 90 days, All time)",
+        "View complete workout history with dates and durations",
+        "Track exercise progress over time with charts",
+        "See max weight lifted for each exercise",
+        "Monitor volume trends (sets × reps × weight)",
+        "View last session data for each exercise",
+        "Weight displayed in user's preferred unit (kg or lb)"
+      ],
+      "usage": "Users visit this page to analyze their training history, identify strength gains, and track progress on specific exercises. It helps users see trends and make data-driven decisions about their training."
+    },
+    "aiRecommendations": {
+      "name": "AI Recommendations",
+      "route": "/recommendations",
+      "description": "AI-powered training insights and chat interface with AILA",
+      "features": [
+        "Get AI-generated workout recommendations based on history",
+        "Filter recommendations by muscle group or category",
+        "Chat with AILA (AI Personal Trainer) for fitness advice",
+        "AI analyzes workout patterns to suggest progressions",
+        "Recommendations include weight increases, exercise variations, and recovery advice",
+        "AI has web search capabilities for latest fitness research and information",
+        "Chat history is maintained for contextual conversations",
+        "View stats: total workouts, exercises tracked, number of recommendations"
+      ],
+      "aiCapabilities": [
+        "Analyzes workout history to detect patterns and plateaus",
+        "Suggests weight progressions when user shows consistent performance",
+        "Recommends exercise variations to prevent boredom and target weak points",
+        "Identifies when rest/recovery is needed based on training frequency",
+        "Provides form tips and technique advice through chat",
+        "Can search the web for current fitness research, nutrition info, and supplement facts",
+        "Maintains conversation context to provide personalized advice",
+        "Respects user's weight unit preference (kg or lb) in all recommendations"
+      ],
+      "usage": "Users can get automated recommendations by clicking 'Get AI Recommendations' or have natural conversations with AILA in the chat. The AI considers their complete workout history and progress data to give personalized advice."
+    },
+    "settings": {
+      "name": "Settings",
+      "route": "/settings",
+      "description": "Manage exercises, workouts, and user preferences",
+      "tabs": {
+        "exercises": {
+          "name": "Exercises",
+          "features": [
+            "View all saved exercises in alphabetical order",
+            "Add new custom exercises with name, category, muscle groups, equipment, and instructions",
+            "Edit existing exercises inline",
+            "Delete exercises (only if not used in workout history)",
+            "Search and filter exercises by name or category"
+          ],
+          "categories": ["chest", "back", "shoulders", "arms", "legs", "core", "cardio", "full-body", "upper-body", "lower-body"]
+        },
+        "workouts": {
+          "name": "Workouts",
+          "features": [
+            "View all completed workouts",
+            "Delete individual workouts with confirmation",
+            "See workout date, duration, and exercise count",
+            "Warning system prevents accidental deletion of workout history"
+          ]
+        },
+        "preferences": {
+          "name": "Preferences",
+          "features": [
+            "Set weight unit preference (Kilograms or Pounds)",
+            "Default is kilograms",
+            "Preference is saved to localStorage",
+            "All weight displays across the app update to match preference",
+            "AI recommendations and chat use the selected weight unit"
+          ]
+        }
+      },
+      "usage": "Users access Settings from the dropdown menu (not in mobile bottom nav) to customize their exercise library, manage workout history, and set preferences like weight units."
+    }
+  },
+  "dataStorage": {
+    "method": "localStorage",
+    "description": "All user data is stored locally in the browser",
+    "dataTypes": [
+      "Workouts: Complete history of all workout sessions",
+      "Exercises: Custom and default exercise library",
+      "Progress: Aggregated progress data for each exercise",
+      "AI Recommendations: Cached recommendations to avoid unnecessary API calls",
+      "User Preferences: Weight unit preference (kg/lb)",
+      "Chat History: Conversation with AILA (persists during session)"
+    ],
+    "important": "Data is stored locally, so it persists across sessions but is tied to the browser. Clearing browser cache will delete all data."
+  },
+  "navigation": {
+    "desktop": [
+      "Dashboard - Home icon",
+      "Workout Tracker - Dumbbell icon",
+      "Progress - TrendingUp icon",
+      "AI Recommendations - Brain icon",
+      "Settings - Settings icon (dropdown menu only)"
+    ],
+    "mobile": [
+      "Bottom navigation bar with Dashboard, Workout, Progress, and AI Recommendations",
+      "Settings accessed via hamburger menu (excluded from bottom nav for space)"
+    ]
+  },
+  "workoutWorkflow": {
+    "description": "Complete workflow from starting a workout to viewing AI insights",
+    "steps": [
+      "1. User starts on Dashboard and sees overview of their stats",
+      "2. User clicks 'Start New Workout' to begin a training session",
+      "3. In Workout Tracker, user adds exercises from their library",
+      "4. User logs sets with reps and weight as they train",
+      "5. Timer tracks total workout duration automatically",
+      "6. User marks sets complete and adds optional notes",
+      "7. When finished, user clicks 'Complete Workout'",
+      "8. Workout is saved to history and localStorage",
+      "9. User can view detailed progress on Progress page",
+      "10. User visits AI Recommendations to get insights on their training",
+      "11. AI analyzes patterns and suggests progressions, variations, or recovery",
+      "12. User can chat with AILA for specific questions or advice",
+      "13. User can adjust preferences and manage exercises in Settings"
+    ]
+  },
+  "commonQuestions": {
+    "howToStart": "Click 'Start New Workout' on the Dashboard, then add exercises from your library and start logging sets.",
+    "howToAddExercise": "Go to Settings > Exercises tab > Click 'Add Exercise' button and fill in the details.",
+    "howToTrackProgress": "Visit the Progress page to see your workout history and exercise-specific charts showing weight and volume trends.",
+    "howToGetAIAdvice": "Go to AI Recommendations and either click 'Get AI Recommendations' for automated insights or click the AILA image to chat.",
+    "howToChangeWeightUnits": "Go to Settings > Preferences tab > Select your preferred unit (kg or lb).",
+    "whereIsMyData": "All data is stored locally in your browser's localStorage. It persists across sessions but won't sync between devices.",
+    "canIDeleteWorkouts": "Yes, go to Settings > Workouts tab. You can delete individual workouts, but be careful as this cannot be undone.",
+    "whatIsAILA": "AILA is your AI Personal Trainer. She can analyze your workout history, provide progression recommendations, answer fitness questions, and search the web for the latest research."
+  },
+  "tips": [
+    "Log your workouts consistently for better AI recommendations",
+    "The AI needs at least a few completed workouts to generate meaningful insights",
+    "Use the Progress page to identify exercises where you're plateauing",
+    "Chat with AILA if you're unsure about form, programming, or nutrition",
+    "Set your weight unit preference in Settings before starting to avoid confusion",
+    "Add notes to sets to remember important details (e.g., 'felt easy' or 'struggled')",
+    "The timer helps track total workout duration - no need to start/stop it manually",
+    "Use category filters in AI Recommendations to get focused advice for specific muscle groups"
+  ]
+}

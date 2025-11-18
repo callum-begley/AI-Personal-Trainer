@@ -5,6 +5,7 @@ import {
   Workout,
 } from '../types/workout'
 import { storageService } from './storage'
+import appContextData from '../data/appContext.json'
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
@@ -431,41 +432,130 @@ export class AITrainerService {
     const weightUnit = storageService.getWeightUnit()
     const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
 
-    // Convert chat history to Gemini format
-    const geminiHistory = chatHistory.map((msg) => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.content }],
-    }))
+    // Create comprehensive app knowledge context
+    const appKnowledge = `
+APP KNOWLEDGE BASE - AI PERSONAL TRAINER APP:
 
-    // Create system context as the first user message if history is empty
-    const systemContext = `
-      You are AILA, an experienced AI personal trainer assistant with access to real-time web search capabilities.
+DASHBOARD (/):
+${appContextData.features.dashboard.features.map((f) => `• ${f}`).join('\n')}
 
-      The user's workout data:
-      - Recent Workouts: ${JSON.stringify(workoutHistory.slice(-5))}
-      - Current Progress: ${JSON.stringify(progress)}
-      - Weight Unit Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
+WORKOUT TRACKER (/workout):
+How to use: ${appContextData.features.workoutTracker.workflow.join(' → ')}
+Features: ${appContextData.features.workoutTracker.features
+      .map((f) => `• ${f}`)
+      .join('\n')}
 
-      Instructions:
-      - When the user asks about current information, latest research, specific studies, nutrition facts, supplement information, trending fitness topics, or anything requiring up-to-date knowledge, AUTOMATICALLY use web search to find accurate information.
-      - You have web search enabled - use it proactively when needed.
-      - When you use web search results, naturally mention your sources.
-      - For questions about the user's personal workout data or general fitness knowledge, answer directly.
-      - Provide helpful, concise, and friendly responses.
-      - Use emojis to make responses engaging.
-      - Keep responses under 250 words unless more detail is requested.
-      - Always use ${weightUnitName.toUpperCase()} for weights.
-      - Don't mention that you are an AI model or talk about your capabilities unless asked.
-    `
+PROGRESS (/progress):
+${appContextData.features.progress.features.map((f) => `• ${f}`).join('\n')}
 
-    const prompt =
-      chatHistory.length === 0
-        ? `${systemContext}\n\nUser question: ${userMessage}`
-        : userMessage
+AI RECOMMENDATIONS (/recommendations):
+${appContextData.features.aiRecommendations.features
+  .map((f) => `• ${f}`)
+  .join('\n')}
+
+SETTINGS (/settings):
+• Exercises Tab: ${appContextData.features.settings.tabs.exercises.features.join(
+      '. '
+    )}
+• Workouts Tab: ${appContextData.features.settings.tabs.workouts.features.join(
+      '. '
+    )}
+• Preferences Tab: ${appContextData.features.settings.tabs.preferences.features.join(
+      '. '
+    )}
+
+COMMON QUESTIONS & ANSWERS:
+${Object.entries(appContextData.commonQuestions)
+  .map(([q, a]) => `Q: ${q}\nA: ${a}`)
+  .join('\n\n')}
+
+DATA STORAGE: ${appContextData.dataStorage.description}
+IMPORTANT: ${appContextData.dataStorage.important}
+
+TIPS FOR USERS:
+${appContextData.tips.map((tip) => `• ${tip}`).join('\n')}
+`
+
+    // Build conversation history in Gemini format with system context in EVERY turn
+    const geminiHistory: Array<{
+      role: string
+      parts: Array<{ text: string }>
+    }> = []
+
+    // Add initial system message
+    if (chatHistory.length === 0) {
+      geminiHistory.push({
+        role: 'user',
+        parts: [
+          {
+            text: `You are AILA, an AI personal trainer assistant. Here's the app context you must remember:
+
+${appKnowledge}
+
+User's Data:
+- Recent Workouts: ${JSON.stringify(workoutHistory.slice(-5))}
+- Progress: ${JSON.stringify(progress)}
+- Weight Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
+
+Instructions:
+- Use the APP KNOWLEDGE BASE above to answer app usage questions accurately
+- For fitness research/nutrition/supplements, use web search
+- Always reference the exact features and workflows from the knowledge base
+- Use emojis to be engaging
+- Keep responses under 250 words unless asked for detail
+- Use ${weightUnitName.toUpperCase()} for weights`,
+          },
+        ],
+      })
+      geminiHistory.push({
+        role: 'model',
+        parts: [
+          {
+            text: "Hi! I'm Aila, your AI Personal Trainer. I can help you with workout advice, form tips, nutrition guidance, and answer any fitness questions you have. What would you like to know?",
+          },
+        ],
+      })
+    } else {
+      // For continuing conversations, add system context then history
+      geminiHistory.push({
+        role: 'user',
+        parts: [
+          {
+            text: `[SYSTEM CONTEXT - Remember this for all responses]
+
+${appKnowledge}
+
+User's Weight Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
+
+[Instructions: Use this knowledge base to answer app questions accurately. For fitness research, use web search.]`,
+          },
+        ],
+      })
+      geminiHistory.push({
+        role: 'model',
+        parts: [
+          {
+            text: 'Understood. I have the app knowledge base loaded and ready to help.',
+          },
+        ],
+      })
+
+      // Add conversation history
+      chatHistory.forEach((msg) => {
+        geminiHistory.push({
+          role: msg.role === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.content }],
+        })
+      })
+    }
 
     try {
       // Enable Google Search grounding for the chat
-      const response = await this.callGeminiAPI(prompt, true, geminiHistory)
+      const response = await this.callGeminiAPI(
+        userMessage,
+        true,
+        geminiHistory
+      )
       return response.trim()
     } catch (error) {
       console.error('Error getting chat response:', error)
