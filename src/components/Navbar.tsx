@@ -15,12 +15,14 @@ import {
 } from 'lucide-react'
 import { useDarkMode } from '../contexts/DarkModeContext'
 import { useWorkout } from '../contexts/WorkoutContext'
+import AIChatModal from './AIChatModal'
 
 const Navbar: React.FC = () => {
   const location = useLocation()
   const { isDarkMode, toggleDarkMode } = useDarkMode()
   const { currentWorkout, timer } = useWorkout()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>(
     'desktop'
   )
@@ -122,6 +124,18 @@ const Navbar: React.FC = () => {
                   <span className="font-medium">{label}</span>
                 </Link>
               ))}
+              {/* Chat Button */}
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="ml-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                aria-label="Chat with AILA"
+              >
+                <img
+                  src="/aila-face.png"
+                  alt="Chat with AILA"
+                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                />
+              </button>
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
@@ -152,6 +166,18 @@ const Navbar: React.FC = () => {
                   <span className="text-xs font-medium">{shortLabel}</span>
                 </Link>
               ))}
+              {/* Chat Button */}
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                aria-label="Chat with AILA"
+              >
+                <img
+                  src="/aila-face.png"
+                  alt="Chat"
+                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                />
+              </button>
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
@@ -168,6 +194,18 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Menu Button */}
             <div className="sm:hidden flex items-center space-x-2">
+              {/* Chat Button for Mobile */}
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                aria-label="Chat with AILA"
+              >
+                <img
+                  src="/aila-face.png"
+                  alt="Chat"
+                  className="h-8 w-8 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600"
+                />
+              </button>
               {currentWorkout && (
                 <Link
                   to="/workout"
@@ -289,6 +327,9 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
       )}
+
+      {/* AI Chat Modal */}
+      <AIChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </>
   )
 }
