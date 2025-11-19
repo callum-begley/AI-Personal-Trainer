@@ -192,7 +192,7 @@ const Progress: React.FC = () => {
                 Total Duration
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {stats.totalDuration}m
+                {(stats.totalDuration / 60).toFixed(1)}h
               </p>
             </div>
             <Award className="h-8 w-8 text-blue-600 dark:text-blue-500" />
