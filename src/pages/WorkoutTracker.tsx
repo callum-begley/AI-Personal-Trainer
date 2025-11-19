@@ -226,8 +226,15 @@ const WorkoutTracker: React.FC = () => {
     // Only include sets that were actually completed to avoid polluting AI recommendations
     const completedSetsOnly = updatedSets.filter((set) => set.completed)
 
+    // Only include exercises that have at least one completed set
+    const exercisesWithCompletedSets = currentWorkout.exercises.filter(
+      (exercise) =>
+        completedSetsOnly.some((set) => set.exerciseId === exercise.id)
+    )
+
     const completedWorkout: Workout = {
       ...currentWorkout,
+      exercises: exercisesWithCompletedSets,
       sets: completedSetsOnly,
       duration: workoutDuration,
       completed: true,
