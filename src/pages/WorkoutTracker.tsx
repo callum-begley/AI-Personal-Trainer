@@ -933,12 +933,12 @@ const WorkoutTracker: React.FC = () => {
                         className="border dark:border-gray-600 rounded-lg p-4"
                       >
                         <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex flex-row items-center space-x-2">
                             <button
                               onClick={() =>
                                 toggleExerciseMinimized(exerciseId)
                               }
-                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
+                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0 flex items-center"
                               title={
                                 minimizedExercises.has(exerciseId)
                                   ? 'Maximize exercise'
@@ -946,14 +946,15 @@ const WorkoutTracker: React.FC = () => {
                               }
                             >
                               {minimizedExercises.has(exerciseId) ? (
-                                <ChevronDown className="h-4 w-4" />
+                                <ChevronDown className="h-4 w-4 " />
                               ) : (
                                 <ChevronUp className="h-4 w-4" />
                               )}
+                              <h3 className="font-medium text-gray-900 dark:text-gray-100 inline ml-2">
+                                {exercise.name}
+                              </h3>
                             </button>
-                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                              {exercise.name}
-                            </h3>
+
                             {minimizedExercises.has(exerciseId) && (
                               <span
                                 className={`text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded
