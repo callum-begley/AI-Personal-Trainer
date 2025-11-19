@@ -1338,6 +1338,13 @@ const WorkoutTracker: React.FC = () => {
             {/* Clear Workout Button */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <button
+                onClick={finishWorkout}
+                className="btn-primary flex items-center justify-center space-x-2 w-full text-sm mb-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>Finish</span>
+              </button>
+              <button
                 onClick={() => setShowClearConfirmation(true)}
                 className="btn-secondary flex items-center justify-center space-x-2 w-full text-sm"
               >
