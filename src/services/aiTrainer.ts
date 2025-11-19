@@ -310,6 +310,8 @@ export class AITrainerService {
          - chest/back/shoulders/arms/legs/core/cardio: ONLY that specific muscle group
       
       3. Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weights.
+
+      4. Do not add more weight on the last set of an exercise, it should only be the same or lower than previous sets
       
       Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
