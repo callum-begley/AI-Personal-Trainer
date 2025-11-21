@@ -161,11 +161,11 @@ const Dashboard: React.FC = () => {
       {/* Recent Workouts and AILA Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* AILA AI Assistant */}
-        <button
-          onClick={() => setIsChatOpen(true)}
-          className="block order-1 lg:order-1 text-left w-full"
-        >
-          <div className="card h-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700 hover:shadow-lg transition-shadow cursor-pointer">
+        <div className="order-1 lg:order-1">
+          <div
+            onClick={() => setIsChatOpen(true)}
+            className="card h-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700 hover:shadow-lg transition-shadow cursor-pointer"
+          >
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-64 h-64 rounded-full border-4 border-blue-300 dark:border-blue-600 overflow-hidden flex items-center justify-center">
                 <img src="/aila.png" alt="AILA" className="h-64 object-cover" />
@@ -184,7 +184,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </button>
+        </div>
 
         {/* Recent Workouts */}
         <div className="card order-2 lg:order-2">
