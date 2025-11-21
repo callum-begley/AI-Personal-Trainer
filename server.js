@@ -59,18 +59,21 @@ server.get('*', (req, res) => {
   console.log('Serving index.html for:', req.url)
   const indexPath = Path.resolve(__dirname, './dist/index.html')
   console.log('Index path:', indexPath)
-  
+
   // Check if file exists
   if (!fs.existsSync(indexPath)) {
     console.error('ERROR: index.html not found at', indexPath)
     return res.status(500).send('index.html not found')
   }
-  
+
   // Read and log first line to verify it's the right file
   const content = fs.readFileSync(indexPath, 'utf8')
   const firstScriptMatch = content.match(/src="([^"]+\.js)"/)
-  console.log('index.html references JS file:', firstScriptMatch ? firstScriptMatch[1] : 'not found')
-  
+  console.log(
+    'index.html references JS file:',
+    firstScriptMatch ? firstScriptMatch[1] : 'not found'
+  )
+
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
