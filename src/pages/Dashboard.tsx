@@ -18,33 +18,45 @@ const Dashboard: React.FC = () => {
   })
 
   useEffect(() => {
-    const workouts = storageService.getWorkouts()
-    const completedWorkouts = workouts.filter((w) => w.completed)
+    try {
+      const workouts = storageService.getWorkouts()
+      const completedWorkouts = workouts.filter((w) => w.completed)
 
-    setRecentWorkouts(completedWorkouts.slice(-5).reverse())
+      setRecentWorkouts(completedWorkouts.slice(-5).reverse())
 
-    const now = new Date()
-    const weekStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - now.getDay()
-    )
-    const thisWeek = completedWorkouts.filter((w) => w.date >= weekStart)
+      const now = new Date()
+      const weekStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - now.getDay()
+      )
+      const thisWeek = completedWorkouts.filter((w) => w.date >= weekStart)
 
-    const totalDuration = completedWorkouts.reduce(
-      (sum, w) => sum + (w.duration || 0),
-      0
-    )
+      const totalDuration = completedWorkouts.reduce(
+        (sum, w) => sum + (w.duration || 0),
+        0
+      )
 
-    setStats({
-      totalWorkouts: completedWorkouts.length,
-      thisWeekWorkouts: thisWeek.length,
-      totalExercises: storageService.getExercises().length,
-      averageDuration:
-        completedWorkouts.length > 0
-          ? Math.round(totalDuration / completedWorkouts.length)
-          : 0,
-    })
+      setStats({
+        totalWorkouts: completedWorkouts.length,
+        thisWeekWorkouts: thisWeek.length,
+        totalExercises: storageService.getExercises().length,
+        averageDuration:
+          completedWorkouts.length > 0
+            ? Math.round(totalDuration / completedWorkouts.length)
+            : 0,
+      })
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+      // Set default values on error
+      setRecentWorkouts([])
+      setStats({
+        totalWorkouts: 0,
+        thisWeekWorkouts: 0,
+        totalExercises: 0,
+        averageDuration: 0,
+      })
+    }
   }, [])
 
   const formatDate = (date: Date) => {
