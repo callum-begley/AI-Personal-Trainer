@@ -1,6 +1,5 @@
 ## To Add:
 - scroll in background of chat
-- user can add workout notes
 - more goal options, setting editing
 - ai chat for suggestions questions etc
 - custom workouts, use ai to complete data?
