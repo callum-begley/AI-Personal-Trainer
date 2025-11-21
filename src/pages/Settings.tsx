@@ -10,14 +10,18 @@ import {
   Dumbbell,
   Calendar,
   Scale,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storageService } from '../services/storage'
 import { Exercise, Workout } from '../types/workout'
+import { useDarkMode } from '../contexts/DarkModeContext'
 
 type TabType = 'exercises' | 'workouts' | 'preferences'
 
 const Settings: React.FC = () => {
+  const { isDarkMode, toggleDarkMode } = useDarkMode()
   const [activeTab, setActiveTab] = useState<TabType>('exercises')
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [workouts, setWorkouts] = useState<Workout[]>([])
@@ -678,6 +682,50 @@ const Settings: React.FC = () => {
             Customize your workout preferences and units.
           </p>
 
+          {/* Appearance Settings */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
+              Appearance
+            </h2>
+
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Choose your preferred theme for the app.
+              </p>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => isDarkMode && toggleDarkMode()}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    !isDarkMode
+                      ? 'bg-primary-600 text-white dark:bg-primary-500'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Sun className="h-6 w-6" />
+                    <span className="text-lg">Light</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => !isDarkMode && toggleDarkMode()}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    isDarkMode
+                      ? 'bg-primary-600 text-white dark:bg-primary-500'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Moon className="h-6 w-6" />
+                    <span className="text-lg">Dark</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Weight Units */}
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
               Weight Units
