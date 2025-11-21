@@ -91,6 +91,8 @@ const WorkoutTracker: React.FC = () => {
     'cardio' | 'strength'
   >('strength')
   const [showClearConfirmation, setShowClearConfirmation] = useState(false)
+  const [showFinishConfirmation, setShowFinishConfirmation] = useState(false)
+  const [workoutNotes, setWorkoutNotes] = useState('')
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
 
   const aiTrainer = new AITrainerService()
@@ -194,6 +196,14 @@ const WorkoutTracker: React.FC = () => {
       return
     }
 
+    // Set initial notes from current workout
+    setWorkoutNotes(currentWorkout.notes || '')
+    setShowFinishConfirmation(true)
+  }
+
+  const confirmFinishWorkout = () => {
+    if (!currentWorkout) return
+
     // Update cardio exercises that don't have a manually entered duration
     // to use the final workout timer value
     const updatedSets = currentWorkout.sets.map((set) => {
@@ -237,6 +247,7 @@ const WorkoutTracker: React.FC = () => {
       exercises: exercisesWithCompletedSets,
       sets: completedSetsOnly,
       duration: workoutDuration,
+      notes: workoutNotes,
       completed: true,
     }
 
@@ -247,8 +258,14 @@ const WorkoutTracker: React.FC = () => {
     setTimer(0)
     setStartTime(null)
     setPausedTime(0)
+    setShowFinishConfirmation(false)
+    setWorkoutNotes('')
 
     toast.success('Workout completed and saved!')
+  }
+
+  const cancelFinishWorkout = () => {
+    setShowFinishConfirmation(false)
   }
 
   const confirmClearWorkout = () => {
@@ -1783,6 +1800,59 @@ const WorkoutTracker: React.FC = () => {
               >
                 <X className="h-4 w-4" />
                 <span>Clear</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Finish Workout Confirmation Modal */}
+      {showFinishConfirmation && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50"
+          style={{ margin: '-2rem -1rem' }}
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md m-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Check className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Complete Workout
+                </h3>
+              </div>
+              <button
+                onClick={cancelFinishWorkout}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mb-6 space-y-4">
+              <p className="text-gray-600 dark:text-gray-300">
+                Great job! Add any notes about this workout below:
+              </p>
+              <textarea
+                value={workoutNotes}
+                onChange={(e) => setWorkoutNotes(e.target.value)}
+                placeholder="How did you feel? Any observations..."
+                className="w-full input-field min-h-[100px] resize-y"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelFinishWorkout}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmFinishWorkout}
+                className="px-4 py-2 text-white bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 rounded-md transition-colors flex items-center space-x-2"
+              >
+                <Check className="h-4 w-4" />
+                <span>Complete Workout</span>
               </button>
             </div>
           </div>
