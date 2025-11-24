@@ -956,7 +956,7 @@ const WorkoutTracker: React.FC = () => {
                         key={exerciseId}
                         className="border dark:border-gray-600 rounded-lg p-4"
                       >
-                        <div className="grid grid-cols-[1fr_auto] gap-2 items-start mb-3">
+                        <div className="grid grid-cols-[1fr_auto] gap-2 items-start ">
                           <button
                             onClick={() => toggleExerciseMinimized(exerciseId)}
                             className="flex flex-row items-start space-x-2 min-w-0 text-left p-1 -ml-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
