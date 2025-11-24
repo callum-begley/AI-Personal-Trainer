@@ -94,6 +94,7 @@ const WorkoutTracker: React.FC = () => {
   const [showFinishConfirmation, setShowFinishConfirmation] = useState(false)
   const [workoutNotes, setWorkoutNotes] = useState('')
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
+  const [isGettingProgression, setIsGettingProgression] = useState(false)
 
   const aiTrainer = new AITrainerService()
 
@@ -576,14 +577,49 @@ const WorkoutTracker: React.FC = () => {
       setCurrentWorkout(completeWorkout)
       setShowPlanForm(false)
       resetPlan()
-      toast.success(
-        `AI workout plan generated with ${completeWorkout.exercises.length} exercises!`
-      )
+      toast.success('AI workout plan generated! Review and start when ready.')
     } catch (error) {
       console.error('Error generating workout plan:', error)
       toast.error('Failed to generate workout plan. Please try again.')
     } finally {
       setIsGeneratingPlan(false)
+    }
+  }
+
+  const getAIProgression = async () => {
+    if (!currentWorkout) return
+
+    setIsGettingProgression(true)
+    try {
+      const improvedWorkout = await aiTrainer.suggestWorkoutProgression(
+        currentWorkout,
+        exercises
+      )
+
+      // Add any new AI-suggested exercises to our exercises list
+      const currentExercises = storageService.getExercises()
+      const newExercises = [...currentExercises]
+
+      improvedWorkout.exercises.forEach((aiExercise) => {
+        const existingExercise = currentExercises.find(
+          (ex) => ex.id === aiExercise.id
+        )
+        if (!existingExercise) {
+          newExercises.push(aiExercise)
+          storageService.saveExercise(aiExercise)
+        }
+      })
+
+      setExercises(newExercises)
+
+      // Update current workout with AI suggestions
+      setCurrentWorkout(improvedWorkout)
+      toast.success('AI has suggested improvements to your workout!')
+    } catch (error) {
+      console.error('Error getting AI progression:', error)
+      toast.error('Failed to get AI suggestions. Please try again.')
+    } finally {
+      setIsGettingProgression(false)
     }
   }
 
@@ -891,15 +927,32 @@ const WorkoutTracker: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 Current Workout
               </h2>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {currentWorkout.sets.length > 0 && (
-                  <button
-                    onClick={completeAllSets}
-                    className="btn-secondary flex items-center space-x-2 text-sm"
-                  >
-                    <Check className="h-4 w-4" />
-                    <span>Complete All</span>
-                  </button>
+                  <>
+                    <button
+                      onClick={getAIProgression}
+                      disabled={isGettingProgression}
+                      className="btn-secondary flex items-center space-x-2 text-sm disabled:opacity-50"
+                      title="Get AI recommendations for progressive overload"
+                    >
+                      <Brain
+                        className={`h-4 w-4 ${
+                          isGettingProgression ? 'animate-spin' : ''
+                        }`}
+                      />
+                      <span className="hidden sm:inline">
+                        {isGettingProgression ? 'Getting...' : 'AI Progression'}
+                      </span>
+                    </button>
+                    <button
+                      onClick={completeAllSets}
+                      className="btn-secondary flex items-center space-x-2 text-sm"
+                    >
+                      <Check className="h-4 w-4" />
+                      <span className="hidden sm:inline">Complete All</span>
+                    </button>
+                  </>
                 )}
               </div>
             </div>

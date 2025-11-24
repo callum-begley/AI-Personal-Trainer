@@ -638,4 +638,74 @@ User's Weight Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
       throw error
     }
   }
+
+  async suggestWorkoutProgression(
+    currentWorkout: Workout,
+    exercises: Exercise[]
+  ): Promise<Workout> {
+    const weightUnit = storageService.getWeightUnit()
+    const weightUnitName = weightUnit === 'kg' ? 'kilograms' : 'pounds'
+
+    const prompt = `
+      As an AI personal trainer, analyze this current workout and suggest improvements for progressive overload.
+
+      Current Workout:
+      ${JSON.stringify(currentWorkout, null, 2)}
+
+      Available Exercises:
+      ${JSON.stringify(exercises, null, 2)}
+
+      Please analyze the current workout and return an UPDATED version with:
+      1. Increased weight (2-5%) OR increased reps (1-2 reps) for exercises where appropriate
+      2. Potentially add 1-2 new exercises if the workout seems incomplete for the muscle groups targeted
+      3. Keep the same workout structure (same exercises unless adding new ones)
+      4. Maintain proper progressive overload principles
+
+      CRITICAL: Return the COMPLETE workout object in the EXACT same JSON format as the input, with all fields preserved.
+      
+      Important rules:
+      - Use ${weightUnitName.toUpperCase()} (${weightUnit}) for all weights
+      - Keep workout.id, workout.date, workout.name unchanged
+      - Keep exercise IDs that already exist unchanged
+      - For new exercises, use existing exercise IDs from the Available Exercises list
+      - Preserve all set IDs that already exist
+      - Only modify weight/reps values to suggest progression
+      - Keep completed status as-is for existing sets
+      - If adding new exercises, add new sets with unique IDs (format: "set-[timestamp]-[random]")
+
+      Return ONLY the JSON workout object, no explanations or markdown:
+    `
+
+    try {
+      const response = await this.callGeminiAPI(prompt)
+
+      // Clean up the response
+      let cleanResponse = response.trim()
+      if (cleanResponse.startsWith('```json')) {
+        cleanResponse = cleanResponse
+          .replace(/^```json\n/, '')
+          .replace(/\n```$/, '')
+      } else if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse
+          .replace(/^```\n/, '')
+          .replace(/\n```$/, '')
+      }
+
+      // Extract JSON if there's extra text
+      let jsonStart = cleanResponse.indexOf('{')
+      let jsonEnd = cleanResponse.lastIndexOf('}')
+
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        cleanResponse = cleanResponse.substring(jsonStart, jsonEnd + 1)
+      }
+
+      const parsed = JSON.parse(cleanResponse)
+      const updatedWorkout = parsed.workout ? parsed.workout : parsed
+
+      return this.sanitizeWorkoutData(updatedWorkout)
+    } catch (error) {
+      console.error('Error getting workout progression:', error)
+      throw error
+    }
+  }
 }
