@@ -929,30 +929,13 @@ const WorkoutTracker: React.FC = () => {
               </h2>
               <div className="flex items-center gap-2 flex-wrap">
                 {currentWorkout.sets.length > 0 && (
-                  <>
-                    <button
-                      onClick={getAIProgression}
-                      disabled={isGettingProgression}
-                      className="btn-secondary flex items-center space-x-2 text-sm disabled:opacity-50"
-                      title="Get AI recommendations for progressive overload"
-                    >
-                      <Brain
-                        className={`h-4 w-4 ${
-                          isGettingProgression ? 'animate-spin' : ''
-                        }`}
-                      />
-                      <span className="hidden sm:inline">
-                        {isGettingProgression ? 'Getting...' : 'AI Progression'}
-                      </span>
-                    </button>
-                    <button
-                      onClick={completeAllSets}
-                      className="btn-secondary flex items-center space-x-2 text-sm"
-                    >
-                      <Check className="h-4 w-4" />
-                      <span className="hidden sm:inline">Complete All</span>
-                    </button>
-                  </>
+                  <button
+                    onClick={completeAllSets}
+                    className="btn-secondary flex items-center space-x-2 text-sm"
+                  >
+                    <Check className="h-4 w-4" />
+                    <span className="hidden sm:inline">Complete All</span>
+                  </button>
                 )}
               </div>
             </div>
@@ -990,6 +973,36 @@ const WorkoutTracker: React.FC = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* AI Progression Button */}
+            {currentWorkout.sets.length > 0 && (
+              <div className="mb-6">
+                <button
+                  onClick={getAIProgression}
+                  disabled={isGettingProgression}
+                  className="w-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-2 border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-200 px-6 py-5 rounded-xl flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Get AI recommendations for progressive overload"
+                >
+                  <img
+                    src="/aila-face.png"
+                    alt="AILA"
+                    className={`h-16 w-16 rounded-full object-cover border-2 border-blue-300 dark:border-blue-600 ${
+                      isGettingProgression ? 'animate-pulse' : ''
+                    }`}
+                  />
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                      {isGettingProgression
+                        ? 'Adding AI Suggestions...'
+                        : 'Add AI Progression'}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                      Let AILA analyze your workout and suggest improvements
+                    </p>
+                  </div>
+                </button>
               </div>
             )}
 
