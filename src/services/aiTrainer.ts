@@ -656,10 +656,11 @@ User's Weight Preference: ${weightUnitName.toUpperCase()} (${weightUnit})
       ${JSON.stringify(exercises, null, 2)}
 
       Please analyze the current workout and return an UPDATED version with:
-      1. Increased weight (2-5%) OR increased reps (1-2 reps) for exercises where appropriate
-      2. Potentially add 1-2 new exercises if the workout seems incomplete for the muscle groups targeted
-      3. Keep the same workout structure (same exercises unless adding new ones)
-      4. Maintain proper progressive overload principles
+      1. Increase weight using realistic gym increments (2.5kg/5lb plates are standard, so increase by 2.5kg, 5kg, 5lb, or 10lb depending on the exercise)
+      2. OR increase reps by 1-2 reps if weight increase isn't appropriate yet
+      3. Potentially add 1-2 new exercises if the workout seems incomplete for the muscle groups targeted
+      4. Keep the same workout structure (same exercises unless adding new ones)
+      5. Maintain proper progressive overload principles
 
       CRITICAL: Return the COMPLETE workout object in the EXACT same JSON format as the input, with all fields preserved.
       
