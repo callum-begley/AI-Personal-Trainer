@@ -956,45 +956,43 @@ const WorkoutTracker: React.FC = () => {
                         key={exerciseId}
                         className="border dark:border-gray-600 rounded-lg p-4"
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex flex-row items-center space-x-2">
-                            <button
-                              onClick={() =>
-                                toggleExerciseMinimized(exerciseId)
-                              }
-                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0 flex items-center"
-                              title={
-                                minimizedExercises.has(exerciseId)
-                                  ? 'Maximize exercise'
-                                  : 'Minimize exercise'
-                              }
-                            >
+                        <div className="grid grid-cols-[1fr_auto] gap-2 items-start mb-3">
+                          <button
+                            onClick={() => toggleExerciseMinimized(exerciseId)}
+                            className="flex flex-row items-start space-x-2 min-w-0 text-left p-1 -ml-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                            title={
+                              minimizedExercises.has(exerciseId)
+                                ? 'Maximize exercise'
+                                : 'Minimize exercise'
+                            }
+                          >
+                            <div className="flex-shrink-0 mt-0.5">
                               {minimizedExercises.has(exerciseId) ? (
-                                <ChevronDown className="h-4 w-4 " />
+                                <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                               ) : (
-                                <ChevronUp className="h-4 w-4" />
+                                <ChevronUp className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                               )}
-                              <h3 className="font-medium text-gray-900 dark:text-gray-100 inline ml-2">
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-medium text-gray-900 dark:text-gray-100 break-words">
                                 {exercise.name}
                               </h3>
-                            </button>
-
-                            {minimizedExercises.has(exerciseId) && (
-                              <span
-                                className={`text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded
-                              ${
-                                sets.filter((set) => set.completed).length ===
-                                sets.length
-                                  ? 'bg-green-200 dark:bg-green-700'
-                                  : ''
-                              }`}
-                              >
-                                {sets.filter((set) => set.completed).length}/
-                                {sets.length} completed
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-1">
+                              {minimizedExercises.has(exerciseId) && (
+                                <span
+                                  className={`inline-block text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded mt-1 ${
+                                    sets.filter((set) => set.completed)
+                                      .length === sets.length
+                                      ? 'bg-green-200 dark:bg-green-700'
+                                      : ''
+                                  }`}
+                                >
+                                  {sets.filter((set) => set.completed).length}/
+                                  {sets.length} completed
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                          <div className="flex items-center space-x-1 flex-shrink-0">
                             {!minimizedExercises.has(exerciseId) && (
                               <>
                                 <button
