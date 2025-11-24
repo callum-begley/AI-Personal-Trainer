@@ -303,15 +303,40 @@ export class AITrainerService {
       CRITICAL RULES:
       1. Exercise "category" MUST be one of: chest, back, shoulders, arms, legs, core, cardio, full-body, upper-body, lower-body
       
-      2. Match workout type "${workoutType}" EXACTLY:
-         - upper-body: ONLY chest/back/shoulders/arms exercises. NO legs/glutes
-         - lower-body: ONLY legs/glutes/hamstrings/calves exercises. NO chest/back/shoulders/arms
-         - full-body: Mix of upper AND lower body exercises
-         - chest/back/shoulders/arms/legs/core/cardio: ONLY that specific muscle group
+      2. Match workout type "${workoutType}" EXACTLY - THIS IS CRITICAL:
+         ${
+           workoutType === 'Shoulders'
+             ? '- SHOULDERS ONLY: Include ONLY shoulder exercises (overhead press, lateral raises, front raises, rear delt flyes, shoulder press variations, Arnold press, upright rows, face pulls). DO NOT include chest exercises (bench press, push-ups, flyes), back exercises (rows, pull-ups, deadlifts), or arm exercises (curls, tricep extensions).'
+             : workoutType === 'Chest'
+             ? '- CHEST ONLY: Include ONLY chest exercises (bench press, push-ups, chest flyes, cable crossovers). NO back, shoulders, or arm exercises.'
+             : workoutType === 'Back'
+             ? '- BACK ONLY: Include ONLY back exercises (rows, pull-ups, deadlifts, lat pulldowns). NO chest, shoulders, or arm exercises.'
+             : workoutType === 'Arms'
+             ? '- ARMS ONLY: Include ONLY arm exercises (bicep curls, tricep extensions, hammer curls, skull crushers). NO chest, back, or shoulder exercises.'
+             : workoutType === 'Legs'
+             ? '- LEGS ONLY: Include ONLY leg exercises (squats, lunges, leg press, leg curls, calf raises). NO upper body exercises.'
+             : workoutType === 'Core/Abs'
+             ? '- CORE/ABS ONLY: Include ONLY core/ab exercises (planks, crunches, Russian twists, leg raises, mountain climbers). NO other muscle groups.'
+             : workoutType === 'Cardio'
+             ? '- CARDIO ONLY: Include ONLY cardio exercises (running, cycling, rowing, jump rope, burpees, high knees). NO strength training.'
+             : workoutType === 'Strength Training'
+             ? '- STRENGTH TRAINING: Focus on compound movements with progressive overload (squats, deadlifts, bench press, overhead press, rows).'
+             : workoutType === 'Endurance'
+             ? '- ENDURANCE: Focus on high-rep, lower-weight exercises and cardio intervals for muscular and cardiovascular endurance.'
+             : workoutType === 'Upper Body'
+             ? '- UPPER-BODY: ONLY chest/back/shoulders/arms exercises. NO legs/glutes.'
+             : workoutType === 'Lower Body'
+             ? '- LOWER-BODY: ONLY legs/glutes/hamstrings/calves exercises. NO chest/back/shoulders/arms.'
+             : workoutType === 'Full Body'
+             ? '- FULL-BODY: Mix of upper AND lower body exercises.'
+             : `- ${workoutType.toUpperCase()}: Focus ONLY on ${workoutType} exercises.`
+         }
       
       3. Always use ${weightUnitName.toUpperCase()} (${weightUnit}) for weights.
 
       4. Do not add more weight on the last set of an exercise, it should only be the same or lower than previous sets
+      
+      5. VERIFY: Before finalizing, check that EVERY exercise category matches "${workoutType}". If workout type is "shoulders", ALL exercises must have category="shoulders".
       
       Ensure appropriate sets, reps, and rest periods for the chosen workout type and fitness level.
     `
@@ -353,12 +378,61 @@ export class AITrainerService {
 
       const parsed = JSON.parse(cleanResponse)
 
-      if (parsed.workout) {
-        return this.sanitizeWorkoutData(parsed.workout)
-      } else {
-        // If the response is the workout object directly
-        return this.sanitizeWorkoutData(parsed)
+      let workout = parsed.workout ? parsed.workout : parsed
+
+      // VALIDATION: Filter out exercises that don't match the requested workout type
+      if (workout.exercises && Array.isArray(workout.exercises)) {
+        const originalCount = workout.exercises.length
+
+        // Normalize the workout type to lowercase with hyphens (matches form values)
+        const normalizedType = workoutType
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/\//g, '-')
+
+        // Define which categories are valid for each workout type
+        const validCategories: { [key: string]: string[] } = {
+          'full-body': ['chest', 'back', 'shoulders', 'arms', 'legs', 'core'],
+          'upper-body': ['chest', 'back', 'shoulders', 'arms'],
+          'lower-body': ['legs'],
+          chest: ['chest'],
+          back: ['back'],
+          shoulders: ['shoulders'],
+          arms: ['arms'],
+          legs: ['legs'],
+          core: ['core'],
+          'core-abs': ['core'],
+          cardio: ['cardio'],
+          strength: ['chest', 'back', 'shoulders', 'arms', 'legs'], // compound movements
+          'strength-training': ['chest', 'back', 'shoulders', 'arms', 'legs'],
+          endurance: ['cardio', 'legs', 'core', 'full-body'], // endurance-focused
+        }
+
+        const allowedCategories = validCategories[normalizedType] || [
+          normalizedType,
+        ]
+
+        // Filter exercises to only include those matching the workout type
+        workout.exercises = workout.exercises.filter((ex: Exercise) =>
+          allowedCategories.includes(ex.category.toLowerCase())
+        )
+
+        // Also filter out sets for removed exercises
+        if (workout.sets && Array.isArray(workout.sets)) {
+          const validExerciseIds = new Set(
+            workout.exercises.map((ex: Exercise) => ex.id)
+          )
+          workout.sets = workout.sets.filter((set: any) =>
+            validExerciseIds.has(set.exerciseId)
+          )
+        }
+
+        console.log(
+          `Workout validation: ${workoutType} workout - kept ${workout.exercises.length}/${originalCount} exercises`
+        )
       }
+
+      return this.sanitizeWorkoutData(workout)
     } catch (error) {
       console.error('Error parsing workout plan:', error)
       console.error(
