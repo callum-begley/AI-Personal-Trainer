@@ -313,27 +313,27 @@ export class AITrainerService {
       2. Match workout type "${workoutType}" EXACTLY - THIS IS CRITICAL:
          ${
            workoutType === 'Shoulders'
-             ? '- SHOULDERS ONLY: Include ONLY shoulder exercises (overhead press, lateral raises, front raises, rear delt flyes, shoulder press variations, Arnold press, upright rows, face pulls). DO NOT include chest exercises (bench press, push-ups, flyes), back exercises (rows, pull-ups, deadlifts), or arm exercises (curls, tricep extensions).'
+             ? '- SHOULDERS ONLY: Include ONLY shoulder exercises (overhead press, lateral raises, front raises, rear delt flyes, shoulder press variations, Arnold press, upright rows, face pulls). Set category="shoulders" for ALL exercises. DO NOT include chest exercises (bench press, push-ups, flyes), back exercises (rows, pull-ups, deadlifts), or arm exercises (curls, tricep extensions).'
              : workoutType === 'Chest'
-             ? '- CHEST ONLY: Include ONLY chest exercises (bench press, push-ups, chest flyes, cable crossovers). NO back, shoulders, or arm exercises.'
+             ? '- CHEST ONLY: Include ONLY chest exercises (bench press, push-ups, chest flyes, cable crossovers). Set category="chest" for ALL exercises. NO back, shoulders, or arm exercises.'
              : workoutType === 'Back'
-             ? '- BACK ONLY: Include ONLY back exercises (rows, pull-ups, deadlifts, lat pulldowns). NO chest, shoulders, or arm exercises.'
+             ? '- BACK ONLY: Include ONLY back exercises (rows, pull-ups, deadlifts, lat pulldowns). Set category="back" for ALL exercises. NO chest, shoulders, or arm exercises.'
              : workoutType === 'Arms'
-             ? '- ARMS ONLY: Include ONLY arm exercises (bicep curls, tricep extensions, hammer curls, skull crushers). NO chest, back, or shoulder exercises.'
+             ? '- ARMS ONLY: Include ONLY arm exercises (bicep curls, tricep extensions, hammer curls, skull crushers). Set category="arms" for ALL exercises. NO chest, back, or shoulder exercises.'
              : workoutType === 'Legs'
-             ? '- LEGS ONLY: Include ONLY leg exercises (squats, lunges, leg press, leg curls, calf raises). NO upper body exercises.'
+             ? '- LEGS ONLY: Include ONLY leg exercises (squats, lunges, leg press, leg curls, calf raises). Set category="legs" for ALL exercises. NO upper body exercises.'
              : workoutType === 'Core/Abs'
-             ? '- CORE/ABS ONLY: Include ONLY core/ab exercises (planks, crunches, Russian twists, leg raises, mountain climbers). NO other muscle groups.'
+             ? '- CORE/ABS ONLY: Include ONLY core and abdominal exercises (planks, crunches, Russian twists, leg raises, mountain climbers, bicycle crunches, dead bugs, bird dogs, ab wheel rollouts, hanging knee raises). Set category="core" for ALL exercises. ABSOLUTELY NO shoulder exercises (no overhead press, lateral raises, face pulls), NO back exercises (no rows, pull-ups, deadlifts), NO chest, NO arms, NO legs. ONLY CORE/ABS.'
              : workoutType === 'Cardio'
-             ? '- CARDIO ONLY: Include ONLY cardio exercises (running, cycling, rowing, jump rope, burpees, high knees). NO strength training.'
+             ? '- CARDIO ONLY: Include ONLY cardio exercises (running, cycling, rowing, jump rope, burpees, high knees). Set category="cardio" for ALL exercises. NO strength training.'
              : workoutType === 'Strength Training'
              ? '- STRENGTH TRAINING: Focus on compound movements with progressive overload (squats, deadlifts, bench press, overhead press, rows).'
              : workoutType === 'Endurance'
              ? '- ENDURANCE: Focus on high-rep, lower-weight exercises and cardio intervals for muscular and cardiovascular endurance.'
              : workoutType === 'Upper Body'
-             ? '- UPPER-BODY: ONLY chest/back/shoulders/arms exercises. NO legs/glutes.'
+             ? '- UPPER-BODY: ONLY chest/back/shoulders/arms exercises. Set appropriate categories. NO legs/glutes.'
              : workoutType === 'Lower Body'
-             ? '- LOWER-BODY: ONLY legs/glutes/hamstrings/calves exercises. NO chest/back/shoulders/arms.'
+             ? '- LOWER-BODY: ONLY legs/glutes/hamstrings/calves exercises. Set category="legs" for ALL exercises. NO chest/back/shoulders/arms.'
              : workoutType === 'Full Body'
              ? '- FULL-BODY: Mix of upper AND lower body exercises.'
              : `- ${workoutType.toUpperCase()}: Focus ONLY on ${workoutType} exercises.`
@@ -389,8 +389,6 @@ export class AITrainerService {
 
       // VALIDATION: Filter out exercises that don't match the requested workout type
       if (workout.exercises && Array.isArray(workout.exercises)) {
-        const originalCount = workout.exercises.length
-
         // Normalize the workout type to lowercase with hyphens (matches form values)
         const normalizedType = workoutType
           .toLowerCase()
@@ -409,6 +407,7 @@ export class AITrainerService {
           legs: ['legs'],
           core: ['core'],
           'core-abs': ['core'],
+          abs: ['core'],
           cardio: ['cardio'],
           strength: ['chest', 'back', 'shoulders', 'arms', 'legs'], // compound movements
           'strength-training': ['chest', 'back', 'shoulders', 'arms', 'legs'],
@@ -433,10 +432,6 @@ export class AITrainerService {
             validExerciseIds.has(set.exerciseId)
           )
         }
-
-        console.log(
-          `Workout validation: ${workoutType} workout - kept ${workout.exercises.length}/${originalCount} exercises`
-        )
       }
 
       return this.sanitizeWorkoutData(workout)
