@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Send, X } from 'lucide-react'
+import { Send, X, Volume2, VolumeX } from 'lucide-react'
+import { ElevenLabsClient } from 'elevenlabs'
 import { storageService } from '../services/storage'
 import { AITrainerService } from '../services/aiTrainer'
 import { Workout, WorkoutProgress } from '../types/workout'
@@ -69,7 +70,12 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
   const [chatLoading, setChatLoading] = useState(false)
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [progress, setProgress] = useState<WorkoutProgress[]>([])
+  const [isMuted, setIsMuted] = useState(() => {
+    const saved = localStorage.getItem('aiChatMuted')
+    return saved ? JSON.parse(saved) : false
+  })
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const aiTrainer = new AITrainerService()
 
   useEffect(() => {
@@ -107,6 +113,75 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
     }
   }, [chatMessages])
 
+  const toggleMute = () => {
+    const newMutedState = !isMuted
+    setIsMuted(newMutedState)
+    localStorage.setItem('aiChatMuted', JSON.stringify(newMutedState))
+
+    // Stop any currently playing audio
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current = null
+    }
+  }
+
+  const speakText = async (text: string) => {
+    if (isMuted) return
+
+    // Stop any currently playing audio
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current = null
+    }
+
+    try {
+      const apiKey = import.meta.env.VITE_ELEVENLABS_API_KEY
+      const voiceId = 'jqcCZkN6Knx8BJ5TBdYR'
+
+      if (!apiKey || apiKey === 'your_elevenlabs_api_key_here') {
+        console.warn('ElevenLabs API key not configured')
+        return
+      }
+
+      // Remove markdown formatting for cleaner speech
+      const cleanText = text
+        .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+        .replace(/\*(.+?)\*/g, '$1') // Remove italic
+        .replace(/^[\*\-]\s+/gm, '') // Remove bullet points
+
+      // Initialize ElevenLabs client
+      const elevenlabs = new ElevenLabsClient({
+        apiKey: apiKey,
+      })
+
+      // Convert text to speech
+      const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
+        text: cleanText,
+        model_id: 'eleven_multilingual_v2',
+        output_format: 'mp3_44100_128',
+      })
+
+      // Convert stream to blob
+      const chunks: BlobPart[] = []
+      for await (const chunk of audioStream) {
+        chunks.push(chunk)
+      }
+      const audioBlob = new Blob(chunks, { type: 'audio/mpeg' })
+      const audioUrl = URL.createObjectURL(audioBlob)
+      const audio = new Audio(audioUrl)
+      audioRef.current = audio
+
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl)
+        audioRef.current = null
+      }
+
+      await audio.play()
+    } catch (error) {
+      console.error('Error playing text-to-speech:', error)
+    }
+  }
+
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return
 
@@ -142,6 +217,9 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
       }
 
       setChatMessages((prev) => [...prev, aiMessage])
+
+      // Speak the AI response
+      speakText(response)
     } catch (error) {
       console.error('Error getting AI response:', error)
       const errorMessage: ChatMessage = {
@@ -192,12 +270,25 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleMute}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2"
+              title={isMuted ? 'Unmute voice' : 'Mute voice'}
+            >
+              {isMuted ? (
+                <VolumeX className="h-6 w-6" />
+              ) : (
+                <Volume2 className="h-6 w-6" />
+              )}
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         {/* Chat Messages */}
