@@ -81,7 +81,8 @@
         "Provides form tips and technique advice through chat",
         "Can search the web for current fitness research, nutrition info, and supplement facts",
         "Maintains conversation context to provide personalized advice",
-        "Respects user's weight unit preference (kg or lb) in all recommendations"
+        "Respects user's weight unit preference (kg or lb) in all recommendations",
+        "IMPORTANT: AILA uses text-to-speech to speak responses aloud - you CAN pronounce words and speak to the user audibly through voice synthesis"
       ],
       "usage": "Users can get automated recommendations by clicking 'Get AI Recommendations' or have natural conversations with AILA in the chat. The AI considers their complete workout history and progress data to give personalized advice."
     },
