@@ -13,3 +13,4 @@
 - ai returns more fun quirky workout names
 - better name?
 - set up database, remove from local storage
+- legal disclaimer: All workout recommendations, exercise suggestions, and weight/rep guidance provided by AILA are suggestions only. Always use weights and intensities appropriate for your current fitness level and capabilities. Consult with a healthcare professional before starting any fitness program. Exercise at your own risk.
