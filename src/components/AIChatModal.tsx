@@ -160,7 +160,7 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
         {
           text: cleanText,
           model_id: 'eleven_turbo_v2_5',
-          output_format: 'mp3_22050_32',
+          output_format: 'mp3_44100_64',
         }
       )
 

@@ -90,7 +90,14 @@ export class AITrainerService {
           .map((part: any) => part.text)
           .join('\n')
 
-        return textParts
+        // Remove citation markers like [1], [2], [cite: ...], etc. and citation sections
+        const cleanedText = textParts
+          .replace(/\[\d+\]/g, '') // Remove [1], [2], etc.
+          .replace(/\[cite:.*?\]/gi, '') // Remove [cite: ...] markers
+          .replace(/\n\s*\n\s*\[\d+\].*$/gm, '') // Remove citation lines at the end
+          .trim()
+
+        return cleanedText
       } else {
         throw new Error('No valid response from AI')
       }
