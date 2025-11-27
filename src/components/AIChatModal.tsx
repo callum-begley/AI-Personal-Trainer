@@ -154,22 +154,46 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
         apiKey: apiKey,
       })
 
-      // Convert text to speech
-      const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
-        text: cleanText,
-        model_id: 'eleven_multilingual_v2',
-        output_format: 'mp3_44100_128',
-      })
+      // Convert text to speech with streaming
+      const audioStream = await elevenlabs.textToSpeech.convertAsStream(
+        voiceId,
+        {
+          text: cleanText,
+          model_id: 'eleven_turbo_v2_5',
+          output_format: 'mp3_22050_32',
+        }
+      )
 
-      // Convert stream to blob
-      const chunks: BlobPart[] = []
-      for await (const chunk of audioStream) {
-        chunks.push(chunk)
-      }
-      const audioBlob = new Blob(chunks, { type: 'audio/mpeg' })
-      const audioUrl = URL.createObjectURL(audioBlob)
+      // Create MediaSource for progressive playback
+      const mediaSource = new MediaSource()
+      const audioUrl = URL.createObjectURL(mediaSource)
       const audio = new Audio(audioUrl)
       audioRef.current = audio
+
+      mediaSource.addEventListener('sourceopen', async () => {
+        const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg')
+        const chunks: Uint8Array[] = []
+
+        for await (const chunk of audioStream) {
+          chunks.push(chunk)
+
+          // Append chunks as they arrive
+          if (!sourceBuffer.updating) {
+            sourceBuffer.appendBuffer(chunk)
+          }
+        }
+
+        // Wait for final buffer update and end stream
+        sourceBuffer.addEventListener(
+          'updateend',
+          () => {
+            if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+              mediaSource.endOfStream()
+            }
+          },
+          { once: true }
+        )
+      })
 
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl)
