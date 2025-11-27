@@ -148,6 +148,7 @@ const AIChatModal: React.FC<AIChatModalProps> = ({ isOpen, onClose }) => {
         .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
         .replace(/\*(.+?)\*/g, '$1') // Remove italic
         .replace(/^[\*\-]\s+/gm, '') // Remove bullet points
+        .toLowerCase() // Convert to lowercase for better pronunciation
 
       // Initialize ElevenLabs client
       const elevenlabs = new ElevenLabsClient({
